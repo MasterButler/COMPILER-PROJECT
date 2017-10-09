@@ -1,7 +1,8 @@
 grammar Java;
 
 code
-	: 'main() {' statement* '}';
+	: 'main() {' methodDeclaration* '}';
+	
 // starting point for parsing a java file
 /*
 compilationUnit
@@ -589,7 +590,7 @@ arguments
 
 // LEXER
 
-// §3.9 Keywords
+// ï¿½3.9 Keywords
 
 //ABSTRACT      : 'abstract';
 //ASSERT        : 'assert';
@@ -642,7 +643,7 @@ VOID          : 'void';
 //VOLATILE      : 'volatile';
 WHILE         : 'while';
 
-// §3.10.1 Integer Literals
+// ï¿½3.10.1 Integer Literals
 
 IntegerLiteral
     :   DecimalIntegerLiteral
@@ -787,7 +788,7 @@ BinaryDigitOrUnderscore
     * 
     */
 
-// §3.10.2 Floating-Point Literals
+// ï¿½3.10.2 Floating-Point Literals
 
 FloatingPointLiteral
     :   DecimalFloatingPointLiteral
@@ -851,14 +852,14 @@ BinaryExponentIndicator
     * 
     */
 
-// §3.10.3 Boolean Literals
+// ï¿½3.10.3 Boolean Literals
 
 BooleanLiteral
     :   'true'
     |   'false'
     ;
 
-// §3.10.4 Character Literals
+// ï¿½3.10.4 Character Literals
 
 CharacterLiteral
     :   '\'' SingleCharacter '\''
@@ -869,7 +870,7 @@ fragment
 SingleCharacter
     :   ~['\\\r\n]
     ;
-// §3.10.5 String Literals
+// ï¿½3.10.5 String Literals
 StringLiteral
     :   '"' StringCharacters? '"'
     ;
@@ -882,7 +883,7 @@ StringCharacter
     :   ~["\\]
     |   EscapeSequence
     ;
-// §3.10.6 Escape Sequences for Character and String Literals
+// ï¿½3.10.6 Escape Sequences for Character and String Literals
 fragment
 EscapeSequence
     :   '\\' [btnfr"'\\]
@@ -907,13 +908,13 @@ ZeroToThree
     :   [0-3]
     ;
 
-// §3.10.7 The Null Literal
+// ï¿½3.10.7 The Null Literal
 
 NullLiteral
     :   'null'
     ;
 
-// §3.11 Separators
+// ï¿½3.11 Separators
 
 LEFTPARENTH     : '(';
 RIGHTPARENTH    : ')';
@@ -925,7 +926,7 @@ SEMICOLON       : ';';
 COMMA           : ',';
 DOT             : '.';
 
-// §3.12 Operators
+// ï¿½3.12 Operators
 
 ASSIGNMENT      : '=';
 GREATER         : '>';
@@ -963,7 +964,7 @@ DIV_ASSIGN      : '/=';
 // RSHIFT_ASSIGN   : '>>=';
 // URSHIFT_ASSIGN  : '>>>=';
 
-// §3.8 Identifiers (must appear after all keywords in the grammar)
+// ï¿½3.8 Identifiers (must appear after all keywords in the grammar)
 
 Identifier
     :   Character (Character|Digit)*
