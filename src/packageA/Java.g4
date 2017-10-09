@@ -188,7 +188,7 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   typeType constantDeclarator (',' constantDeclarator)* ';'
+    :   constantModifier* typeType constantDeclarator (',' constantDeclarator)* ';'
     ;
 
 constantDeclarator
