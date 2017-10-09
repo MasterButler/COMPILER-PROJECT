@@ -89,13 +89,13 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVariableModifier(@NotNull JavaParser.VariableModifierContext ctx) { }
+	@Override public void enterConstantModifier(@NotNull JavaParser.ConstantModifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVariableModifier(@NotNull JavaParser.VariableModifierContext ctx) { }
+	@Override public void exitConstantModifier(@NotNull JavaParser.ConstantModifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -305,18 +305,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassOrInterfaceType(@NotNull JavaParser.ClassOrInterfaceTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassOrInterfaceType(@NotNull JavaParser.ClassOrInterfaceTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTypeBound(@NotNull JavaParser.TypeBoundContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -336,6 +324,18 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitVariableDeclaratorId(@NotNull JavaParser.VariableDeclaratorIdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterClassType(@NotNull JavaParser.ClassTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitClassType(@NotNull JavaParser.ClassTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -408,6 +408,18 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMethodDeclaration(@NotNull JavaParser.MethodDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCode(@NotNull JavaParser.CodeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCode(@NotNull JavaParser.CodeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

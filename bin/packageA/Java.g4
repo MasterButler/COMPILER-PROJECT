@@ -1,5 +1,7 @@
 grammar Java;
 
+code
+	: 'main() {' statement* '}';
 // starting point for parsing a java file
 /*
 compilationUnit
@@ -49,7 +51,7 @@ classModifier
         )
     ;
 
-variableModifier
+constantModifier
     :   'CONST'
 //    |   annotation
     ;
@@ -229,11 +231,11 @@ enumConstantName
     ;
 
 typeType
-    :   classOrInterfaceType ('[' ']')*
+    :   classType ('[' ']')*
     |   dataType ('[' ']')*
     ;
 
-classOrInterfaceType
+classType
     :   Identifier typeArguments? ('.' Identifier typeArguments? )*
     ;
 
@@ -267,11 +269,11 @@ formalParameterList
     ;
 
 formalParameter
-    :   variableModifier* typeType variableDeclaratorId
+    :   typeType variableDeclaratorId
     ;
 
 lastFormalParameter
-    :   variableModifier* typeType '...' variableDeclaratorId
+    :   typeType '...' variableDeclaratorId
     ;
 
 methodBody
@@ -380,31 +382,32 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   variableModifier* typeType variableDeclarators
+    :   constantModifier? typeType variableDeclarators
     ;
 
 statement
     :   block
-    |   ASSERT expression (':' expression)? ';'
+//    |   ASSERT expression (':' expression)? ';'
     |   'if' parExpression statement ('else' statement)?
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
     |   'dowhile' parExpression statement
-    |   'try' block (catchClause+ finallyBlock? | finallyBlock)
-    |   'try' resourceSpecification block catchClause* finallyBlock?
+//    |   'try' block (catchClause+ finallyBlock? | finallyBlock)
+//    |   'try' resourceSpecification block catchClause* finallyBlock?
     |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
-    |   'synchronized' parExpression block
+//    |   'synchronized' parExpression block
     |   'return' expression? ';'
     |   'throw' expression ';'
     |   'break' Identifier? ';'
-    |   'continue' Identifier? ';'
+//    |   'continue' Identifier? ';'
     |   ';'
     |   statementExpression ';'
     |   Identifier ':' statement
+    | constDeclaration
     ;
 
 catchClause
-    :   'catch' '(' variableModifier* catchType Identifier ')' block
+    :   'catch' '(' catchType Identifier ')' block
     ;
 
 catchType
@@ -424,7 +427,7 @@ resources
     ;
 
 resource
-    :   variableModifier* classOrInterfaceType variableDeclaratorId '=' expression
+    :   constantModifier* classType variableDeclaratorId '=' expression
     ;
 
 /** Matches cases then statements, both of which are mandatory.
@@ -451,7 +454,7 @@ forInit
     ;
 
 enhancedForControl
-    :   variableModifier* typeType variableDeclaratorId ':' expression
+    :   constantModifier* typeType variableDeclaratorId ':' expression
     ;
 
 forUpdate
@@ -513,12 +516,12 @@ expression
 
 primary
     :   '(' expression ')'
-    |   'this'
-    |   'super'
+//    |   'this'
+//    |   'super'
     |   literal
     |   Identifier
-    |   typeType '.' 'class'
-    |   'void' '.' 'class'
+//    |   typeType '.' 'class'
+//    |   'void' '.' 'class'
     |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | 'this' arguments)
     ;
 
@@ -704,10 +707,13 @@ Underscores
     :   '_'+
     ;
 
+/*
 fragment
 HexNumeral
     :   '0' [xX] HexDigits
     ;
+    * 
+    */
 
 fragment
 HexDigits
@@ -725,14 +731,17 @@ HexDigitOrUnderscore
     |   '_'
     ;
 
+/*
 fragment
 OctalNumeral
     :   '0' Underscores? OctalDigits
     ;
+    * 
+    */
 
 fragment
 OctalDigits
-    :   OctalDigit (OctalDigitOrUnderscore* OctalDigit)?
+    :   OctalDigit (OctalDigit* OctalDigit)?
     ;
 
 fragment
@@ -740,11 +749,14 @@ OctalDigit
     :   [0-7]
     ;
 
+/*
 fragment
 OctalDigitOrUnderscore
     :   OctalDigit
     |   '_'
     ;
+    * 
+    */
 
 /*
 fragment
