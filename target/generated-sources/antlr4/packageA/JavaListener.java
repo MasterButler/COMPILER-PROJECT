@@ -9,6 +9,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface JavaListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#enumConstantName}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnumConstantName(@NotNull JavaParser.EnumConstantNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#enumConstantName}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnumConstantName(@NotNull JavaParser.EnumConstantNameContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#memberDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -29,6 +39,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitDefaultValue(@NotNull JavaParser.DefaultValueContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#modifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterModifier(@NotNull JavaParser.ModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#modifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitModifier(@NotNull JavaParser.ModifierContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#annotationTypeElementDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -38,6 +58,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAnnotationTypeElementDeclaration(@NotNull JavaParser.AnnotationTypeElementDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#innerCreator}.
+	 * @param ctx the parse tree
+	 */
+	void enterInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#innerCreator}.
+	 * @param ctx the parse tree
+	 */
+	void exitInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#annotationTypeBody}.
 	 * @param ctx the parse tree
@@ -49,15 +79,25 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitAnnotationTypeBody(@NotNull JavaParser.AnnotationTypeBodyContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#genericInterfaceMethodDeclaration}.
+	 * Enter a parse tree produced by {@link JavaParser#explicitGenericInvocationSuffix}.
 	 * @param ctx the parse tree
 	 */
-	void enterGenericInterfaceMethodDeclaration(@NotNull JavaParser.GenericInterfaceMethodDeclarationContext ctx);
+	void enterExplicitGenericInvocationSuffix(@NotNull JavaParser.ExplicitGenericInvocationSuffixContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#genericInterfaceMethodDeclaration}.
+	 * Exit a parse tree produced by {@link JavaParser#explicitGenericInvocationSuffix}.
 	 * @param ctx the parse tree
 	 */
-	void exitGenericInterfaceMethodDeclaration(@NotNull JavaParser.GenericInterfaceMethodDeclarationContext ctx);
+	void exitExplicitGenericInvocationSuffix(@NotNull JavaParser.ExplicitGenericInvocationSuffixContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#variableModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterVariableModifier(@NotNull JavaParser.VariableModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#variableModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitVariableModifier(@NotNull JavaParser.VariableModifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#classBodyDeclaration}.
 	 * @param ctx the parse tree
@@ -69,6 +109,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitClassBodyDeclaration(@NotNull JavaParser.ClassBodyDeclarationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#elementValuePair}.
+	 * @param ctx the parse tree
+	 */
+	void enterElementValuePair(@NotNull JavaParser.ElementValuePairContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#elementValuePair}.
+	 * @param ctx the parse tree
+	 */
+	void exitElementValuePair(@NotNull JavaParser.ElementValuePairContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#block}.
 	 * @param ctx the parse tree
 	 */
@@ -79,15 +129,25 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitBlock(@NotNull JavaParser.BlockContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#enumBodyDeclarations}.
+	 * Enter a parse tree produced by {@link JavaParser#arrayInitializer}.
 	 * @param ctx the parse tree
 	 */
-	void enterEnumBodyDeclarations(@NotNull JavaParser.EnumBodyDeclarationsContext ctx);
+	void enterArrayInitializer(@NotNull JavaParser.ArrayInitializerContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#enumBodyDeclarations}.
+	 * Exit a parse tree produced by {@link JavaParser#arrayInitializer}.
 	 * @param ctx the parse tree
 	 */
-	void exitEnumBodyDeclarations(@NotNull JavaParser.EnumBodyDeclarationsContext ctx);
+	void exitArrayInitializer(@NotNull JavaParser.ArrayInitializerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#elementValue}.
+	 * @param ctx the parse tree
+	 */
+	void enterElementValue(@NotNull JavaParser.ElementValueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#elementValue}.
+	 * @param ctx the parse tree
+	 */
+	void exitElementValue(@NotNull JavaParser.ElementValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#forUpdate}.
 	 * @param ctx the parse tree
@@ -99,6 +159,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitForUpdate(@NotNull JavaParser.ForUpdateContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#constDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterConstDeclaration(@NotNull JavaParser.ConstDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#constDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitConstDeclaration(@NotNull JavaParser.ConstDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#typeType}.
 	 * @param ctx the parse tree
 	 */
@@ -108,6 +178,26 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeType(@NotNull JavaParser.TypeTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#resource}.
+	 * @param ctx the parse tree
+	 */
+	void enterResource(@NotNull JavaParser.ResourceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#resource}.
+	 * @param ctx the parse tree
+	 */
+	void exitResource(@NotNull JavaParser.ResourceContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#qualifiedName}.
+	 * @param ctx the parse tree
+	 */
+	void enterQualifiedName(@NotNull JavaParser.QualifiedNameContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#qualifiedName}.
+	 * @param ctx the parse tree
+	 */
+	void exitQualifiedName(@NotNull JavaParser.QualifiedNameContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#enhancedForControl}.
 	 * @param ctx the parse tree
@@ -119,6 +209,26 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitEnhancedForControl(@NotNull JavaParser.EnhancedForControlContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#dataType}.
+	 * @param ctx the parse tree
+	 */
+	void enterDataType(@NotNull JavaParser.DataTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#dataType}.
+	 * @param ctx the parse tree
+	 */
+	void exitDataType(@NotNull JavaParser.DataTypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#resourceSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void enterResourceSpecification(@NotNull JavaParser.ResourceSpecificationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#resourceSpecification}.
+	 * @param ctx the parse tree
+	 */
+	void exitResourceSpecification(@NotNull JavaParser.ResourceSpecificationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#annotationConstantRest}.
 	 * @param ctx the parse tree
 	 */
@@ -128,6 +238,26 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAnnotationConstantRest(@NotNull JavaParser.AnnotationConstantRestContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#formalParameterList}.
+	 * @param ctx the parse tree
+	 */
+	void enterFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#formalParameterList}.
+	 * @param ctx the parse tree
+	 */
+	void exitFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#annotationTypeDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#annotationTypeDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#explicitGenericInvocation}.
 	 * @param ctx the parse tree
@@ -179,6 +309,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitClassOrInterfaceType(@NotNull JavaParser.ClassOrInterfaceTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#annotationMethodRest}.
+	 * @param ctx the parse tree
+	 */
+	void enterAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#annotationMethodRest}.
+	 * @param ctx the parse tree
+	 */
+	void exitAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#typeBound}.
 	 * @param ctx the parse tree
 	 */
@@ -219,16 +359,6 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitClassCreatorRest(@NotNull JavaParser.ClassCreatorRestContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#interfaceBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceBodyDeclaration(@NotNull JavaParser.InterfaceBodyDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#interfaceBodyDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceBodyDeclaration(@NotNull JavaParser.InterfaceBodyDeclarationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link JavaParser#typeArguments}.
 	 * @param ctx the parse tree
 	 */
@@ -239,15 +369,75 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitTypeArguments(@NotNull JavaParser.TypeArgumentsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#annotationName}.
+	 * Enter a parse tree produced by {@link JavaParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
 	 */
-	void enterAnnotationName(@NotNull JavaParser.AnnotationNameContext ctx);
+	void enterSwitchBlockStatementGroup(@NotNull JavaParser.SwitchBlockStatementGroupContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#annotationName}.
+	 * Exit a parse tree produced by {@link JavaParser#switchBlockStatementGroup}.
 	 * @param ctx the parse tree
 	 */
-	void exitAnnotationName(@NotNull JavaParser.AnnotationNameContext ctx);
+	void exitSwitchBlockStatementGroup(@NotNull JavaParser.SwitchBlockStatementGroupContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#typeParameter}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeParameter(@NotNull JavaParser.TypeParameterContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#typeParameter}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeParameter(@NotNull JavaParser.TypeParameterContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#methodDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethodDeclaration(@NotNull JavaParser.MethodDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#methodDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethodDeclaration(@NotNull JavaParser.MethodDeclarationContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#methodBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterMethodBody(@NotNull JavaParser.MethodBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#methodBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitMethodBody(@NotNull JavaParser.MethodBodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#classModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassModifier(@NotNull JavaParser.ClassModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#classModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassModifier(@NotNull JavaParser.ClassModifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#typeArgument}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeArgument(@NotNull JavaParser.TypeArgumentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#typeArgument}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeArgument(@NotNull JavaParser.TypeArgumentContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#typeDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeDeclaration(@NotNull JavaParser.TypeDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#typeDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeDeclaration(@NotNull JavaParser.TypeDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#finallyBlock}.
 	 * @param ctx the parse tree
@@ -269,6 +459,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitTypeParameters(@NotNull JavaParser.TypeParametersContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#genericConstructorDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterGenericConstructorDeclaration(@NotNull JavaParser.GenericConstructorDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#genericConstructorDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitGenericConstructorDeclaration(@NotNull JavaParser.GenericConstructorDeclarationContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#lastFormalParameter}.
 	 * @param ctx the parse tree
 	 */
@@ -288,6 +488,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstructorBody(@NotNull JavaParser.ConstructorBodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#classDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterClassDeclaration(@NotNull JavaParser.ClassDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#classDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitClassDeclaration(@NotNull JavaParser.ClassDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#literal}.
 	 * @param ctx the parse tree
@@ -339,15 +549,15 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitTypeList(@NotNull JavaParser.TypeListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#enumConstants}.
+	 * Enter a parse tree produced by {@link JavaParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void enterEnumConstants(@NotNull JavaParser.EnumConstantsContext ctx);
+	void enterStatement(@NotNull JavaParser.StatementContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#enumConstants}.
+	 * Exit a parse tree produced by {@link JavaParser#statement}.
 	 * @param ctx the parse tree
 	 */
-	void exitEnumConstants(@NotNull JavaParser.EnumConstantsContext ctx);
+	void exitStatement(@NotNull JavaParser.StatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#classBody}.
 	 * @param ctx the parse tree
@@ -369,15 +579,15 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitCreatedName(@NotNull JavaParser.CreatedNameContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#enumDeclaration}.
+	 * Enter a parse tree produced by {@link JavaParser#importDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterEnumDeclaration(@NotNull JavaParser.EnumDeclarationContext ctx);
+	void enterImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#enumDeclaration}.
+	 * Exit a parse tree produced by {@link JavaParser#importDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitEnumDeclaration(@NotNull JavaParser.EnumDeclarationContext ctx);
+	void exitImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#formalParameter}.
 	 * @param ctx the parse tree
@@ -399,16 +609,6 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitParExpression(@NotNull JavaParser.ParExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#annotation}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotation(@NotNull JavaParser.AnnotationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#annotation}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotation(@NotNull JavaParser.AnnotationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link JavaParser#variableInitializer}.
 	 * @param ctx the parse tree
 	 */
@@ -429,6 +629,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitElementValueArrayInitializer(@NotNull JavaParser.ElementValueArrayInitializerContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#localVariableDeclarationStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterLocalVariableDeclarationStatement(@NotNull JavaParser.LocalVariableDeclarationStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#localVariableDeclarationStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitLocalVariableDeclarationStatement(@NotNull JavaParser.LocalVariableDeclarationStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#creator}.
 	 * @param ctx the parse tree
 	 */
@@ -448,6 +658,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArrayCreatorRest(@NotNull JavaParser.ArrayCreatorRestContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#blockStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlockStatement(@NotNull JavaParser.BlockStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#blockStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlockStatement(@NotNull JavaParser.BlockStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#expression}.
 	 * @param ctx the parse tree
@@ -478,386 +698,6 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitQualifiedNameList(@NotNull JavaParser.QualifiedNameListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#constructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstructorDeclaration(@NotNull JavaParser.ConstructorDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#constructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstructorDeclaration(@NotNull JavaParser.ConstructorDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#forControl}.
-	 * @param ctx the parse tree
-	 */
-	void enterForControl(@NotNull JavaParser.ForControlContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#forControl}.
-	 * @param ctx the parse tree
-	 */
-	void exitForControl(@NotNull JavaParser.ForControlContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#superSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void enterSuperSuffix(@NotNull JavaParser.SuperSuffixContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#superSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void exitSuperSuffix(@NotNull JavaParser.SuperSuffixContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#variableDeclarators}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableDeclarators(@NotNull JavaParser.VariableDeclaratorsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#variableDeclarators}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableDeclarators(@NotNull JavaParser.VariableDeclaratorsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#catchType}.
-	 * @param ctx the parse tree
-	 */
-	void enterCatchType(@NotNull JavaParser.CatchTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#catchType}.
-	 * @param ctx the parse tree
-	 */
-	void exitCatchType(@NotNull JavaParser.CatchTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#classOrInterfaceModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassOrInterfaceModifier(@NotNull JavaParser.ClassOrInterfaceModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#classOrInterfaceModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassOrInterfaceModifier(@NotNull JavaParser.ClassOrInterfaceModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#enumConstantName}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumConstantName(@NotNull JavaParser.EnumConstantNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#enumConstantName}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumConstantName(@NotNull JavaParser.EnumConstantNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterModifier(@NotNull JavaParser.ModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitModifier(@NotNull JavaParser.ModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#innerCreator}.
-	 * @param ctx the parse tree
-	 */
-	void enterInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#innerCreator}.
-	 * @param ctx the parse tree
-	 */
-	void exitInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#explicitGenericInvocationSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void enterExplicitGenericInvocationSuffix(@NotNull JavaParser.ExplicitGenericInvocationSuffixContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#explicitGenericInvocationSuffix}.
-	 * @param ctx the parse tree
-	 */
-	void exitExplicitGenericInvocationSuffix(@NotNull JavaParser.ExplicitGenericInvocationSuffixContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterVariableModifier(@NotNull JavaParser.VariableModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#variableModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitVariableModifier(@NotNull JavaParser.VariableModifierContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#elementValuePair}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValuePair(@NotNull JavaParser.ElementValuePairContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#elementValuePair}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValuePair(@NotNull JavaParser.ElementValuePairContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#arrayInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrayInitializer(@NotNull JavaParser.ArrayInitializerContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#arrayInitializer}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrayInitializer(@NotNull JavaParser.ArrayInitializerContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#elementValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterElementValue(@NotNull JavaParser.ElementValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#elementValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitElementValue(@NotNull JavaParser.ElementValueContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#constDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterConstDeclaration(@NotNull JavaParser.ConstDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#constDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitConstDeclaration(@NotNull JavaParser.ConstDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#resource}.
-	 * @param ctx the parse tree
-	 */
-	void enterResource(@NotNull JavaParser.ResourceContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#resource}.
-	 * @param ctx the parse tree
-	 */
-	void exitResource(@NotNull JavaParser.ResourceContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#qualifiedName}.
-	 * @param ctx the parse tree
-	 */
-	void enterQualifiedName(@NotNull JavaParser.QualifiedNameContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#qualifiedName}.
-	 * @param ctx the parse tree
-	 */
-	void exitQualifiedName(@NotNull JavaParser.QualifiedNameContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#dataType}.
-	 * @param ctx the parse tree
-	 */
-	void enterDataType(@NotNull JavaParser.DataTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#dataType}.
-	 * @param ctx the parse tree
-	 */
-	void exitDataType(@NotNull JavaParser.DataTypeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#resourceSpecification}.
-	 * @param ctx the parse tree
-	 */
-	void enterResourceSpecification(@NotNull JavaParser.ResourceSpecificationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#resourceSpecification}.
-	 * @param ctx the parse tree
-	 */
-	void exitResourceSpecification(@NotNull JavaParser.ResourceSpecificationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#formalParameterList}.
-	 * @param ctx the parse tree
-	 */
-	void enterFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#formalParameterList}.
-	 * @param ctx the parse tree
-	 */
-	void exitFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#annotationTypeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#annotationTypeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#compilationUnit}.
-	 * @param ctx the parse tree
-	 */
-	void enterCompilationUnit(@NotNull JavaParser.CompilationUnitContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#compilationUnit}.
-	 * @param ctx the parse tree
-	 */
-	void exitCompilationUnit(@NotNull JavaParser.CompilationUnitContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#annotationMethodRest}.
-	 * @param ctx the parse tree
-	 */
-	void enterAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#annotationMethodRest}.
-	 * @param ctx the parse tree
-	 */
-	void exitAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#switchBlockStatementGroup}.
-	 * @param ctx the parse tree
-	 */
-	void enterSwitchBlockStatementGroup(@NotNull JavaParser.SwitchBlockStatementGroupContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#switchBlockStatementGroup}.
-	 * @param ctx the parse tree
-	 */
-	void exitSwitchBlockStatementGroup(@NotNull JavaParser.SwitchBlockStatementGroupContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#typeParameter}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeParameter(@NotNull JavaParser.TypeParameterContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#typeParameter}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeParameter(@NotNull JavaParser.TypeParameterContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#interfaceBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceBody(@NotNull JavaParser.InterfaceBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#interfaceBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceBody(@NotNull JavaParser.InterfaceBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#methodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethodDeclaration(@NotNull JavaParser.MethodDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#methodDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethodDeclaration(@NotNull JavaParser.MethodDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#methodBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterMethodBody(@NotNull JavaParser.MethodBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#methodBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitMethodBody(@NotNull JavaParser.MethodBodyContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#typeArgument}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeArgument(@NotNull JavaParser.TypeArgumentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#typeArgument}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeArgument(@NotNull JavaParser.TypeArgumentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#typeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeDeclaration(@NotNull JavaParser.TypeDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#typeDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeDeclaration(@NotNull JavaParser.TypeDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#genericConstructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterGenericConstructorDeclaration(@NotNull JavaParser.GenericConstructorDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#genericConstructorDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitGenericConstructorDeclaration(@NotNull JavaParser.GenericConstructorDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#classDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassDeclaration(@NotNull JavaParser.ClassDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#classDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassDeclaration(@NotNull JavaParser.ClassDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#enumConstant}.
-	 * @param ctx the parse tree
-	 */
-	void enterEnumConstant(@NotNull JavaParser.EnumConstantContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#enumConstant}.
-	 * @param ctx the parse tree
-	 */
-	void exitEnumConstant(@NotNull JavaParser.EnumConstantContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterStatement(@NotNull JavaParser.StatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitStatement(@NotNull JavaParser.StatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#importDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#importDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#interfaceDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterInterfaceDeclaration(@NotNull JavaParser.InterfaceDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#interfaceDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitInterfaceDeclaration(@NotNull JavaParser.InterfaceDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#localVariableDeclarationStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterLocalVariableDeclarationStatement(@NotNull JavaParser.LocalVariableDeclarationStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#localVariableDeclarationStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitLocalVariableDeclarationStatement(@NotNull JavaParser.LocalVariableDeclarationStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#blockStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterBlockStatement(@NotNull JavaParser.BlockStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#blockStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitBlockStatement(@NotNull JavaParser.BlockStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#fieldDeclaration}.
 	 * @param ctx the parse tree
@@ -899,25 +739,35 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitStatementExpression(@NotNull JavaParser.StatementExpressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#interfaceMethodDeclaration}.
+	 * Enter a parse tree produced by {@link JavaParser#constructorDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void enterInterfaceMethodDeclaration(@NotNull JavaParser.InterfaceMethodDeclarationContext ctx);
+	void enterConstructorDeclaration(@NotNull JavaParser.ConstructorDeclarationContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#interfaceMethodDeclaration}.
+	 * Exit a parse tree produced by {@link JavaParser#constructorDeclaration}.
 	 * @param ctx the parse tree
 	 */
-	void exitInterfaceMethodDeclaration(@NotNull JavaParser.InterfaceMethodDeclarationContext ctx);
+	void exitConstructorDeclaration(@NotNull JavaParser.ConstructorDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#packageDeclaration}.
+	 * Enter a parse tree produced by {@link JavaParser#forControl}.
 	 * @param ctx the parse tree
 	 */
-	void enterPackageDeclaration(@NotNull JavaParser.PackageDeclarationContext ctx);
+	void enterForControl(@NotNull JavaParser.ForControlContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#packageDeclaration}.
+	 * Exit a parse tree produced by {@link JavaParser#forControl}.
 	 * @param ctx the parse tree
 	 */
-	void exitPackageDeclaration(@NotNull JavaParser.PackageDeclarationContext ctx);
+	void exitForControl(@NotNull JavaParser.ForControlContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#superSuffix}.
+	 * @param ctx the parse tree
+	 */
+	void enterSuperSuffix(@NotNull JavaParser.SuperSuffixContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#superSuffix}.
+	 * @param ctx the parse tree
+	 */
+	void exitSuperSuffix(@NotNull JavaParser.SuperSuffixContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#elementValuePairs}.
 	 * @param ctx the parse tree
@@ -949,15 +799,15 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitNonWildcardTypeArguments(@NotNull JavaParser.NonWildcardTypeArgumentsContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#interfaceMemberDeclaration}.
+	 * Enter a parse tree produced by {@link JavaParser#variableDeclarators}.
 	 * @param ctx the parse tree
 	 */
-	void enterInterfaceMemberDeclaration(@NotNull JavaParser.InterfaceMemberDeclarationContext ctx);
+	void enterVariableDeclarators(@NotNull JavaParser.VariableDeclaratorsContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link JavaParser#interfaceMemberDeclaration}.
+	 * Exit a parse tree produced by {@link JavaParser#variableDeclarators}.
 	 * @param ctx the parse tree
 	 */
-	void exitInterfaceMemberDeclaration(@NotNull JavaParser.InterfaceMemberDeclarationContext ctx);
+	void exitVariableDeclarators(@NotNull JavaParser.VariableDeclaratorsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#switchLabel}.
 	 * @param ctx the parse tree
@@ -978,6 +828,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForInit(@NotNull JavaParser.ForInitContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#catchType}.
+	 * @param ctx the parse tree
+	 */
+	void enterCatchType(@NotNull JavaParser.CatchTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#catchType}.
+	 * @param ctx the parse tree
+	 */
+	void exitCatchType(@NotNull JavaParser.CatchTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#formalParameters}.
 	 * @param ctx the parse tree

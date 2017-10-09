@@ -1,28 +1,32 @@
 grammar Java;
 
 // starting point for parsing a java file
+/*
 compilationUnit
     :   packageDeclaration? importDeclaration* typeDeclaration* EOF
     ;
 
+
 packageDeclaration
     :   annotation* 'package' qualifiedName ';'
     ;
+    * 
+    */
 
 importDeclaration
     :   'import' 'static'? qualifiedName ('.' '*')? ';'
     ;
 
 typeDeclaration
-    :   classOrInterfaceModifier* classDeclaration
-    |   classOrInterfaceModifier* enumDeclaration
-    |   classOrInterfaceModifier* interfaceDeclaration
-    |   classOrInterfaceModifier* annotationTypeDeclaration
+    :   classModifier* classDeclaration
+//    |   classModifier* enumDeclaration
+//    |   classOrInterfaceModifier* interfaceDeclaration
+    |   classModifier* annotationTypeDeclaration
     |   ';'
     ;
 
 modifier
-    :   classOrInterfaceModifier
+    :   classModifier
     |   (   'native'
         |   'synchronized'
         |   'transient'
@@ -30,9 +34,9 @@ modifier
         )
     ;
 
-classOrInterfaceModifier
-    :   annotation       // class or interface
-    |   (   'public'     // class or interface
+classModifier
+    :   //annotation       // class or interface
+    	(   'public'     // class or interface
         |   'protected'  // class or interface
         |   'private'    // class or interface
         |   'static'     // class or interface
@@ -43,8 +47,8 @@ classOrInterfaceModifier
     ;
 
 variableModifier
-    :   'final'
-    |   annotation
+    :   'CONST'
+//    |   annotation
     ;
 
 classDeclaration
@@ -66,6 +70,7 @@ typeBound
     :   typeType ('&' typeType)*
     ;
 
+/*
 enumDeclaration
     :   ENUM Identifier ('implements' typeList)?
         '{' enumConstants? ','? enumBodyDeclarations? '}'
@@ -83,9 +88,12 @@ enumBodyDeclarations
     :   ';' classBodyDeclaration*
     ;
 
+/*
 interfaceDeclaration
     :   'interface' Identifier typeParameters? ('extends' typeList)? interfaceBody
     ;
+    * 
+    */
 
 typeList
     :   typeType (',' typeType)*
@@ -95,9 +103,12 @@ classBody
     :   '{' classBodyDeclaration* '}'
     ;
 
+/*
 interfaceBody
     :   '{' interfaceBodyDeclaration* '}'
     ;
+    * 
+    */
 
 classBodyDeclaration
     :   ';'
@@ -111,10 +122,10 @@ memberDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
-    |   interfaceDeclaration
+//    |   interfaceDeclaration
     |   annotationTypeDeclaration
     |   classDeclaration
-    |   enumDeclaration
+//    |   enumDeclaration
     ;
 
 /* We use rule this even for void methods which cannot have [] after parameters.
@@ -147,20 +158,26 @@ fieldDeclaration
     :   typeType variableDeclarators ';'
     ;
 
+/*
 interfaceBodyDeclaration
     :   modifier* interfaceMemberDeclaration
     |   ';'
     ;
+    * 
+    */
 
+/*
 interfaceMemberDeclaration
     :   constDeclaration
     |   interfaceMethodDeclaration
     |   genericInterfaceMethodDeclaration
-    |   interfaceDeclaration
+//    |   interfaceDeclaration
     |   annotationTypeDeclaration
     |   classDeclaration
     |   enumDeclaration
     ;
+    * 
+    */
 
 constDeclaration
     :   typeType constantDeclarator (',' constantDeclarator)* ';'
@@ -171,6 +188,7 @@ constantDeclarator
     ;
 
 // see matching of [] comment in methodDeclaratorRest
+/*
 interfaceMethodDeclaration
     :   (typeType|'void') Identifier formalParameters ('[' ']')*
         ('throws' qualifiedNameList)?
@@ -180,6 +198,7 @@ interfaceMethodDeclaration
 genericInterfaceMethodDeclaration
     :   typeParameters interfaceMethodDeclaration
     ;
+    */
 
 variableDeclarators
     :   variableDeclarator (',' variableDeclarator)*
@@ -218,12 +237,8 @@ classOrInterfaceType
 dataType
     :   'boolean'
     |   'char'
-    |   'byte'
-    |   'short'
     |   'int'
-    |   'long'
     |   'float'
-    |   'double'
     ;
 
 typeArguments
@@ -278,12 +293,13 @@ literal
     ;
 
 // ANNOTATIONS
-
+/*
 annotation
     :   '@' annotationName ( '(' ( elementValuePairs | elementValue )? ')' )?
     ;
 
 annotationName : qualifiedName ;
+* */
 
 elementValuePairs
     :   elementValuePair (',' elementValuePair)*
@@ -295,7 +311,7 @@ elementValuePair
 
 elementValue
     :   expression
-    |   annotation
+//    |   annotation
     |   elementValueArrayInitializer
     ;
 
@@ -319,8 +335,8 @@ annotationTypeElementDeclaration
 annotationTypeElementRest
     :   typeType annotationMethodOrConstantRest ';'
     |   classDeclaration ';'?
-    |   interfaceDeclaration ';'?
-    |   enumDeclaration ';'?
+//    |   interfaceDeclaration ';'?
+//    |   enumDeclaration ';'?
     |   annotationTypeDeclaration ';'?
     ;
 
@@ -367,7 +383,7 @@ statement
     |   'if' parExpression statement ('else' statement)?
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
-    |   'do' statement 'while' parExpression ';'
+    |   'dowhile' parExpression statement
     |   'try' block (catchClause+ finallyBlock? | finallyBlock)
     |   'try' resourceSpecification block catchClause* finallyBlock?
     |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
@@ -454,19 +470,21 @@ constantExpression
     :   expression
     ;
 
+
 expression
     :   primary
     |   expression '.' Identifier
     |   expression '.' 'this'
-    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
-    |   expression '.' 'super' superSuffix
+//    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
+//    |   expression '.' 'super' superSuffix
     |   expression '.' explicitGenericInvocation
     |   expression '[' expression ']'
-    |   expression '(' expressionList? ')'
+    |   expression '(' expressionList? ')' 
     |   'new' creator
-    |   '(' typeType ')' expression
+//    |   '(' typeType ')' expression
     |   expression ('++' | '--')
-    |   ('+'|'-'|'++'|'--'|'!') expression
+//    |   ('+'|'-'|'++'|'--'|'!') expression
+    |   ('+'|'-'|'!') expression
     |   expression ('*'|'/'|'%') expression
     |   expression ('+'|'-') expression
     |   expression ('<=' | '>=' | '>' | '<') expression
@@ -485,6 +503,7 @@ expression
         )
         expression
     ;
+
 
 primary
     :   '(' expression ')'
