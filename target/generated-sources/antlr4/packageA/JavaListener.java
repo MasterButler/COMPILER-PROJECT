@@ -39,16 +39,6 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitDefaultValue(@NotNull JavaParser.DefaultValueContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterModifier(@NotNull JavaParser.ModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#modifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitModifier(@NotNull JavaParser.ModifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link JavaParser#innerCreator}.
 	 * @param ctx the parse tree
 	 */

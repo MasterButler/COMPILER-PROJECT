@@ -30,6 +30,7 @@ typeDeclaration
     |   ';'
     ;
 
+/*
 modifier
     :   classModifier
     |   (   'native'
@@ -38,6 +39,8 @@ modifier
         |   'volatile'
         )
     ;
+    * 
+    */
 
 classModifier
     :   //annotation       // class or interface
@@ -47,7 +50,7 @@ classModifier
         |   'static'     // class or interface
         |   'abstract'   // class or interface
         |   'final'      // class only -- does not apply to interfaces
-        |   'strictfp'   // class or interface
+//        |   'strictfp'   // class or interface
         )
     ;
 
@@ -118,7 +121,7 @@ interfaceBody
 classBodyDeclaration
     :   ';'
     |   'static'? block
-    |   modifier* memberDeclaration
+    |   classModifier* memberDeclaration
     ;
 
 memberDeclaration
@@ -404,6 +407,8 @@ statement
     |   statementExpression ';'
     |   Identifier ':' statement
     | constDeclaration
+    | 'output' parExpression ';'
+    | 'input();'
     ;
 
 catchClause
@@ -977,7 +982,7 @@ Character
 //
 
 //AT : '@';
-ELLIPSIS : '...';
+//ELLIPSIS : '...';
 
 //
 // Whitespace and comments
