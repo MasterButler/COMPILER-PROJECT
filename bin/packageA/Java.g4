@@ -208,14 +208,14 @@ enumConstantName
 
 typeType
     :   classOrInterfaceType ('[' ']')*
-    |   primitiveType ('[' ']')*
+    |   dataType ('[' ']')*
     ;
 
 classOrInterfaceType
     :   Identifier typeArguments? ('.' Identifier typeArguments? )*
     ;
 
-primitiveType
+dataType
     :   'boolean'
     |   'char'
     |   'byte'
@@ -466,17 +466,13 @@ expression
     |   'new' creator
     |   '(' typeType ')' expression
     |   expression ('++' | '--')
-    |   ('+'|'-'|'++'|'--') expression
-    |   ('~'|'!') expression
+    |   ('+'|'-'|'++'|'--'|'!') expression
     |   expression ('*'|'/'|'%') expression
     |   expression ('+'|'-') expression
-    |   expression ('<' '<' | '>' '>' '>' | '>' '>') expression
     |   expression ('<=' | '>=' | '>' | '<') expression
     |   expression 'instanceof' typeType
     |   expression ('==' | '!=') expression
-    |   expression '&' expression
     |   expression '^' expression
-    |   expression '|' expression
     |   expression '&&' expression
     |   expression '||' expression
     |   expression '?' expression ':' expression
@@ -486,13 +482,6 @@ expression
         |   '-='
         |   '*='
         |   '/='
-        |   '&='
-        |   '|='
-        |   '^='
-        |   '>>='
-        |   '>>>='
-        |   '<<='
-        |   '%='
         )
         expression
     ;
@@ -515,7 +504,7 @@ creator
 
 createdName
     :   Identifier typeArgumentsOrDiamond? ('.' Identifier typeArgumentsOrDiamond?)*
-    |   primitiveType
+    |   dataType
     ;
 
 innerCreator
@@ -875,78 +864,68 @@ NullLiteral
 
 // §3.11 Separators
 
-LPAREN          : '(';
-RPAREN          : ')';
-LBRACE          : '{';
-RBRACE          : '}';
-LBRACK          : '[';
-RBRACK          : ']';
-SEMI            : ';';
+LEFTPARENTH     : '(';
+RIGHTPARENTH    : ')';
+LEFTBRACE       : '{';
+RIGHTBRACE      : '}';
+LEFTBRACKET     : '[';
+RIGHTBRACKET    : ']';
+SEMICOLON       : ';';
 COMMA           : ',';
 DOT             : '.';
 
 // §3.12 Operators
 
-ASSIGN          : '=';
-GT              : '>';
-LT              : '<';
-BANG            : '!';
-TILDE           : '~';
-QUESTION        : '?';
-COLON           : ':';
+ASSIGNMENT      : '=';
+GREATER         : '>';
+LESS            : '<';
+// BANG            : '!';
+// TILDE           : '~';
+// QUESTION        : '?';
+// COLON           : ':';
 EQUAL           : '==';
-LE              : '<=';
-GE              : '>=';
+LESSEQUAL       : '<=';
+GREATEREQUAL    : '>=';
 NOTEQUAL        : '!=';
 AND             : '&&';
 OR              : '||';
-INC             : '++';
-DEC             : '--';
-ADD             : '+';
-SUB             : '-';
-MUL             : '*';
-DIV             : '/';
-BITAND          : '&';
-BITOR           : '|';
-CARET           : '^';
-MOD             : '%';
+INCREMENT       : '++';
+DECREMENT       : '--';
+ADDITION        : '+';
+SUBTRACT        : '-';
+MULTIPLY        : '*';
+DIVISION        : '/';
+// BITAND          : '&';
+// BITOR           : '|';
+EXPONENT        : '^';
+MODULO          : '%';
 
 ADD_ASSIGN      : '+=';
 SUB_ASSIGN      : '-=';
 MUL_ASSIGN      : '*=';
 DIV_ASSIGN      : '/=';
-AND_ASSIGN      : '&=';
-OR_ASSIGN       : '|=';
-XOR_ASSIGN      : '^=';
-MOD_ASSIGN      : '%=';
-LSHIFT_ASSIGN   : '<<=';
-RSHIFT_ASSIGN   : '>>=';
-URSHIFT_ASSIGN  : '>>>=';
+// AND_ASSIGN      : '&=';
+// OR_ASSIGN       : '|=';
+// XOR_ASSIGN      : '^=';
+// MOD_ASSIGN      : '%=';
+// LSHIFT_ASSIGN   : '<<=';
+// RSHIFT_ASSIGN   : '>>=';
+// URSHIFT_ASSIGN  : '>>>=';
 
 // §3.8 Identifiers (must appear after all keywords in the grammar)
 
 Identifier
-    :   JavaLetter JavaLetterOrDigit*
+    :   Character (Character|Digit)*
     ;
 
 fragment
-JavaLetter
+Character
     :   [a-zA-Z$_] // these are the "java letters" below 0x7F
     |   // covers all characters above 0x7F which are not a surrogate
         ~[\u0000-\u007F\uD800-\uDBFF]
     |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
         [\uD800-\uDBFF] [\uDC00-\uDFFF]
     ;
-
-fragment
-JavaLetterOrDigit
-    :   [a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
-    |   // covers all characters above 0x7F which are not a surrogate
-        ~[\u0000-\u007F\uD800-\uDBFF]
-    |   // covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
-        [\uD800-\uDBFF] [\uDC00-\uDFFF]
-    ;
-
 //
 // Additional symbols not defined in the lexical specification
 //

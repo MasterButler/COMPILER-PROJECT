@@ -649,6 +649,16 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitQualifiedName(@NotNull JavaParser.QualifiedNameContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link JavaParser#dataType}.
+	 * @param ctx the parse tree
+	 */
+	void enterDataType(@NotNull JavaParser.DataTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#dataType}.
+	 * @param ctx the parse tree
+	 */
+	void exitDataType(@NotNull JavaParser.DataTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link JavaParser#resourceSpecification}.
 	 * @param ctx the parse tree
 	 */
@@ -818,16 +828,6 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link JavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void enterPrimitiveType(@NotNull JavaParser.PrimitiveTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#primitiveType}.
-	 * @param ctx the parse tree
-	 */
-	void exitPrimitiveType(@NotNull JavaParser.PrimitiveTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#interfaceDeclaration}.
 	 * @param ctx the parse tree
