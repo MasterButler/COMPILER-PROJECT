@@ -13,15 +13,18 @@ packageDeclaration
     * 
     */
 
+/*
 importDeclaration
     :   'import' 'static'? qualifiedName ('.' '*')? ';'
     ;
+    * 
+    */
 
 typeDeclaration
     :   classModifier* classDeclaration
 //    |   classModifier* enumDeclaration
 //    |   classOrInterfaceModifier* interfaceDeclaration
-    |   classModifier* annotationTypeDeclaration
+//    |   classModifier* annotationTypeDeclaration
     |   ';'
     ;
 
@@ -123,7 +126,7 @@ memberDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
 //    |   interfaceDeclaration
-    |   annotationTypeDeclaration
+//    |   annotationTypeDeclaration
     |   classDeclaration
 //    |   enumDeclaration
     ;
@@ -319,6 +322,7 @@ elementValueArrayInitializer
     :   '{' (elementValue (',' elementValue)*)? (',')? '}'
     ;
 
+/*
 annotationTypeDeclaration
     :   '@' 'interface' Identifier annotationTypeBody
     ;
@@ -352,6 +356,8 @@ annotationMethodRest
 annotationConstantRest
     :   variableDeclarators
     ;
+    * 
+    */
 
 defaultValue
     :   'default' elementValue
@@ -577,64 +583,64 @@ arguments
 
 // §3.9 Keywords
 
-ABSTRACT      : 'abstract';
-ASSERT        : 'assert';
+//ABSTRACT      : 'abstract';
+//ASSERT        : 'assert';
 BOOLEAN       : 'boolean';
 BREAK         : 'break';
-BYTE          : 'byte';
+//BYTE          : 'byte';
 CASE          : 'case';
-CATCH         : 'catch';
+//CATCH         : 'catch';
 CHAR          : 'char';
-CLASS         : 'class';
-CONST         : 'const';
-CONTINUE      : 'continue';
+//CLASS         : 'class';
+CONST         : 'CONST';
+//CONTINUE      : 'continue';
 DEFAULT       : 'default';
-DO            : 'do';
-DOUBLE        : 'double';
+DOWHILE            : 'dowhile';
+//DOUBLE        : 'double';
 ELSE          : 'else';
-ENUM          : 'enum';
-EXTENDS       : 'extends';
-FINAL         : 'final';
-FINALLY       : 'finally';
+//ENUM          : 'enum';
+//EXTENDS       : 'extends';
+//FINAL         : 'final';
+//FINALLY       : 'finally';
 FLOAT         : 'float';
 FOR           : 'for';
 IF            : 'if';
-GOTO          : 'goto';
-IMPLEMENTS    : 'implements';
-IMPORT        : 'import';
+//GOTO          : 'goto';
+//IMPLEMENTS    : 'implements';
+//IMPORT        : 'import';
 INSTANCEOF    : 'instanceof';
 INT           : 'int';
-INTERFACE     : 'interface';
+//INTERFACE     : 'interface';
 LONG          : 'long';
-NATIVE        : 'native';
+//NATIVE        : 'native';
 NEW           : 'new';
-PACKAGE       : 'package';
-PRIVATE       : 'private';
-PROTECTED     : 'protected';
-PUBLIC        : 'public';
+//PACKAGE       : 'package';
+//PRIVATE       : 'private';
+//PROTECTED     : 'protected';
+//PUBLIC        : 'public';
 RETURN        : 'return';
-SHORT         : 'short';
-STATIC        : 'static';
-STRICTFP      : 'strictfp';
-SUPER         : 'super';
+//SHORT         : 'short';
+//STATIC        : 'static';
+//STRICTFP      : 'strictfp';
+//SUPER         : 'super';
 SWITCH        : 'switch';
-SYNCHRONIZED  : 'synchronized';
+//SYNCHRONIZED  : 'synchronized';
 THIS          : 'this';
-THROW         : 'throw';
-THROWS        : 'throws';
-TRANSIENT     : 'transient';
-TRY           : 'try';
+//THROW         : 'throw';
+//THROWS        : 'throws';
+//TRANSIENT     : 'transient';
+//TRY           : 'try';
 VOID          : 'void';
-VOLATILE      : 'volatile';
+//VOLATILE      : 'volatile';
 WHILE         : 'while';
 
 // §3.10.1 Integer Literals
 
 IntegerLiteral
     :   DecimalIntegerLiteral
-    |   HexIntegerLiteral
-    |   OctalIntegerLiteral
-    |   BinaryIntegerLiteral
+//    |   HexIntegerLiteral
+//    |   OctalIntegerLiteral
+//    |   BinaryIntegerLiteral
     ;
 
 fragment
@@ -642,6 +648,7 @@ DecimalIntegerLiteral
     :   DecimalNumeral IntegerTypeSuffix?
     ;
 
+/*
 fragment
 HexIntegerLiteral
     :   HexNumeral IntegerTypeSuffix?
@@ -656,6 +663,8 @@ fragment
 BinaryIntegerLiteral
     :   BinaryNumeral IntegerTypeSuffix?
     ;
+    * 
+    */
 
 fragment
 IntegerTypeSuffix
@@ -737,6 +746,7 @@ OctalDigitOrUnderscore
     |   '_'
     ;
 
+/*
 fragment
 BinaryNumeral
     :   '0' [bB] BinaryDigits
@@ -757,12 +767,14 @@ BinaryDigitOrUnderscore
     :   BinaryDigit
     |   '_'
     ;
+    * 
+    */
 
 // §3.10.2 Floating-Point Literals
 
 FloatingPointLiteral
     :   DecimalFloatingPointLiteral
-    |   HexadecimalFloatingPointLiteral
+//    |   HexadecimalFloatingPointLiteral
     ;
 
 fragment
@@ -798,6 +810,7 @@ FloatTypeSuffix
     :   [fFdD]
     ;
 
+/*
 fragment
 HexadecimalFloatingPointLiteral
     :   HexSignificand BinaryExponent FloatTypeSuffix?
@@ -818,6 +831,8 @@ fragment
 BinaryExponentIndicator
     :   [pP]
     ;
+    * 
+    */
 
 // §3.10.3 Boolean Literals
 
@@ -949,7 +964,7 @@ Character
 // Additional symbols not defined in the lexical specification
 //
 
-AT : '@';
+//AT : '@';
 ELLIPSIS : '...';
 
 //

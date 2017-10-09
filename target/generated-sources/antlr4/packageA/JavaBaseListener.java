@@ -65,18 +65,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAnnotationTypeElementDeclaration(@NotNull JavaParser.AnnotationTypeElementDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationTypeElementDeclaration(@NotNull JavaParser.AnnotationTypeElementDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -84,18 +72,6 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInnerCreator(@NotNull JavaParser.InnerCreatorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAnnotationTypeBody(@NotNull JavaParser.AnnotationTypeBodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationTypeBody(@NotNull JavaParser.AnnotationTypeBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -281,18 +257,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAnnotationConstantRest(@NotNull JavaParser.AnnotationConstantRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationConstantRest(@NotNull JavaParser.AnnotationConstantRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -300,18 +264,6 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFormalParameterList(@NotNull JavaParser.FormalParameterListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationTypeDeclaration(@NotNull JavaParser.AnnotationTypeDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -353,18 +305,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAnnotationTypeElementRest(@NotNull JavaParser.AnnotationTypeElementRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationTypeElementRest(@NotNull JavaParser.AnnotationTypeElementRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterClassOrInterfaceType(@NotNull JavaParser.ClassOrInterfaceTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -372,18 +312,6 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitClassOrInterfaceType(@NotNull JavaParser.ClassOrInterfaceTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationMethodRest(@NotNull JavaParser.AnnotationMethodRestContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -617,18 +545,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAnnotationMethodOrConstantRest(@NotNull JavaParser.AnnotationMethodOrConstantRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAnnotationMethodOrConstantRest(@NotNull JavaParser.AnnotationMethodOrConstantRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterCatchClause(@NotNull JavaParser.CatchClauseContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -696,18 +612,6 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCreatedName(@NotNull JavaParser.CreatedNameContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitImportDeclaration(@NotNull JavaParser.ImportDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
