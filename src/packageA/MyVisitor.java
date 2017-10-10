@@ -37,6 +37,12 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
         
         ParseTree tree = parser.code();
         
+        Token curr = lexer.getToken();
+        sb.append(curr.getText())
+    	.append(" | ")
+    	.append(JavaLexer.VOCABULARY.getSymbolicName(curr.getType()))
+    	.append(System.getProperty("line.separator"));
+        
         for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
             sb.append(token.getText())
             	.append(" | ")
