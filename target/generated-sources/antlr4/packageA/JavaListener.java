@@ -349,16 +349,6 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitMethodBody(@NotNull JavaParser.MethodBodyContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#classModifier}.
-	 * @param ctx the parse tree
-	 */
-	void enterClassModifier(@NotNull JavaParser.ClassModifierContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#classModifier}.
-	 * @param ctx the parse tree
-	 */
-	void exitClassModifier(@NotNull JavaParser.ClassModifierContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link JavaParser#typeArgument}.
 	 * @param ctx the parse tree
 	 */
@@ -428,6 +418,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstructorBody(@NotNull JavaParser.ConstructorBodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#pointerModifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterPointerModifier(@NotNull JavaParser.PointerModifierContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#pointerModifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitPointerModifier(@NotNull JavaParser.PointerModifierContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#classDeclaration}.
 	 * @param ctx the parse tree

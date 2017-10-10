@@ -425,18 +425,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterClassModifier(@NotNull JavaParser.ClassModifierContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitClassModifier(@NotNull JavaParser.ClassModifierContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTypeArgument(@NotNull JavaParser.TypeArgumentContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -516,6 +504,18 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitConstructorBody(@NotNull JavaParser.ConstructorBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPointerModifier(@NotNull JavaParser.PointerModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPointerModifier(@NotNull JavaParser.PointerModifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

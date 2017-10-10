@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: 'main() {' methodDeclaration* '}';
+	: memberDeclaration*;
 	
 // starting point for parsing a java file
 /*
@@ -24,7 +24,8 @@ importDeclaration
     */
 
 typeDeclaration
-    :   classModifier* classDeclaration
+    :   classDeclaration
+//       classModifier* classDeclaration
 //    |   classModifier* enumDeclaration
 //    |   classOrInterfaceModifier* interfaceDeclaration
 //    |   classModifier* annotationTypeDeclaration
@@ -43,6 +44,7 @@ modifier
     * 
     */
 
+/*
 classModifier
     :   //annotation       // class or interface
     	(   'public'     // class or interface
@@ -54,6 +56,7 @@ classModifier
 //        |   'strictfp'   // class or interface
         )
     ;
+    */
 
 constantModifier
     :   'CONST'
@@ -62,8 +65,8 @@ constantModifier
 
 classDeclaration
     :   'class' Identifier typeParameters?
-        ('extends' typeType)?
-        ('implements' typeList)?
+//        ('extends' typeType)?
+//        ('implements' typeList)?
         classBody
     ;
 
@@ -122,7 +125,8 @@ interfaceBody
 classBodyDeclaration
     :   ';'
     |   'static'? block
-    |   classModifier* memberDeclaration
+    //|   classModifier*
+    | memberDeclaration
     ;
 
 memberDeclaration
@@ -143,7 +147,7 @@ memberDeclaration
    for invalid return type after parsing.
  */
 methodDeclaration
-    :   (typeType|'void') Identifier formalParameters ('[' ']')*
+    :   'function' (typeType|'void') Identifier formalParameters ('[' ']')*
         ('throws' qualifiedNameList)?
         (   methodBody
         |   ';'
@@ -164,7 +168,7 @@ genericConstructorDeclaration
     ;
 
 fieldDeclaration
-    :   typeType variableDeclarators ';'
+    :   typeType pointerModifier? variableDeclarators ';'
     ;
 
 /*
@@ -189,8 +193,11 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   constantModifier* typeType constantDeclarator (',' constantDeclarator)* ';'
+    :   constantModifier* typeType pointerModifier? constantDeclarator (',' constantDeclarator)* ';'
     ;
+    
+pointerModifier
+	:	'*';
 
 constantDeclarator
     :   Identifier ('[' ']')* '=' variableInitializer
@@ -410,6 +417,7 @@ statement
     | constDeclaration
     | 'output' parExpression ';'
     | 'input();'
+    | methodDeclaration
     ;
 
 catchClause
