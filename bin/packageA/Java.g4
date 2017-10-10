@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: memberDeclaration*;
+	: baseDeclaration*;
 	
 // starting point for parsing a java file
 /*
@@ -126,10 +126,10 @@ classBodyDeclaration
     :   ';'
     |   'static'? block
     //|   classModifier*
-    | memberDeclaration
+    | 
     ;
 
-memberDeclaration
+baseDeclaration
     :   methodDeclaration
     |   genericMethodDeclaration
     |   fieldDeclaration

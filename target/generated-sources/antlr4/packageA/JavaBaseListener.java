@@ -29,18 +29,6 @@ public class JavaBaseListener implements JavaListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMemberDeclaration(@NotNull JavaParser.MemberDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMemberDeclaration(@NotNull JavaParser.MemberDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDefaultValue(@NotNull JavaParser.DefaultValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -84,6 +72,18 @@ public class JavaBaseListener implements JavaListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitConstantModifier(@NotNull JavaParser.ConstantModifierContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBaseDeclaration(@NotNull JavaParser.BaseDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBaseDeclaration(@NotNull JavaParser.BaseDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -19,16 +19,6 @@ public interface JavaListener extends ParseTreeListener {
 	 */
 	void exitEnumConstantName(@NotNull JavaParser.EnumConstantNameContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link JavaParser#memberDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void enterMemberDeclaration(@NotNull JavaParser.MemberDeclarationContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link JavaParser#memberDeclaration}.
-	 * @param ctx the parse tree
-	 */
-	void exitMemberDeclaration(@NotNull JavaParser.MemberDeclarationContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link JavaParser#defaultValue}.
 	 * @param ctx the parse tree
 	 */
@@ -68,6 +58,16 @@ public interface JavaListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitConstantModifier(@NotNull JavaParser.ConstantModifierContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link JavaParser#baseDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void enterBaseDeclaration(@NotNull JavaParser.BaseDeclarationContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link JavaParser#baseDeclaration}.
+	 * @param ctx the parse tree
+	 */
+	void exitBaseDeclaration(@NotNull JavaParser.BaseDeclarationContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link JavaParser#classBodyDeclaration}.
 	 * @param ctx the parse tree

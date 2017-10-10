@@ -45,7 +45,7 @@ public class JavaParser extends Parser {
 	public static final int
 		RULE_code = 0, RULE_typeDeclaration = 1, RULE_constantModifier = 2, RULE_classDeclaration = 3, 
 		RULE_typeParameters = 4, RULE_typeParameter = 5, RULE_typeBound = 6, RULE_typeList = 7, 
-		RULE_classBody = 8, RULE_classBodyDeclaration = 9, RULE_memberDeclaration = 10, 
+		RULE_classBody = 8, RULE_classBodyDeclaration = 9, RULE_baseDeclaration = 10, 
 		RULE_methodDeclaration = 11, RULE_genericMethodDeclaration = 12, RULE_constructorDeclaration = 13, 
 		RULE_genericConstructorDeclaration = 14, RULE_fieldDeclaration = 15, RULE_constDeclaration = 16, 
 		RULE_pointerModifier = 17, RULE_constantDeclarator = 18, RULE_variableDeclarators = 19, 
@@ -72,24 +72,23 @@ public class JavaParser extends Parser {
 	public static final String[] ruleNames = {
 		"code", "typeDeclaration", "constantModifier", "classDeclaration", "typeParameters", 
 		"typeParameter", "typeBound", "typeList", "classBody", "classBodyDeclaration", 
-		"memberDeclaration", "methodDeclaration", "genericMethodDeclaration", 
-		"constructorDeclaration", "genericConstructorDeclaration", "fieldDeclaration", 
-		"constDeclaration", "pointerModifier", "constantDeclarator", "variableDeclarators", 
-		"variableDeclarator", "variableDeclaratorId", "variableInitializer", "arrayInitializer", 
-		"enumConstantName", "typeType", "classType", "dataType", "typeArguments", 
-		"typeArgument", "qualifiedNameList", "formalParameters", "formalParameterList", 
-		"formalParameter", "lastFormalParameter", "methodBody", "constructorBody", 
-		"qualifiedName", "literal", "elementValuePairs", "elementValuePair", "elementValue", 
-		"elementValueArrayInitializer", "defaultValue", "block", "blockStatement", 
-		"localVariableDeclarationStatement", "localVariableDeclaration", "statement", 
-		"catchClause", "catchType", "finallyBlock", "resourceSpecification", "resources", 
-		"resource", "switchBlockStatementGroup", "switchLabel", "forControl", 
-		"forInit", "enhancedForControl", "forUpdate", "parExpression", "expressionList", 
-		"statementExpression", "constantExpression", "expression", "primary", 
-		"creator", "createdName", "innerCreator", "arrayCreatorRest", "classCreatorRest", 
-		"explicitGenericInvocation", "nonWildcardTypeArguments", "typeArgumentsOrDiamond", 
-		"nonWildcardTypeArgumentsOrDiamond", "superSuffix", "explicitGenericInvocationSuffix", 
-		"arguments"
+		"baseDeclaration", "methodDeclaration", "genericMethodDeclaration", "constructorDeclaration", 
+		"genericConstructorDeclaration", "fieldDeclaration", "constDeclaration", 
+		"pointerModifier", "constantDeclarator", "variableDeclarators", "variableDeclarator", 
+		"variableDeclaratorId", "variableInitializer", "arrayInitializer", "enumConstantName", 
+		"typeType", "classType", "dataType", "typeArguments", "typeArgument", 
+		"qualifiedNameList", "formalParameters", "formalParameterList", "formalParameter", 
+		"lastFormalParameter", "methodBody", "constructorBody", "qualifiedName", 
+		"literal", "elementValuePairs", "elementValuePair", "elementValue", "elementValueArrayInitializer", 
+		"defaultValue", "block", "blockStatement", "localVariableDeclarationStatement", 
+		"localVariableDeclaration", "statement", "catchClause", "catchType", "finallyBlock", 
+		"resourceSpecification", "resources", "resource", "switchBlockStatementGroup", 
+		"switchLabel", "forControl", "forInit", "enhancedForControl", "forUpdate", 
+		"parExpression", "expressionList", "statementExpression", "constantExpression", 
+		"expression", "primary", "creator", "createdName", "innerCreator", "arrayCreatorRest", 
+		"classCreatorRest", "explicitGenericInvocation", "nonWildcardTypeArguments", 
+		"typeArgumentsOrDiamond", "nonWildcardTypeArgumentsOrDiamond", "superSuffix", 
+		"explicitGenericInvocationSuffix", "arguments"
 	};
 
 	@Override
@@ -112,11 +111,11 @@ public class JavaParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class CodeContext extends ParserRuleContext {
-		public List<MemberDeclarationContext> memberDeclaration() {
-			return getRuleContexts(MemberDeclarationContext.class);
+		public List<BaseDeclarationContext> baseDeclaration() {
+			return getRuleContexts(BaseDeclarationContext.class);
 		}
-		public MemberDeclarationContext memberDeclaration(int i) {
-			return getRuleContext(MemberDeclarationContext.class,i);
+		public BaseDeclarationContext baseDeclaration(int i) {
+			return getRuleContext(BaseDeclarationContext.class,i);
 		}
 		public CodeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -145,7 +144,7 @@ public class JavaParser extends Parser {
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__11) | (1L << T__9) | (1L << BOOLEAN) | (1L << CHAR) | (1L << FLOAT) | (1L << INT) | (1L << LESS))) != 0) || _la==Identifier) {
 				{
 				{
-				setState(158); memberDeclaration();
+				setState(158); baseDeclaration();
 				}
 				}
 				setState(163);
@@ -580,8 +579,8 @@ public class JavaParser extends Parser {
 	}
 
 	public static class ClassBodyDeclarationContext extends ParserRuleContext {
-		public MemberDeclarationContext memberDeclaration() {
-			return getRuleContext(MemberDeclarationContext.class,0);
+		public BaseDeclarationContext baseDeclaration() {
+			return getRuleContext(BaseDeclarationContext.class,0);
 		}
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
@@ -638,7 +637,7 @@ public class JavaParser extends Parser {
 			case Identifier:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(223); memberDeclaration();
+				setState(223); baseDeclaration();
 				}
 				break;
 			default:
@@ -656,7 +655,7 @@ public class JavaParser extends Parser {
 		return _localctx;
 	}
 
-	public static class MemberDeclarationContext extends ParserRuleContext {
+	public static class BaseDeclarationContext extends ParserRuleContext {
 		public GenericMethodDeclarationContext genericMethodDeclaration() {
 			return getRuleContext(GenericMethodDeclarationContext.class,0);
 		}
@@ -675,23 +674,23 @@ public class JavaParser extends Parser {
 		public FieldDeclarationContext fieldDeclaration() {
 			return getRuleContext(FieldDeclarationContext.class,0);
 		}
-		public MemberDeclarationContext(ParserRuleContext parent, int invokingState) {
+		public BaseDeclarationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_memberDeclaration; }
+		@Override public int getRuleIndex() { return RULE_baseDeclaration; }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaListener ) ((JavaListener)listener).enterMemberDeclaration(this);
+			if ( listener instanceof JavaListener ) ((JavaListener)listener).enterBaseDeclaration(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof JavaListener ) ((JavaListener)listener).exitMemberDeclaration(this);
+			if ( listener instanceof JavaListener ) ((JavaListener)listener).exitBaseDeclaration(this);
 		}
 	}
 
-	public final MemberDeclarationContext memberDeclaration() throws RecognitionException {
-		MemberDeclarationContext _localctx = new MemberDeclarationContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_memberDeclaration);
+	public final BaseDeclarationContext baseDeclaration() throws RecognitionException {
+		BaseDeclarationContext _localctx = new BaseDeclarationContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_baseDeclaration);
 		try {
 			setState(232);
 			switch ( getInterpreter().adaptivePredict(_input,10,_ctx) ) {
