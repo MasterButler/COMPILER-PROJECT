@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -18,9 +20,12 @@ import packageA.gui.LineNumberModel;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.JTextArea;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -66,6 +71,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 	 */
 	public JavaGUI() {
 		initializeUI();
+		initializeListeners();
 
 		updateStatus(1,0);
 	}
@@ -94,29 +100,67 @@ public class JavaGUI extends JFrame implements MouseListener{
  				
  		taField = new JTextArea();       
 		taField.setFont(new Font("Consolas", Font.PLAIN, 13));
+
+		scrollPane.setViewportView(taField);
+		scrollPane.setRowHeaderView(taLineNumber);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		btnRun = new JButton("\t\u25B6");
+		btnRun.setBounds(10, 11, 89, 23);
+		btnRun.addMouseListener(this);
+		contentPane.add(btnRun);
+		
+		spLexer = new JScrollPane();
+		spLexer.setBounds(698, 11, 254, 674);
+		contentPane.add(spLexer);
+		
+		taLexer = new JTextArea();
+		taLexer.setForeground(Color.RED);
+		taLexer.setFont(new Font("Consolas", Font.PLAIN, 13));
+		taLexer.setEditable(false);
+		taLexer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		spLexer.setViewportView(taLexer);
+		
+		spResult = new JScrollPane();
+		spResult.setBounds(10, 470, 678, 215);
+		contentPane.add(spResult);
+		
+		taResult = new JTextArea();
+		taResult.setEditable(false);
+		spResult.setViewportView(taResult);
+		
+		tfStatus = new JTextField();
+		tfStatus.setBackground(SystemColor.menu);
+		tfStatus.setBounds(10, 690, 942, 20);
+		contentPane.add(tfStatus);
+		tfStatus.setColumns(10);
+	}
+	
+	public void initializeListeners() {
 		taField.getDocument().addDocumentListener(new DocumentListener(){
 			public String getText(){
-				int caretPosition = taField.getDocument().getLength();
-				Element root = taField.getDocument().getDefaultRootElement();
-				String text = " 1  " + System.getProperty("line.separator");
-				for(int i = 2; i < root.getElementIndex( caretPosition ) + 2; i++){
-					text += " " + i + "  " + System.getProperty("line.separator");
-				}
-				return text;
+				return updateLineNumbers();
 			}
 			@Override
 			public void changedUpdate(DocumentEvent de) {
 				taLineNumber.setText(getText());
+				scrollPane.revalidate();
+				scrollPane.repaint();
+
 			}
  
 			@Override
 			public void insertUpdate(DocumentEvent de) {
 				taLineNumber.setText(getText());
+				scrollPane.revalidate();
+				scrollPane.repaint();				
 			}
  
 			@Override
 			public void removeUpdate(DocumentEvent de) {
 				taLineNumber.setText(getText());
+				scrollPane.revalidate();
+				scrollPane.repaint();
 			}
 		});
 		taField.addCaretListener(new CaretListener() {
@@ -153,47 +197,43 @@ public class JavaGUI extends JFrame implements MouseListener{
             }
 
         });
-
 		
-		scrollPane.setViewportView(taField);
-		scrollPane.setRowHeaderView(taLineNumber);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//		taField.scroll
+		taField.addCaretListener(new CaretListener() {
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				int caret = taField.getCaretPosition();
+				scrollPane.validate();
+				scrollPane.repaint();
+				
+			}
+		});
 		
-		btnRun = new JButton("\t\u25B6");
-		btnRun.setBounds(10, 11, 89, 23);
-		btnRun.addMouseListener(this);
-		contentPane.add(btnRun);
-		
-		spLexer = new JScrollPane();
-		spLexer.setBounds(698, 11, 254, 674);
-		contentPane.add(spLexer);
-		
-		taLexer = new JTextArea();
-		taLexer.setForeground(Color.RED);
-		taLexer.setFont(new Font("Consolas", Font.PLAIN, 13));
-		taLexer.setEditable(false);
-		taLexer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		spLexer.setViewportView(taLexer);
-		
-		spResult = new JScrollPane();
-		spResult.setBounds(10, 470, 678, 215);
-		contentPane.add(spResult);
-		
-		taResult = new JTextArea();
-		taResult.setEditable(false);
-		spResult.setViewportView(taResult);
-		
-		tfStatus = new JTextField();
-		tfStatus.setBackground(SystemColor.menu);
-		tfStatus.setBounds(10, 690, 942, 20);
-		contentPane.add(tfStatus);
-		tfStatus.setColumns(10);
+		scrollPane.getRowHeader().addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+			    JViewport viewport = (JViewport) e.getSource();
+			    scrollPane.getVerticalScrollBar().setValue(viewport.getViewPosition().y);
+			}
+		} );
 	}
 	
     private void updateStatus(int linenumber, int columnnumber) {
         tfStatus.setText("Line: " + linenumber + " Column: " + columnnumber);
     }
 	
+	public String updateLineNumbers(){
+		int caretPosition = taField.getDocument().getLength();
+		Element root = taField.getDocument().getDefaultRootElement();
+		StringBuilder text = new StringBuilder();
+		text.append(" 1  ").append(System.getProperty("line.separator"));
+		for(int i = 2; i < root.getElementIndex( caretPosition ) + 2; i++){
+			text.append(" ").append(i).append("  ").append(System.getProperty("line.separator"));
+		}
+		return " " + text.toString().trim() + "  ";
+	}
+    
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
