@@ -130,14 +130,14 @@ classBodyDeclaration
     ;
 
 baseDeclaration
-    :   methodDeclaration
+    :   methodDeclaration /*
     |   genericMethodDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
 //    |   interfaceDeclaration
 //    |   annotationTypeDeclaration
-    |   classDeclaration
+    |   classDeclaration */
 //    |   enumDeclaration
     ;
 
