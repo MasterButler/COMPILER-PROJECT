@@ -6,7 +6,13 @@ import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.InputMismatchException;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -29,15 +35,33 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
             	.append(System.getProperty("line.separator"));
         }
         JavaParser parser = new JavaParser(tokens);
-        ParseTree tree = parser.compilationUnit(); // see the grammar ->
-                                                    // starting point for
-                                                    // parsing a java file
+        parser.setErrorHandler(new DefaultErrorStrategy(){
+
+            @Override
+            public void recover(Parser recognizer, RecognitionException e) {
+                for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
+                    context.exception = e;
+                }
+
+                throw new ParseCancellationException(e);
+            }
 
 
+            @Override
+            public Token recoverInline(Parser recognizer)
+                throws RecognitionException
+            {
+                InputMismatchException e = new InputMismatchException(recognizer);
+                for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
+                    context.exception = e;
+                }
 
-        MyVisitor visitor = new MyVisitor(); // extends JavaBaseVisitor<Void>
-                                                // and overrides the methods
-                                                // you're interested
+                throw new ParseCancellationException(e);
+            }
+        });
+        ParseTree tree = parser.compilationUnit();
+
+        MyVisitor visitor = new MyVisitor(); 
         visitor.visit(tree);
         
         return sb.toString();
@@ -50,21 +74,6 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     
     @Override
     public Void visitStatement(StatementContext ctx) {
-    	
-//    	int x=ctx.getChildCount();
-//    	for(int i = 0;i < x; i++) {
-//    		printChildren(ctx.getChild(i), ctx.getRuleContext().getChild(i));
-//    	}
-//    	
     	return super.visitStatement(ctx);
-    }
-    
-    public void printChildren(ParseTree pt, ParseTree rt) {
-    	for(int i = 0; i < pt.getChildCount(); i++) {
-    		printChildren(pt.getChild(i), rt.getChild(i));
-    		if(pt.getChild(i).getChildCount() == 0) {
-    			System.out.println(pt.getChild(i).getText() + " --> ");
-    		}
-    	}
     }
 }
