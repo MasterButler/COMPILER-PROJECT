@@ -126,7 +126,7 @@ classBodyDeclaration
     :   ';'
     |   'static'? block
     //|   classModifier*
-    | 
+    | baseDeclaration
     ;
 
 baseDeclaration
