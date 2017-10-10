@@ -26,9 +26,16 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     	
     	ANTLRInputStream input = new ANTLRInputStream(userInput);
         JavaLexer lexer = new JavaLexer(input);
+        
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+        
+        JavaBaseErrorListener javaErrorListener = new JavaBaseErrorListener();
+        SyntaxErrorCollector.getInstance().reset();
+        
         JavaParser parser = new JavaParser(tokens);
-        ParseTree tree = parser.compilationUnit();
+        parser.addErrorListener(javaErrorListener);
+        
+        ParseTree tree = parser.code();
         
         for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
             sb.append(token.getText())
@@ -37,6 +44,13 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
             	.append(System.getProperty("line.separator"));
         }
         
+        MyVisitor visitor = new MyVisitor(); 
+        visitor.visit(tree);
+        	
+        return sb.toString();
+    }
+    
+
 /*  
             @Override
             public void recover(Parser recognizer, RecognitionException e) {
@@ -61,17 +75,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
             }
         });
 */
-        
-        long count = tree.getChildCount();
-        for(long i = 0; i < count; i++) {
-        	System.out.println("ERROR: " + tree.getChild((int)i));        	
-        }
-        
-        MyVisitor visitor = new MyVisitor(); 
-        visitor.visit(tree);
-        	
-        return sb.toString();
-    }
+    
 
     /**
      * some attribute comment

@@ -126,6 +126,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 		contentPane.add(spResult);
 		
 		taResult = new JTextArea();
+		taResult.setLineWrap(true);
 		taResult.setEditable(false);
 		spResult.setViewportView(taResult);
 		
@@ -266,6 +267,12 @@ public class JavaGUI extends JFrame implements MouseListener{
 			System.out.println(taField.getText().toString());
 			String output = mv.visit(taField.getText().toString());
 			taLexer.setText(output);
+			
+			if(SyntaxErrorCollector.getInstance().countErrors() == 0) {
+				taResult.setText("Code successfully compiled");							
+			}else {
+				taResult.setText(SyntaxErrorCollector.getInstance().listErrors());			
+			}
 		}
 	}
 }
