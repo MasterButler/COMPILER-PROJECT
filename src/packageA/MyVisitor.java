@@ -22,21 +22,22 @@ import packageA.JavaParser.StatementContext;
 public class MyVisitor extends JavaBaseVisitor<Void> {
 
     public String visit(String userInput) {
-    	ANTLRInputStream input = new ANTLRInputStream(userInput);
+    	StringBuilder sb = new StringBuilder("");
     	
-        StringBuilder sb = new StringBuilder("");
-        
+    	ANTLRInputStream input = new ANTLRInputStream(userInput);
         JavaLexer lexer = new JavaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+        ParseTree tree = parser.compilationUnit();
+        
         for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
             sb.append(token.getText())
             	.append(" | ")
             	.append(JavaLexer.VOCABULARY.getSymbolicName(token.getType()))
             	.append(System.getProperty("line.separator"));
         }
-        JavaParser parser = new JavaParser(tokens);
-        parser.setErrorHandler(new DefaultErrorStrategy(){
-
+        
+/*  
             @Override
             public void recover(Parser recognizer, RecognitionException e) {
                 for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
@@ -59,11 +60,16 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
                 throw new ParseCancellationException(e);
             }
         });
-        ParseTree tree = parser.compilationUnit();
-
+*/
+        
+        long count = tree.getChildCount();
+        for(long i = 0; i < count; i++) {
+        	System.out.println("ERROR: " + tree.getChild((int)i));        	
+        }
+        
         MyVisitor visitor = new MyVisitor(); 
         visitor.visit(tree);
-        
+        	
         return sb.toString();
     }
 
