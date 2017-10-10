@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: baseDeclaration*;
+	: baseDeclaration* ;
 	
 // starting point for parsing a java file
 /*
