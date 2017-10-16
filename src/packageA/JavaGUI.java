@@ -16,6 +16,16 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
+import org.antlr.runtime.tree.ParseTree;
+import org.antlr.v4.gui.TreeTextProvider;
+import org.antlr.v4.gui.TreeViewer;
+import org.antlr.v4.gui.TreeViewer.DefaultTreeTextProvider;
+import org.antlr.v4.runtime.ANTLRErrorStrategy;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.Tree;
 import packageA.gui.LineNumberModel;
 
 import javax.swing.JScrollPane;
@@ -28,11 +38,16 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.SystemColor;
+import javax.swing.JTree;
+import javax.swing.ImageIcon;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class JavaGUI extends JFrame implements MouseListener{
 
@@ -48,8 +63,6 @@ public class JavaGUI extends JFrame implements MouseListener{
 	private JScrollPane spResult;
 	private JTextArea taResult;
 	private JTextField tfStatus;
-
-
 	/**
 	 * Launch the application.
 	 */
@@ -80,8 +93,9 @@ public class JavaGUI extends JFrame implements MouseListener{
 		setResizable(false);
 		setTitle("COMPILER v0.1");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 978, 741);
+		setBounds(10, 100, 701, 741);
 		contentPane = new JPanel();
+		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -106,7 +120,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		btnRun = new JButton("\t\u25B6");
-		btnRun.setBounds(10, 11, 89, 23);
+		btnRun.setBounds(10, 11, 54, 23);
 		btnRun.addMouseListener(this);
 		contentPane.add(btnRun);
 		
@@ -119,6 +133,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 		taLexer.setFont(new Font("Consolas", Font.PLAIN, 13));
 		taLexer.setEditable(false);
 		taLexer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		taLexer.setVisible(false);
 		spLexer.setViewportView(taLexer);
 		
 		spResult = new JScrollPane();
@@ -131,10 +146,12 @@ public class JavaGUI extends JFrame implements MouseListener{
 		spResult.setViewportView(taResult);
 		
 		tfStatus = new JTextField();
-		tfStatus.setBackground(SystemColor.menu);
-		tfStatus.setBounds(10, 690, 942, 20);
+		tfStatus.setForeground(Color.WHITE);
+		tfStatus.setBackground(Color.DARK_GRAY);
+		tfStatus.setBounds(10, 690, 678, 20);
 		contentPane.add(tfStatus);
 		tfStatus.setColumns(10);
+		
 	}
 	
 	public void initializeListeners() {
@@ -266,6 +283,78 @@ public class JavaGUI extends JFrame implements MouseListener{
 			System.out.println("Input is: ");
 			System.out.println(taField.getText().toString());
 			String output = mv.visit(taField.getText().toString());
+			
+			TreeViewer viewr = new TreeViewer(Arrays.asList(
+	                mv.getParser().getRuleNames()), mv.getTree());
+			viewr.setScale(1.5);
+		    viewr.open();
+		    
+//			JavaLexer lexer = new JavaLexer(CharStreams.fromString(taField.getText().toString()));	        
+//	        CommonTokenStream tokens = new CommonTokenStream(lexer);
+//	        JavaBaseErrorListener javaErrorListener = new JavaBaseErrorListener();
+//	        SyntaxErrorCollector.getInstance().reset();
+//	        ANTLRErrorStrategy defaultStrat = new DefaultErrorStrategy();
+//	        JavaParser parser = new JavaParser(tokens);
+//	        
+//	        org.antlr.v4.runtime.tree.ParseTree tree = parser.code();
+//	        
+//			TreeViewer tv = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
+//
+//			tv.setVisible(true);
+//			pane.setViewportView(tv);
+//			tv.setBounds(698, 11, 254, 674);
+//			tv.setVisible(true);
+//			contentPane.add(tv);
+//			tv.setTreeTextProvider(new TreeTextProvider()
+//	        {
+//	            TreeTextProvider defaultProvider = new DefaultTreeTextProvider(Arrays.asList(parser.getRuleNames()));
+//
+//	            @Override
+//	            public String getText(Tree node)
+//	            {
+//	                if (node instanceof ParseTree) {
+//	                    NodeState nodeState = states.get((ParseTree)node);
+//
+//	                    ExpressionValue value;
+//	                    if (nodeState != null) {
+//	                        value = nodeState.getExpressionValue();
+//	                    }else{
+//	                        value = null;
+//	                    }
+//
+//	                    if (value != null) {
+//	                        return defaultProvider.getText(node) + "(" + value + ")";
+//	                    }else{
+//	                        return defaultProvider.getText(node) + "(null)";
+//	                    }
+//	                }
+//
+//	                return defaultProvider.getText(node);
+//	            }
+//	        });
+//	        tv.open();
+//
+//			
+//			StringBuilder sb = new StringBuilder();
+//			Token curr = lexer.getToken();
+//	        sb.append(curr.getText())
+//	    	.append(" | ")
+//	    	.append(JavaLexer.VOCABULARY.getSymbolicName(curr.getType()))
+//	    	.append(System.getProperty("line.separator"));
+//	        
+//	        for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
+//	        	System.out.println("COUNT");
+//	            sb.append(token.getText())
+//	            	.append(" | ")
+//	            	.append(JavaLexer.VOCABULARY.getSymbolicName(token.getType()))
+//	            	.append(System.getProperty("line.separator"));
+//	        }
+//	        
+//	        MyVisitor visitor = new MyVisitor(); 
+//	        visitor.visit(tree);
+	        	
+	        
+			
 			taLexer.setText(output);
 			
 			if(SyntaxErrorCollector.getInstance().countErrors() == 0) {

@@ -24,7 +24,7 @@ public class SyntaxErrorCollector {
 	
 	public String recordError(int line, int charPositionInLine, String msg) {
 		StringBuilder sb = new StringBuilder();
-		String error = sb.append("line ").append(line).append(":").append(msg).append(" ").append(msg).toString();
+		String error = sb.append("line ").append(line).append(":").append(charPositionInLine).append(" ").append(msg).toString();
 		if(errors.add(error)) {
 			return error;
 		}else {

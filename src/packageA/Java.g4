@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: baseDeclaration* ;
+	: baseDeclaration ;
 	
 // starting point for parsing a java file
 /*
@@ -130,14 +130,14 @@ classBodyDeclaration
     ;
 
 baseDeclaration
-    :   methodDeclaration /*
+    :   methodDeclaration 
     |   genericMethodDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
 //    |   interfaceDeclaration
 //    |   annotationTypeDeclaration
-    |   classDeclaration */
+    |   classDeclaration 
 //    |   enumDeclaration
     ;
 
@@ -168,7 +168,7 @@ genericConstructorDeclaration
     ;
 
 fieldDeclaration
-    :   typeType pointerModifier? variableDeclarators ';'
+    :   typeType pointerModifier* variableDeclarators ';'
     ;
 
 /*
