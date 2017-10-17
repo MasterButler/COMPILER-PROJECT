@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: baseDeclaration ;
+	: baseDeclaration baseDeclaration* ;
 	
 // starting point for parsing a java file
 /*
@@ -193,7 +193,7 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   constantModifier* typeType pointerModifier? constantDeclarator (',' constantDeclarator)* ';'
+    :   constantModifier* typeType pointerModifier* constantDeclarator (',' constantDeclarator)* ';'
     ;
     
 pointerModifier
@@ -416,7 +416,6 @@ statement
     |   Identifier ':' statement
     | constDeclaration
     | 'output' parExpression ';'
-    | 'input();'
     | methodDeclaration
     ;
 

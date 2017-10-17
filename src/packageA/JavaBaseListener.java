@@ -1,4 +1,4 @@
-// Generated from /Users/Thea/COMPILER-PROJECT/src/packageA/Java.g4 by ANTLR 4.7
+// Generated from C:\Users\rafe0\OneDrive\Documents\COMPILER-PROJECT\src\packageA\Java.g4 by ANTLR 4.7
 package packageA;
 
 import org.antlr.v4.runtime.ParserRuleContext;
