@@ -278,87 +278,22 @@ public class JavaGUI extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		taResult.setText("");
 		if(e.getSource().equals(btnRun)) {
 			MyVisitor mv = new MyVisitor();
-			System.out.println("Input is: ");
+			System.out.println("Input is: \n");
 			System.out.println(taField.getText().toString());
 			String output = mv.visit(taField.getText().toString());
+			taLexer.setText(output);
 			
 			TreeViewer viewr = new TreeViewer(Arrays.asList(
 	                mv.getParser().getRuleNames()), mv.getTree());
 			viewr.setScale(1.5);
 		    viewr.open();
-		    
-//			JavaLexer lexer = new JavaLexer(CharStreams.fromString(taField.getText().toString()));	        
-//	        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//	        JavaBaseErrorListener javaErrorListener = new JavaBaseErrorListener();
-//	        SyntaxErrorCollector.getInstance().reset();
-//	        ANTLRErrorStrategy defaultStrat = new DefaultErrorStrategy();
-//	        JavaParser parser = new JavaParser(tokens);
-//	        
-//	        org.antlr.v4.runtime.tree.ParseTree tree = parser.code();
-//	        
-//			TreeViewer tv = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-//
-//			tv.setVisible(true);
-//			pane.setViewportView(tv);
-//			tv.setBounds(698, 11, 254, 674);
-//			tv.setVisible(true);
-//			contentPane.add(tv);
-//			tv.setTreeTextProvider(new TreeTextProvider()
-//	        {
-//	            TreeTextProvider defaultProvider = new DefaultTreeTextProvider(Arrays.asList(parser.getRuleNames()));
-//
-//	            @Override
-//	            public String getText(Tree node)
-//	            {
-//	                if (node instanceof ParseTree) {
-//	                    NodeState nodeState = states.get((ParseTree)node);
-//
-//	                    ExpressionValue value;
-//	                    if (nodeState != null) {
-//	                        value = nodeState.getExpressionValue();
-//	                    }else{
-//	                        value = null;
-//	                    }
-//
-//	                    if (value != null) {
-//	                        return defaultProvider.getText(node) + "(" + value + ")";
-//	                    }else{
-//	                        return defaultProvider.getText(node) + "(null)";
-//	                    }
-//	                }
-//
-//	                return defaultProvider.getText(node);
-//	            }
-//	        });
-//	        tv.open();
-//
-//			
-//			StringBuilder sb = new StringBuilder();
-//			Token curr = lexer.getToken();
-//	        sb.append(curr.getText())
-//	    	.append(" | ")
-//	    	.append(JavaLexer.VOCABULARY.getSymbolicName(curr.getType()))
-//	    	.append(System.getProperty("line.separator"));
-//	        
-//	        for (Token token = lexer.nextToken(); token.getType() != Token.EOF; token = lexer.nextToken()) {
-//	        	System.out.println("COUNT");
-//	            sb.append(token.getText())
-//	            	.append(" | ")
-//	            	.append(JavaLexer.VOCABULARY.getSymbolicName(token.getType()))
-//	            	.append(System.getProperty("line.separator"));
-//	        }
-//	        
-//	        MyVisitor visitor = new MyVisitor(); 
-//	        visitor.visit(tree);
-	        	
-	        
 			
-			taLexer.setText(output);
 			
 			if(SyntaxErrorCollector.getInstance().countErrors() == 0) {
-				taResult.setText("Code successfully compiled");							
+				taResult.setText(OutputCollector.getInstance().getOutput());				
 			}else {
 				taResult.setText(SyntaxErrorCollector.getInstance().listErrors());			
 			}

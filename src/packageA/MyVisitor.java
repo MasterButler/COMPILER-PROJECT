@@ -17,7 +17,11 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 
+import packageA.JavaParser.ExpressionContext;
+import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.StatementContext;
+import packageA.function.FunctionDictionary;
+import packageA.function.StringUtil;
 
 public class MyVisitor extends JavaBaseVisitor<Void> {
 
@@ -63,38 +67,17 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
             	.append(System.getProperty("line.separator"));
         }
         
-        MyVisitor visitor = new MyVisitor(); 
+        MyVisitor visitor = new MyVisitor();
+        
+        System.out.println("START\n");
+        
         visitor.visit(tree);
+        
+        System.out.println("\nEND");
         	    
         System.out.println(sb);
         return sb.toString();
     }
-
-/*  
-            @Override
-            public void recover(Parser recognizer, RecognitionException e) {
-                for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
-                    context.exception = e;
-                }
-
-                throw new ParseCancellationException(e);
-            }
-
-
-            @Override
-            public Token recoverInline(Parser recognizer)
-                throws RecognitionException
-            {
-                InputMismatchException e = new InputMismatchException(recognizer);
-                for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
-                    context.exception = e;
-                }
-
-                throw new ParseCancellationException(e);
-            }
-        });
-*/
-    
 
     public JavaLexer getLexer() {
 		return lexer;
@@ -148,4 +131,46 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     public Void visitStatement(StatementContext ctx) {
     	return super.visitStatement(ctx);
     }
+	
+	@Override
+	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
+//		System.out.println("PRINTING");
+//		System.out.println(ctx);
+//		System.out.println(ctx.getText());
+//		for(int i = 0;i < ctx.getChildCount(); i++) {
+//			
+//			System.out.println(ctx.getChild(i).getText() + " | " + JavaLexer.VOCABULARY.getSymbolicName(ctx.getAltNumber()));			
+//		}
+		
+		return super.visitMethodDeclaration(ctx);
+	}
+	
+	
+	@Override
+	public Void visitExpression(ExpressionContext ctx) {
+		
+//		System.out.println();
+//		System.out.println("EXPRESSION START");
+//		System.out.println();
+		
+		int total = ctx.getChildCount();
+		for(int i = 0; i < total; i++) {
+			switch(ctx.getChild(i).getText()) {
+				case FunctionDictionary.FUNCTION_PRINT:
+					if(i+2 < ctx.getChildCount()) {
+//						System.out.println("ADDING " + ctx.getChild(i+2).getText());
+						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
+					}
+					break;
+				
+				default: 
+			}
+		}
+		
+//		System.out.println();
+//		System.out.println("EXPRESSION END");
+//		System.out.println();
+		// TODO Auto-generated method stub
+		return super.visitExpression(ctx);
+	}
 }

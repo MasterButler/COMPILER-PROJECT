@@ -124,7 +124,7 @@ interfaceBody
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block
+    |   'static'? set
     //|   classModifier*
     | baseDeclaration
     ;
@@ -147,7 +147,7 @@ baseDeclaration
    for invalid return type after parsing.
  */
 methodDeclaration
-    :   'function' (typeType|'void') Identifier formalParameters ('[' ']')*
+    :   'function' (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
         (   methodBody
         |   ';'
@@ -159,7 +159,7 @@ genericMethodDeclaration
     ;
 
 constructorDeclaration
-    :   Identifier formalParameters ('throws' qualifiedNameList)?
+    :   Identifier parameters ('throws' qualifiedNameList)?
         constructorBody
     ;
 
@@ -206,7 +206,7 @@ constantDeclarator
 // see matching of [] comment in methodDeclaratorRest
 /*
 interfaceMethodDeclaration
-    :   (typeType|'void') Identifier formalParameters ('[' ']')*
+    :   (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
         ';'
     ;
@@ -270,16 +270,16 @@ qualifiedNameList
     :   qualifiedName (',' qualifiedName)*
     ;
 
-formalParameters
-    :   '(' formalParameterList? ')'
+parameters
+    :   '(' parameterList? ')'
     ;
 
-formalParameterList
-    :   formalParameter (',' formalParameter)* (',' lastFormalParameter)?
+parameterList
+    :   parameter (',' parameter)* (',' lastFormalParameter)?
     |   lastFormalParameter
     ;
 
-formalParameter
+parameter
     :   typeType variableDeclaratorId
     ;
 
@@ -288,11 +288,11 @@ lastFormalParameter
     ;
 
 methodBody
-    :   block
+    :   set
     ;
 
 constructorBody
-    :   block
+    :   set
     ;
 
 qualifiedName
@@ -378,11 +378,11 @@ defaultValue
 
 // STATEMENTS / BLOCKS
 
-block
-    :   '{' blockStatement* '}'
+set
+    :   '{' setStatement* '}'
     ;
 
-blockStatement
+setStatement
     :   localVariableDeclarationStatement
     |   statement
     |   typeDeclaration
@@ -397,16 +397,16 @@ localVariableDeclaration
     ;
 
 statement
-    :   block
+    :   set
 //    |   ASSERT expression (':' expression)? ';'
     |   'if' parExpression statement ('else' statement)?
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
     |   'dowhile' parExpression statement
-//    |   'try' block (catchClause+ finallyBlock? | finallyBlock)
-//    |   'try' resourceSpecification block catchClause* finallyBlock?
-    |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
-//    |   'synchronized' parExpression block
+//    |   'try' set (catchClause+ finallySet? | finallySet)
+//    |   'try' resourceSpecification set catchClause* finallySet?
+    |   'switch' parExpression '{' switchSetStatementGroup* switchLabel* '}'
+//    |   'synchronized' parExpression set
     |   'return' expression? ';'
     |   'throw' expression ';'
     |   'break' Identifier? ';'
@@ -420,15 +420,15 @@ statement
     ;
 
 catchClause
-    :   'catch' '(' catchType Identifier ')' block
+    :   'catch' '(' catchType Identifier ')' set
     ;
 
 catchType
     :   qualifiedName ('|' qualifiedName)*
     ;
 
-finallyBlock
-    :   'finally' block
+finallySet
+    :   'finally' set
     ;
 
 resourceSpecification
@@ -446,8 +446,8 @@ resource
 /** Matches cases then statements, both of which are mandatory.
  *  To handle empty cases at the end, we add switchLabel* to statement.
  */
-switchBlockStatementGroup
-    :   switchLabel+ blockStatement+
+switchSetStatementGroup
+    :   switchLabel+ setStatement+
     ;
 
 switchLabel
