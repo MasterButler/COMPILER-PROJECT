@@ -1,4 +1,4 @@
-package packageA;
+package packageA.collector;
 
 public class OutputCollector {
 	private static OutputCollector instance = null;

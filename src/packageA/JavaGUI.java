@@ -1,11 +1,20 @@
 package packageA;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Arrays;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -13,41 +22,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 
-import org.antlr.runtime.tree.ParseTree;
-import org.antlr.v4.gui.TreeTextProvider;
 import org.antlr.v4.gui.TreeViewer;
-import org.antlr.v4.gui.TreeViewer.DefaultTreeTextProvider;
-import org.antlr.v4.runtime.ANTLRErrorStrategy;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.DefaultErrorStrategy;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.Tree;
-import packageA.gui.LineNumberModel;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.JViewport;
-import javax.swing.JTextArea;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Arrays;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import java.awt.SystemColor;
-import javax.swing.JTree;
-import javax.swing.ImageIcon;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import packageA.collector.InputCollector;
+import packageA.collector.OutputCollector;
+import packageA.collector.SyntaxErrorCollector;
+import packageA.storage.Storage;
+import packageA.variable.Variable;
+import packageA.variable.util.VariableManager;
 
 public class JavaGUI extends JFrame implements MouseListener{
 
@@ -278,13 +262,20 @@ public class JavaGUI extends JFrame implements MouseListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		taResult.setText("");
 		if(e.getSource().equals(btnRun)) {
+			resetSingleton();
+			
+			taResult.setText("");
+			
 			MyVisitor mv = new MyVisitor();
 			System.out.println("Input is: \n");
 			System.out.println(taField.getText().toString());
 			String output = mv.visit(taField.getText().toString());
 			taLexer.setText(output);
+			
+			
+//			VariableManager.addVariable(new Variable("String", "adsads"));
+//			VariableManager.addVariable(new Variable("String", "adsads"));
 			
 			TreeViewer viewr = new TreeViewer(Arrays.asList(
 	                mv.getParser().getRuleNames()), mv.getTree());
@@ -298,5 +289,12 @@ public class JavaGUI extends JFrame implements MouseListener{
 				taResult.setText(SyntaxErrorCollector.getInstance().listErrors());			
 			}
 		}
+	}
+	
+	public void resetSingleton() {
+		OutputCollector.getInstance().reset();
+		Storage.getInstance().reset();
+		InputCollector.getInstance().reset();
+		SyntaxErrorCollector.getInstance().reset();
 	}
 }

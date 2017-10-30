@@ -1,30 +1,29 @@
 package packageA;
 
-import java.util.Arrays;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import org.antlr.v4.gui.TreeTextProvider;
-import org.antlr.v4.gui.TreeViewer;
-import org.antlr.v4.gui.TreeViewer.DefaultTreeTextProvider;
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
-import org.antlr.v4.runtime.BailErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.DefaultErrorStrategy;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.Tree;
 
+import packageA.JavaParser.BaseDeclarationContext;
 import packageA.JavaParser.ExpressionContext;
+import packageA.JavaParser.ExpressionListContext;
 import packageA.JavaParser.MethodDeclarationContext;
+import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
+import packageA.collector.OutputCollector;
+import packageA.collector.SyntaxErrorCollector;
 import packageA.function.FunctionDictionary;
 import packageA.function.StringUtil;
 
 public class MyVisitor extends JavaBaseVisitor<Void> {
 
+	public static final String REFERENCE_STATEMENT_CONTEXT = "stmt";
+	public static final String REFERENCE_SET_STATEMENT_CONTEXT = "set_stmt";
+	
 	private JavaLexer lexer;
 	private CommonTokenStream tokens;
 	private JavaBaseErrorListener javaErrorListener;
@@ -137,7 +136,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		int total = ctx.getChildCount();
 		for(int i = 0; i < total; i++) {
 			
-			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
+//			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
 			
 		}
 		return super.visitMethodDeclaration(ctx);
@@ -155,16 +154,25 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		int total = ctx.getChildCount();
 		for(int i = 0; i < total; i++) {
 			
-			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
 			switch(ctx.getChild(i).getText()) {
 				case FunctionDictionary.FUNCTION_PRINT:
 					if(i+2 < ctx.getChildCount()) {
 						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
 						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
 					}
-				break;
-				
-				default: 
+					break;
+                case FunctionDictionary.FUNCTION_SCAN:
+                	System.out.println("SCANNING");
+                	if(i + 2 < ctx.getChildCount() && ctx.getChild(i+2).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())){
+                		
+                		String varScope = constructVariableScope(ctx);
+                		String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
+                		System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
+                		System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
+//                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
+                	}
+                    break;
+                default: System.out.println("DEFAULT: " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
 			}
 		}
 		
@@ -173,5 +181,28 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 //		System.out.println();
 		// TODO Auto-generated method stub
 		return super.visitExpression(ctx);
+	}
+	
+	
+	public String constructVariableScope(ParserRuleContext ctx) {
+		ParserRuleContext parentFinder;
+		StringBuilder varName = new StringBuilder();
+		parentFinder = ctx.getParent();
+		do {
+			parentFinder = parentFinder.getParent();
+			if(parentFinder.getClass().getSimpleName().equals(MethodDeclarationContext.class.getSimpleName())) {
+				varName.append(new StringBuffer(parentFinder.getChild(2).getText()).reverse().toString()).append('$');
+			}else if(parentFinder.getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
+				varName.append(new StringBuffer(REFERENCE_SET_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
+			}else if(parentFinder.getClass().getSimpleName().equals(StatementContext.class.getSimpleName())) {
+				varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
+			}
+		}while(!parentFinder.getClass().getSimpleName().equals(BaseDeclarationContext.class.getSimpleName()));
+		
+		return new StringBuffer(varName.toString()).reverse().toString().substring(1, varName.length());
+	}
+	
+	public String constructVariableName(ParserRuleContext ctx, String simpleName) {
+		return (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString();
 	}
 }
