@@ -134,14 +134,12 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	@Override
 	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
-//		System.out.println("PRINTING");
-//		System.out.println(ctx);
-//		System.out.println(ctx.getText());
-//		for(int i = 0;i < ctx.getChildCount(); i++) {
-//			
-//			System.out.println(ctx.getChild(i).getText() + " | " + JavaLexer.VOCABULARY.getSymbolicName(ctx.getAltNumber()));			
-//		}
-		
+		int total = ctx.getChildCount();
+		for(int i = 0; i < total; i++) {
+			
+			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
+			
+		}
 		return super.visitMethodDeclaration(ctx);
 	}
 	
@@ -149,19 +147,22 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	@Override
 	public Void visitExpression(ExpressionContext ctx) {
 		
+		
 //		System.out.println();
 //		System.out.println("EXPRESSION START");
 //		System.out.println();
 		
 		int total = ctx.getChildCount();
 		for(int i = 0; i < total; i++) {
+			
+			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
 			switch(ctx.getChild(i).getText()) {
 				case FunctionDictionary.FUNCTION_PRINT:
 					if(i+2 < ctx.getChildCount()) {
-//						System.out.println("ADDING " + ctx.getChild(i+2).getText());
+						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
 						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
 					}
-					break;
+				break;
 				
 				default: 
 			}
