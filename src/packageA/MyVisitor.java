@@ -1,5 +1,7 @@
 package packageA;
 
+import java.util.ArrayList;
+
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -9,11 +11,19 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import packageA.JavaParser.BaseDeclarationContext;
+import packageA.JavaParser.DataTypeContext;
 import packageA.JavaParser.ExpressionContext;
 import packageA.JavaParser.ExpressionListContext;
+import packageA.JavaParser.LocalVariableDeclarationContext;
+import packageA.JavaParser.LocalVariableDeclarationStatementContext;
+import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
+import packageA.JavaParser.VariableDeclaratorContext;
+import packageA.JavaParser.VariableDeclaratorIdContext;
+import packageA.JavaParser.VariableDeclaratorsContext;
+import packageA.JavaParser.VariableInitializerContext;
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.function.FunctionDictionary;
@@ -30,6 +40,8 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	private ANTLRErrorStrategy defaultStrat;
 	private JavaParser parser;
 	private ParseTree tree;
+	
+	ArrayList <MethodDeclarationContext> methodList = new ArrayList<MethodDeclarationContext> ();
 	
     public String visit(String userInput) {
     	StringBuilder sb = new StringBuilder("");
@@ -132,15 +144,64 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     }
 	
 	@Override
+	public Void visitVariableInitializer(VariableInitializerContext ctx) {
+		System.out.println("here at variable initializer");
+		for(int j=0; j<ctx.getChildCount() ;j++)
+    		System.out.println(j + " : " + ctx.getChild(j).getText());
+		return super.visitVariableInitializer(ctx);
+	}
+	
+	
+	
+	@Override
+	public Void visitVariableDeclarator(VariableDeclaratorContext ctx) {
+		System.out.println("here at variable declarator");
+		for(int j=0; j<ctx.getChildCount() ;j++)
+    		System.out.println(j + " : " + ctx.getChild(j).getText());
+		return super.visitVariableDeclarator(ctx);
+	}
+	
+	
+	
+	@Override
+	public Void visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+		System.out.println("here at variable id");
+		for(int j=0; j<ctx.getChildCount() ;j++)
+    		System.out.println(j + " : " + ctx.getChild(j).getText());
+		return super.visitVariableDeclaratorId(ctx);
+	}
+	
+	@Override
+	public Void visitDataType(DataTypeContext ctx) {
+		System.out.println("here at variable datatype");
+		for(int j=0; j<ctx.getChildCount() ;j++)
+    		System.out.println(j + " : " + ctx.getChild(j).getText());
+		return super.visitDataType(ctx);
+	}
+	
+	
+	@Override
 	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
 		int total = ctx.getChildCount();
-		for(int i = 0; i < total; i++) {
+		
+		System.out.println("\n\n");
+		if(! ctx.getChild(2).getText().equals("main")){
+			System.out.println("return: " + ctx.getChild(1).getText());
+			System.out.println("name: " + ctx.getChild(2).getText());
+			System.out.println("param: " + ctx.getChild(3).getText());
+			System.out.println("content: " + ctx.getChild(4).getText());
 			
-//			System.out.println("ADDING i: " + i + " : " + ctx.getChild(i).getText());
-			
+			methodList.add(ctx);
 		}
+		
+		for(int i=0; i<methodList.size(); i++)
+			System.out.println("name: " + methodList.get(i).getChild(2).getText());
+		
+		
 		return super.visitMethodDeclaration(ctx);
 	}
+	
+	
 	
 	
 	@Override
@@ -172,7 +233,13 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 //                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
                 	}
                     break;
-                default: System.out.println("DEFAULT: " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+//                case FunctionDictionary.FUNCTION_FOR_LOOP:
+//                	System.out.println();
+//                	for(int j=0; j<ctx.getChildCount() ;j++)
+//                		System.out.println(j + " : " + ctx.getChild(j));
+//                		
+//                	break;
+                default: System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
 			}
 		}
 		
