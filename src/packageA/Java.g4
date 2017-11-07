@@ -494,6 +494,11 @@ variableAssignment
     :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
     ;
 
+math_expression
+	:   left=expression op=('*'|'/'|'%') right=expression 
+    |   left=expression op=('+'|'-') right=expression 
+    ;
+
 expression
     :   primary	
     |	variableAssignment
@@ -508,9 +513,8 @@ expression
 //    |   '(' typeType ')' expression	
     |   expression ('++' | '--')	
 //    |   ('+'|'-'|'++'|'--'|'!') expression	
-    |   ('+'|'-'|'!') expression	
-    |   left=expression op=('*'|'/'|'%') right=expression 
-    |   left=expression op=('+'|'-') right=expression 
+    |   ('-'|'!') expression
+    |	math_expression	
     |   left=expression ('<=' | '>=' | '>' | '<') right=expression 
     |   expression 'instanceof' typeType	
     |   expression ('==' | '!=') expression	
