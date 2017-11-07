@@ -29,11 +29,13 @@ public class Value {
 	
 	public void setValue(Object value) throws IncompatibleVariableDataTypeError {
 		if(this.isConstant == false) {
-			String inferredType = ValueUtil.inferVarType(value.toString());
-			if(this.type.equals(inferredType)){
-				this.value = value;
-			}else {
-				throw new IncompatibleVariableDataTypeError(this.type, inferredType);
+			if(value != null) {
+				String inferredType = ValueUtil.inferVarType(value.toString());
+				if(this.type.equals(inferredType)){
+					this.value = value;
+				}else {
+					throw new IncompatibleVariableDataTypeError(this.type, inferredType);
+				}
 			}
 		}else {
 			System.out.println("CANNOT CHANGE!");
