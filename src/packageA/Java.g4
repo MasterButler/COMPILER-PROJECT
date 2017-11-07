@@ -481,6 +481,10 @@ parExpression
 expressionList
     :   expression (',' expression)*
     ;
+    
+primaryList
+	: primary (',' primary)*
+	;
 
 statementExpression
     :   expression
@@ -495,12 +499,17 @@ variableAssignment
     ;
 
 math_expression
-	:   left=expression op=('*'|'/'|'%') right=expression 
-    |   left=expression op=('+'|'-') right=expression 
+	:	primary   
+	|   primary '[' math_expression ']' 
+	|   primary '(' primaryList? ')'
+	|	left=math_expression op=('*'|'/'|'%') right=math_expression 
+    |   left=math_expression op=('+'|'-') right=math_expression 
     ;
 
 expression
     :   primary	
+    |   expression '[' expression ']'	
+    |   expression '(' expressionList? ')'
     |	variableAssignment
     |   expression '.' Identifier	 
     |   expression '.' 'this'	
