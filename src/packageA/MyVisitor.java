@@ -1,5 +1,7 @@
 package packageA;
 
+import packageA.variable.util.*;
+import packageA.variable.*;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -40,6 +42,8 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	private ANTLRErrorStrategy defaultStrat;
 	private JavaParser parser;
 	private ParseTree tree;
+	
+	String tempType = "";
 	
 	ArrayList <MethodDeclarationContext> methodList = new ArrayList<MethodDeclarationContext> ();
 	
@@ -143,6 +147,8 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     	return super.visitStatement(ctx);
     }
 	
+	
+	
 	@Override
 	public Void visitVariableInitializer(VariableInitializerContext ctx) {
 		System.out.println("here at variable initializer");
@@ -155,7 +161,13 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	@Override
 	public Void visitVariableDeclarator(VariableDeclaratorContext ctx) {
-		System.out.println("here at variable declarator");
+		System.out.println("here at variable declarator with context" + ctx.getText());
+		
+		if(ctx.getChildCount() >=2)
+			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText(), ctx.getChild(2).getText()));
+		else
+			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText()));
+		
 		for(int j=0; j<ctx.getChildCount() ;j++)
     		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitVariableDeclarator(ctx);
@@ -166,6 +178,9 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	@Override
 	public Void visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
 		System.out.println("here at variable id");
+		
+		
+	
 		for(int j=0; j<ctx.getChildCount() ;j++)
     		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitVariableDeclaratorId(ctx);
@@ -174,6 +189,8 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	@Override
 	public Void visitDataType(DataTypeContext ctx) {
 		System.out.println("here at variable datatype");
+		tempType = ctx.getChild(0).getText();
+		
 		for(int j=0; j<ctx.getChildCount() ;j++)
     		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitDataType(ctx);
@@ -200,6 +217,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		
 		return super.visitMethodDeclaration(ctx);
 	}
+	
 	
 	
 	
@@ -252,6 +270,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	
 	public String constructVariableScope(ParserRuleContext ctx) {
+		System.out.println("here at var scope");
 		ParserRuleContext parentFinder;
 		StringBuilder varName = new StringBuilder();
 		parentFinder = ctx.getParent();
