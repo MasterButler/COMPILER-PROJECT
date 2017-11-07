@@ -168,7 +168,7 @@ genericConstructorDeclaration
     ;
 
 fieldDeclaration
-    :   typeType pointerModifier* variableDeclarators ';'
+    :   varType=typeType pointerModifier* varDeclare=variableDeclarator ';'
     ;
 
 /*
@@ -216,12 +216,9 @@ genericInterfaceMethodDeclaration
     ;
     */
 
-variableDeclarators
-    :   variableDeclarator (',' variableDeclarator)*
-    ;
 
 variableDeclarator
-    :   variableDeclaratorId ('=' variableInitializer)?
+    :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
     ;
 
 variableDeclaratorId
@@ -251,12 +248,12 @@ classType
     ;
 
 dataType
-    :   'boolean'
-    |   'char'
-    |   'int'
-    |   'float'
-    ;
-
+    :   type='boolean' 
+    |   type='char'
+    |   type='int'
+    |   type='float'
+	;
+	
 typeArguments
     :   '<' typeArgument (',' typeArgument)* '>'
     ;
@@ -393,7 +390,7 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   constantModifier? typeType variableDeclarators
+    :   constantModifier? typeType variableDeclarator
     ;
 
 statement

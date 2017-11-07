@@ -16,18 +16,21 @@ import packageA.JavaParser.BaseDeclarationContext;
 import packageA.JavaParser.DataTypeContext;
 import packageA.JavaParser.ExpressionContext;
 import packageA.JavaParser.ExpressionListContext;
+import packageA.JavaParser.FieldDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationStatementContext;
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
+import packageA.JavaParser.TypeTypeContext;
 import packageA.JavaParser.VariableDeclaratorContext;
 import packageA.JavaParser.VariableDeclaratorIdContext;
-import packageA.JavaParser.VariableDeclaratorsContext;
 import packageA.JavaParser.VariableInitializerContext;
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
+import packageA.error.IncompatibleVariableDataTypeError;
+import packageA.error.MultipleVariableDeclarationError;
 import packageA.function.FunctionDictionary;
 import packageA.function.StringUtil;
 
@@ -147,13 +150,59 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
     	return super.visitStatement(ctx);
     }
 	
-	
+	public static String getDataType(TypeTypeContext typeType) {
+		return null;
+	}
 	
 	@Override
+	public Void visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+		int total = ctx.getChildCount();
+		
+		String varType = ValueUtil.getDataType(ctx.typeType()); 
+		String varSimpleName = ctx.variableDeclarator().varName.getText();
+		String varValue = null;
+		String varValueType = null;
+		if(ctx.variableDeclarator().varValue != null) {
+			varValue = ctx.variableDeclarator().varValue.getText();
+		}
+		
+		Variable toStore = null;
+		try {
+			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue));
+			VariableManager.addVariable(toStore);
+		} catch (MultipleVariableDeclarationError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
+			e.printStackTrace();
+		} catch( IncompatibleVariableDataTypeError e) {
+			System.out.println("HEH");
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(varType, ValueUtil.inferVarType(ctx.variableDeclarator().varValue.getText())).getErrorMessage());
+			e.printStackTrace();
+		}
+		
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		System.out.println(varType);
+//		System.out.println(varSimpleName);
+//		System.out.println(varValue);
+//		System.out.println(constructVariableScope(ctx));
+//		System.out.println();
+//		System.out.println();
+//		System.out.println();
+//		for(int i = 0; i < total; i++) {
+//			System.out.println(i + ": " + ctx.getChild(i).getText());
+//		}
+//		System.out.println();
+//		System.out.println();
+		
+		return super.visitLocalVariableDeclaration(ctx);
+	}
+
+	@Override
 	public Void visitVariableInitializer(VariableInitializerContext ctx) {
-		System.out.println("here at variable initializer");
-		for(int j=0; j<ctx.getChildCount() ;j++)
-    		System.out.println(j + " : " + ctx.getChild(j).getText());
+//		System.out.println("here at variable initializer");
+//		for(int j=0; j<ctx.getChildCount() ;j++)
+//    		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitVariableInitializer(ctx);
 	}
 	
@@ -161,15 +210,15 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	@Override
 	public Void visitVariableDeclarator(VariableDeclaratorContext ctx) {
-		System.out.println("here at variable declarator with context" + ctx.getText());
-		
-		if(ctx.getChildCount() >=2)
-			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText(), ctx.getChild(2).getText()));
-		else
-			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText()));
-		
-		for(int j=0; j<ctx.getChildCount() ;j++)
-    		System.out.println(j + " : " + ctx.getChild(j).getText());
+//		System.out.println("here at variable declarator with context" + ctx.getText());
+//		
+//		if(ctx.getChildCount() >=2)
+//			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText(), ctx.getChild(2).getText()));
+//		else
+//			VariableManager.addVariable(new Variable(tempType, "idk", ctx.getChild(0).getText()));
+//		
+//		for(int j=0; j<ctx.getChildCount() ;j++)
+//    		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitVariableDeclarator(ctx);
 	}
 	
@@ -180,41 +229,52 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		System.out.println("here at variable id");
 		
 		
-	
-		for(int j=0; j<ctx.getChildCount() ;j++)
-    		System.out.println(j + " : " + ctx.getChild(j).getText());
+//	
+//		for(int j=0; j<ctx.getChildCount() ;j++)
+//    		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitVariableDeclaratorId(ctx);
 	}
 	
 	@Override
 	public Void visitDataType(DataTypeContext ctx) {
-		System.out.println("here at variable datatype");
-		tempType = ctx.getChild(0).getText();
-		
-		for(int j=0; j<ctx.getChildCount() ;j++)
-    		System.out.println(j + " : " + ctx.getChild(j).getText());
+//		System.out.println("here at variable datatype");
+//		tempType = ctx.getChild(0).getText();
+//		
+//		for(int j=0; j<ctx.getChildCount() ;j++)
+//    		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitDataType(ctx);
 	}
 	
 	
 	@Override
-	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
+	public Void visitFieldDeclaration(FieldDeclarationContext ctx) {
 		int total = ctx.getChildCount();
 		
-		System.out.println("\n\n");
-		if(! ctx.getChild(2).getText().equals("main")){
-			System.out.println("return: " + ctx.getChild(1).getText());
-			System.out.println("name: " + ctx.getChild(2).getText());
-			System.out.println("param: " + ctx.getChild(3).getText());
-			System.out.println("content: " + ctx.getChild(4).getText());
-			
-			methodList.add(ctx);
+		for(int i = 0; i < total; i++) {
+			System.out.println(ctx.getChild(i).getText());
 		}
+		System.out.println();
+		System.out.println();
 		
-		for(int i=0; i<methodList.size(); i++)
-			System.out.println("name: " + methodList.get(i).getChild(2).getText());
+//		System.out.println("\n\n");
+//		if(! ctx.getChild(2).getText().equals("main")){
+//			System.out.println("return: " + ctx.getChild(1).getText());
+//			System.out.println("name: " + ctx.getChild(2).getText());
+//			System.out.println("param: " + ctx.getChild(3).getText());
+//			System.out.println("content: " + ctx.getChild(4).getText());
+//			
+////			methodList.add(ctx);
+//		}
+//		
+//		for(int i=0; i<methodList.size(); i++)
+//			System.out.println("name: " + methodList.get(i).getChild(2).getText());
 		
 		
+		return super.visitFieldDeclaration(ctx);
+	}
+	
+	@Override
+	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
 		return super.visitMethodDeclaration(ctx);
 	}
 	
@@ -278,8 +338,8 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 			parentFinder = parentFinder.getParent();
 			if(parentFinder.getClass().getSimpleName().equals(MethodDeclarationContext.class.getSimpleName())) {
 				varName.append(new StringBuffer(parentFinder.getChild(2).getText()).reverse().toString()).append('$');
-			}else if(parentFinder.getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
-				varName.append(new StringBuffer(REFERENCE_SET_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
+//			}else if(parentFinder.getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
+//				varName.append(new StringBuffer(REFERENCE_SET_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}else if(parentFinder.getClass().getSimpleName().equals(StatementContext.class.getSimpleName())) {
 				varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}

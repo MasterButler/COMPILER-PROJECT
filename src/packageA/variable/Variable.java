@@ -1,34 +1,25 @@
 package packageA.variable;
 
+import packageA.error.IncompatibleVariableDataTypeError;
+
 public class Variable {
 	
 	//Determines the scope, or where the value is present when viewed by the interpreter
 	private String varScope;
 	//Determines the simple variable name when typed in the IDE
 	private String varSimpleName;
-	//Determines the class of the variable
-	private String varClass;
 	//Determines the value stored in the variable
-	private Object value;
+	private Value value;
 	
-	public Variable (String varClass, String varScope, String varSimpleName, Object value) {
-		this(varClass, varScope, varSimpleName);
-		setValue(value);
-	}
 	
-	public Variable(String varClass, String varScope, String varSimpleName) {
+	public Variable(String varScope, String varSimpleName, Value value) throws IncompatibleVariableDataTypeError {
 		this.varScope = varScope;
 		this.varSimpleName = varSimpleName;
-	}
-	
-	public Variable(String varClass, String varName, Object value) {
-		this(varClass, varName);
 		setValue(value);
 	}
 	
-	public Variable(String varClass, String varName) {
+	public Variable(String varName, Value value) throws IncompatibleVariableDataTypeError {
 		int lastIndex = varName.lastIndexOf("$");
-		this.varClass = varClass;
 		if(lastIndex == -1) {
 			this.varScope = "";
 			this.varSimpleName = varName;
@@ -36,21 +27,35 @@ public class Variable {
 			this.varScope = varName.substring(0, lastIndex);
 			this.varSimpleName = varName.substring(lastIndex+1);
 		}
+		setValue(value);
 	}
 	
 	//TODO some type of checking to see if datatype entered matches. If not, throw error.
-	public void setValue(Object value) {
-		this.value = value;
+	public boolean setValue(Value value) throws IncompatibleVariableDataTypeError {
+		if(this.value == null) {
+			this.value = value;
+		}else {
+			if(this.value.getType().equals(value.getType())) {
+				this.value.setValue(value.getValue());
+				return true;
+			}else {
+				throw new IncompatibleVariableDataTypeError(this.value.getType(), value.getType());
+			}
+		}
+		return false;
 	}
 	
 	/**
-	 * Returns the variable class
+	 * Returns the variable type
 	 * @return
 	 */
-	public String getVarClass() {
-		return varClass;
+	public String getVarType() {
+		return value.getType();
 	}
 	
+	public Value getValue() {
+		return value;
+	}
 	
 	/**
 	 * This returns the scope concatenated with the name of the variable. Mostly used for checking if an instance
