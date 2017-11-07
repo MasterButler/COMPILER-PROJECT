@@ -494,36 +494,36 @@ constantExpression
 
 
 expression
-    :   primary
-    |   expression '.' Identifier
-    |   expression '.' 'this'
-//    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
-//    |   expression '.' 'super' superSuffix
-    |   expression '.' explicitGenericInvocation
-    |   expression '[' expression ']'
-    |   expression '(' expressionList? ')' 
-    |   'new' creator
-//    |   '(' typeType ')' expression
-    |   expression ('++' | '--')
-//    |   ('+'|'-'|'++'|'--'|'!') expression
-    |   ('+'|'-'|'!') expression
-    |   expression ('*'|'/'|'%') expression
-    |   expression ('+'|'-') expression
-    |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression 'instanceof' typeType
-    |   expression ('==' | '!=') expression
-    |   expression '^' expression
-    |   expression '&&' expression
-    |   expression '||' expression
+    :   primary	
+    |   expression '.' Identifier	 
+    |   expression '.' 'this'	
+//    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator	
+//    |   expression '.' 'super' superSuffix	
+    |   expression '.' explicitGenericInvocation	
+    |   expression '[' expression ']'	
+    |   expression '(' expressionList? ')' 	
+    |   'new' creator	
+//    |   '(' typeType ')' expression	
+    |   expression ('++' | '--')	
+//    |   ('+'|'-'|'++'|'--'|'!') expression	
+    |   ('+'|'-'|'!') expression	
+    |   left=expression op=('*'|'/'|'%') right=expression 
+    |   left=expression op=('+'|'-') right=expression 
+    |   left=expression ('<=' | '>=' | '>' | '<') right=expression 
+    |   expression 'instanceof' typeType	
+    |   expression ('==' | '!=') expression	
+    |   expression '^' expression	
+    |   expression '&&' expression	
+    |   expression '||' expression	
     |   expression '?' expression ':' expression
-    |   <assoc=right> expression
+    |   <assoc=right> expression	
         (   '='
         |   '+='
         |   '-='
         |   '*='
         |   '/='
         )
-        expression
+        expression 
     ;
 
 
@@ -531,8 +531,8 @@ primary
     :   '(' expression ')'
 //    |   'this'
 //    |   'super'
-    |   literal
-    |   Identifier
+    |   constantVal=literal
+    |   variableVal=Identifier
 //    |   typeType '.' 'class'
 //    |   'void' '.' 'class'
     |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | 'this' arguments)
@@ -751,10 +751,10 @@ FloatingPointLiteral
 
 fragment
 DecimalFloatingPointLiteral
-    :   Digits '.' Digits? ExponentPart? FloatTypeSuffix?
-    |   '.' Digits ExponentPart? FloatTypeSuffix?
-    |   Digits ExponentPart FloatTypeSuffix?
-    |   Digits FloatTypeSuffix
+    :   Digits '.' Digits? ExponentPart?
+//    |   '.' Digits ExponentPart?
+//    |   Digits ExponentPart
+    |   Digits
     ;
 
 fragment
@@ -775,11 +775,6 @@ SignedInteger
 fragment
 Sign
     :   [+-]
-    ;
-
-fragment
-FloatTypeSuffix
-    :   [fFdD]
     ;
 
 /*
