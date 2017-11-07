@@ -1,7 +1,7 @@
 grammar Java;
 
 code
-	: baseDeclaration* ;
+	: baseDeclaration baseDeclaration* ;
 	
 // starting point for parsing a java file
 /*
@@ -124,20 +124,20 @@ interfaceBody
 
 classBodyDeclaration
     :   ';'
-    |   'static'? block
+    |   'static'? set
     //|   classModifier*
     | baseDeclaration
     ;
 
 baseDeclaration
-    :   methodDeclaration /*
+    :   methodDeclaration 
     |   genericMethodDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
     |   genericConstructorDeclaration
 //    |   interfaceDeclaration
 //    |   annotationTypeDeclaration
-    |   classDeclaration */
+    |   classDeclaration 
 //    |   enumDeclaration
     ;
 
@@ -147,7 +147,7 @@ baseDeclaration
    for invalid return type after parsing.
  */
 methodDeclaration
-    :   'function' (typeType|'void') Identifier formalParameters ('[' ']')*
+    :   'function' (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
         (   methodBody
         |   ';'
@@ -159,7 +159,7 @@ genericMethodDeclaration
     ;
 
 constructorDeclaration
-    :   Identifier formalParameters ('throws' qualifiedNameList)?
+    :   Identifier parameters ('throws' qualifiedNameList)?
         constructorBody
     ;
 
@@ -168,7 +168,7 @@ genericConstructorDeclaration
     ;
 
 fieldDeclaration
-    :   typeType pointerModifier? variableDeclarators ';'
+    :   varType=typeType pointerModifier* varDeclare=variableDeclarator ';'
     ;
 
 /*
@@ -193,7 +193,7 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   constantModifier* typeType pointerModifier? constantDeclarator (',' constantDeclarator)* ';'
+    :   constantModifier* typeType pointerModifier* constantDeclarator (',' constantDeclarator)* ';'
     ;
     
 pointerModifier
@@ -206,7 +206,7 @@ constantDeclarator
 // see matching of [] comment in methodDeclaratorRest
 /*
 interfaceMethodDeclaration
-    :   (typeType|'void') Identifier formalParameters ('[' ']')*
+    :   (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
         ';'
     ;
@@ -216,12 +216,9 @@ genericInterfaceMethodDeclaration
     ;
     */
 
-variableDeclarators
-    :   variableDeclarator (',' variableDeclarator)*
-    ;
 
 variableDeclarator
-    :   variableDeclaratorId ('=' variableInitializer)?
+    :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
     ;
 
 variableDeclaratorId
@@ -251,12 +248,13 @@ classType
     ;
 
 dataType
-    :   'boolean'
-    |   'char'
-    |   'int'
-    |   'float'
-    ;
-
+    :   type='boolean' 
+    |   type='char'
+    |   type='int'
+    |   type='float'
+    |	type='string'
+	;
+	
 typeArguments
     :   '<' typeArgument (',' typeArgument)* '>'
     ;
@@ -270,16 +268,16 @@ qualifiedNameList
     :   qualifiedName (',' qualifiedName)*
     ;
 
-formalParameters
-    :   '(' formalParameterList? ')'
+parameters
+    :   '(' parameterList? ')'
     ;
 
-formalParameterList
-    :   formalParameter (',' formalParameter)* (',' lastFormalParameter)?
+parameterList
+    :   parameter (',' parameter)* (',' lastFormalParameter)?
     |   lastFormalParameter
     ;
 
-formalParameter
+parameter
     :   typeType variableDeclaratorId
     ;
 
@@ -288,11 +286,11 @@ lastFormalParameter
     ;
 
 methodBody
-    :   block
+    :   set
     ;
 
 constructorBody
-    :   block
+    :   set
     ;
 
 qualifiedName
@@ -378,11 +376,11 @@ defaultValue
 
 // STATEMENTS / BLOCKS
 
-block
-    :   '{' blockStatement* '}'
+set
+    :   '{' setStatement* '}'
     ;
 
-blockStatement
+setStatement
     :   localVariableDeclarationStatement
     |   statement
     |   typeDeclaration
@@ -393,20 +391,20 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   constantModifier? typeType variableDeclarators
+    :   constantModifier? typeType variableDeclarator
     ;
 
 statement
-    :   block
+    :   set
 //    |   ASSERT expression (':' expression)? ';'
     |   'if' parExpression statement ('else' statement)?
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
     |   'dowhile' parExpression statement
-//    |   'try' block (catchClause+ finallyBlock? | finallyBlock)
-//    |   'try' resourceSpecification block catchClause* finallyBlock?
-    |   'switch' parExpression '{' switchBlockStatementGroup* switchLabel* '}'
-//    |   'synchronized' parExpression block
+//    |   'try' set (catchClause+ finallySet? | finallySet)
+//    |   'try' resourceSpecification set catchClause* finallySet?
+    |   'switch' parExpression '{' switchSetStatementGroup* switchLabel* '}'
+//    |   'synchronized' parExpression set
     |   'return' expression? ';'
     |   'throw' expression ';'
     |   'break' Identifier? ';'
@@ -416,20 +414,19 @@ statement
     |   Identifier ':' statement
     | constDeclaration
     | 'output' parExpression ';'
-    | 'input();'
     | methodDeclaration
     ;
 
 catchClause
-    :   'catch' '(' catchType Identifier ')' block
+    :   'catch' '(' catchType Identifier ')' set
     ;
 
 catchType
     :   qualifiedName ('|' qualifiedName)*
     ;
 
-finallyBlock
-    :   'finally' block
+finallySet
+    :   'finally' set
     ;
 
 resourceSpecification
@@ -447,8 +444,8 @@ resource
 /** Matches cases then statements, both of which are mandatory.
  *  To handle empty cases at the end, we add switchLabel* to statement.
  */
-switchBlockStatementGroup
-    :   switchLabel+ blockStatement+
+switchSetStatementGroup
+    :   switchLabel+ setStatement+
     ;
 
 switchLabel
@@ -495,36 +492,36 @@ constantExpression
 
 
 expression
-    :   primary
-    |   expression '.' Identifier
-    |   expression '.' 'this'
-//    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator
-//    |   expression '.' 'super' superSuffix
-    |   expression '.' explicitGenericInvocation
-    |   expression '[' expression ']'
-    |   expression '(' expressionList? ')' 
-    |   'new' creator
-//    |   '(' typeType ')' expression
-    |   expression ('++' | '--')
-//    |   ('+'|'-'|'++'|'--'|'!') expression
-    |   ('+'|'-'|'!') expression
-    |   expression ('*'|'/'|'%') expression
-    |   expression ('+'|'-') expression
-    |   expression ('<=' | '>=' | '>' | '<') expression
-    |   expression 'instanceof' typeType
-    |   expression ('==' | '!=') expression
-    |   expression '^' expression
-    |   expression '&&' expression
-    |   expression '||' expression
+    :   primary	
+    |   expression '.' Identifier	 
+    |   expression '.' 'this'	
+//    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator	
+//    |   expression '.' 'super' superSuffix	
+    |   expression '.' explicitGenericInvocation	
+    |   expression '[' expression ']'	
+    |   expression '(' expressionList? ')' 	
+    |   'new' creator	
+//    |   '(' typeType ')' expression	
+    |   expression ('++' | '--')	
+//    |   ('+'|'-'|'++'|'--'|'!') expression	
+    |   ('+'|'-'|'!') expression	
+    |   left=expression op=('*'|'/'|'%') right=expression 
+    |   left=expression op=('+'|'-') right=expression 
+    |   left=expression ('<=' | '>=' | '>' | '<') right=expression 
+    |   expression 'instanceof' typeType	
+    |   expression ('==' | '!=') expression	
+    |   expression '^' expression	
+    |   expression '&&' expression	
+    |   expression '||' expression	
     |   expression '?' expression ':' expression
-    |   <assoc=right> expression
+    |   <assoc=right> expression	
         (   '='
         |   '+='
         |   '-='
         |   '*='
         |   '/='
         )
-        expression
+        expression 
     ;
 
 
@@ -532,8 +529,8 @@ primary
     :   '(' expression ')'
 //    |   'this'
 //    |   'super'
-    |   literal
-    |   Identifier
+    |   constantVal=literal
+    |   variableVal=Identifier
 //    |   typeType '.' 'class'
 //    |   'void' '.' 'class'
     |   nonWildcardTypeArguments (explicitGenericInvocationSuffix | 'this' arguments)
@@ -752,10 +749,10 @@ FloatingPointLiteral
 
 fragment
 DecimalFloatingPointLiteral
-    :   Digits '.' Digits? ExponentPart? FloatTypeSuffix?
-    |   '.' Digits ExponentPart? FloatTypeSuffix?
-    |   Digits ExponentPart FloatTypeSuffix?
-    |   Digits FloatTypeSuffix
+    :   Digits '.' Digits? ExponentPart?
+//    |   '.' Digits ExponentPart?
+//    |   Digits ExponentPart
+    |   Digits
     ;
 
 fragment
@@ -776,11 +773,6 @@ SignedInteger
 fragment
 Sign
     :   [+-]
-    ;
-
-fragment
-FloatTypeSuffix
-    :   [fFdD]
     ;
 
 /*
