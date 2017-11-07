@@ -29,6 +29,8 @@ public class Storage {
 	 * @return variable placed in the hashmap
 	 */
 	public Variable addVariable(Variable variable) {
+		System.out.println("ADDING THE ONE NAMED " + variable.getVarName());
+		
 		return varList.put(variable.getVarName(), variable);
 	}
 	

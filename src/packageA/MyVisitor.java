@@ -13,6 +13,8 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import packageA.JavaParser.BaseDeclarationContext;
+import packageA.JavaParser.ConstDeclarationContext;
+import packageA.JavaParser.ConstantDeclaratorContext;
 import packageA.JavaParser.DataTypeContext;
 import packageA.JavaParser.ExpressionContext;
 import packageA.JavaParser.ExpressionListContext;
@@ -24,6 +26,7 @@ import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
 import packageA.JavaParser.TypeTypeContext;
+import packageA.JavaParser.VariableAssignmentContext;
 import packageA.JavaParser.VariableDeclaratorContext;
 import packageA.JavaParser.VariableDeclaratorIdContext;
 import packageA.JavaParser.VariableInitializerContext;
@@ -153,51 +156,98 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	public static String getDataType(TypeTypeContext typeType) {
 		return null;
 	}
-	
+
+	/*************************************************************************************************/
+	/* 003. VARIABLE INITIALIZATIONS AND DECLARATIONS                                                */
+	/*************************************************************************************************/	
 	@Override
-	public Void visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+	public Void visitFieldDeclaration(FieldDeclarationContext ctx) {
 		int total = ctx.getChildCount();
 		
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
 		String varSimpleName = ctx.variableDeclarator().varName.getText();
 		String varValue = null;
-		String varValueType = null;
 		if(ctx.variableDeclarator().varValue != null) {
 			varValue = ctx.variableDeclarator().varValue.getText();
 		}
 		
+		declareVariable(ctx, varSimpleName, varType, varValue, false);
+		return super.visitFieldDeclaration(ctx);
+	}
+	
+	
+	@Override
+	public Void visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+		int total = ctx.getChildCount();
+
+		String varType = ValueUtil.getDataType(ctx.typeType()); 
+		String varSimpleName = ctx.variableDeclarator().varName.getText();
+		String varValue = null;
+		if(ctx.variableDeclarator().varValue != null) {
+			varValue = ctx.variableDeclarator().varValue.getText();
+		}
+		
+		declareVariable(ctx, varSimpleName, varType, varValue, false);
+		return super.visitLocalVariableDeclaration(ctx);
+	}
+
+	@Override
+	public Void visitConstDeclaration(ConstDeclarationContext ctx) {
+		int total = ctx.getChildCount();
+
+		String conType = ctx.constMod.getText(); 
+		String conSimpleName = ctx.constantDeclarator().conName.getText();
+		String conValue = null;
+		if(ctx.constantDeclarator().conValue != null) {
+			conValue = ctx.constantDeclarator().conValue.getText();
+		}
+		
+		declareVariable(ctx, conSimpleName, conType, conValue, true);
+		return super.visitConstDeclaration(ctx);
+	}
+	
+	public void declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
 		Variable toStore = null;
 		try {
-			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue));
+			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
 		} catch (MultipleVariableDeclarationError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
 			e.printStackTrace();
 		} catch( IncompatibleVariableDataTypeError e) {
-			System.out.println("HEH");
-			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(varType, ValueUtil.inferVarType(ctx.variableDeclarator().varValue.getText())).getErrorMessage());
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(varType, ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
 		}
-		
-//		System.out.println();
-//		System.out.println();
-//		System.out.println();
-//		System.out.println(varType);
-//		System.out.println(varSimpleName);
-//		System.out.println(varValue);
-//		System.out.println(constructVariableScope(ctx));
-//		System.out.println();
-//		System.out.println();
-//		System.out.println();
-//		for(int i = 0; i < total; i++) {
-//			System.out.println(i + ": " + ctx.getChild(i).getText());
-//		}
-//		System.out.println();
-//		System.out.println();
-		
-		return super.visitLocalVariableDeclaration(ctx);
 	}
 
+	/*************************************************************************************************/
+	/* 007. VARIABLE ASSIGNMENT                                                                      */
+	/*************************************************************************************************/
+	@Override
+	public Void visitVariableAssignment(VariableAssignmentContext ctx) {
+		String varSimpleName = ctx.varName.getText();
+		String varValue = ctx.varValue.getText();
+		
+		assignValueToVariable(ctx, varSimpleName, varValue);
+		
+		return super.visitVariableAssignment(ctx);
+	}
+	
+	public void assignValueToVariable(ParserRuleContext ctx, String varSimpleName, String varValue){
+		Variable toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
+		try {
+			VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));
+		} catch (IncompatibleVariableDataTypeError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	/*************************************************************************************************/
+	/* 009. IF STATEMENTS                                                                            */
+	/*************************************************************************************************/	
+	
+	
 	@Override
 	public Void visitVariableInitializer(VariableInitializerContext ctx) {
 //		System.out.println("here at variable initializer");
@@ -243,34 +293,6 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 //		for(int j=0; j<ctx.getChildCount() ;j++)
 //    		System.out.println(j + " : " + ctx.getChild(j).getText());
 		return super.visitDataType(ctx);
-	}
-	
-	
-	@Override
-	public Void visitFieldDeclaration(FieldDeclarationContext ctx) {
-		int total = ctx.getChildCount();
-		
-		for(int i = 0; i < total; i++) {
-			System.out.println(ctx.getChild(i).getText());
-		}
-		System.out.println();
-		System.out.println();
-		
-//		System.out.println("\n\n");
-//		if(! ctx.getChild(2).getText().equals("main")){
-//			System.out.println("return: " + ctx.getChild(1).getText());
-//			System.out.println("name: " + ctx.getChild(2).getText());
-//			System.out.println("param: " + ctx.getChild(3).getText());
-//			System.out.println("content: " + ctx.getChild(4).getText());
-//			
-////			methodList.add(ctx);
-//		}
-//		
-//		for(int i=0; i<methodList.size(); i++)
-//			System.out.println("name: " + methodList.get(i).getChild(2).getText());
-		
-		
-		return super.visitFieldDeclaration(ctx);
 	}
 	
 	@Override

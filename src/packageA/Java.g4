@@ -193,14 +193,14 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   constantModifier* typeType pointerModifier* constantDeclarator (',' constantDeclarator)* ';'
+    :   constMod=constantModifier? conType=typeType pointerModifier* conDeclare=constantDeclarator';'
     ;
     
 pointerModifier
 	:	'*';
 
 constantDeclarator
-    :   Identifier ('[' ']')* '=' variableInitializer
+    :   conName=Identifier ('[' ']')* '=' conValue=variableInitializer
     ;
 
 // see matching of [] comment in methodDeclaratorRest
@@ -252,6 +252,7 @@ dataType
     |   type='char'
     |   type='int'
     |   type='float'
+    |   type='string'
 	;
 	
 typeArguments
@@ -489,9 +490,13 @@ constantExpression
     :   expression
     ;
 
+variableAssignment
+    :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
+    ;
 
 expression
     :   primary	
+    |	variableAssignment
     |   expression '.' Identifier	 
     |   expression '.' 'this'	
 //    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator	
@@ -514,8 +519,7 @@ expression
     |   expression '||' expression	
     |   expression '?' expression ':' expression
     |   <assoc=right> expression	
-        (   '='
-        |   '+='
+        (   '+='
         |   '-='
         |   '*='
         |   '/='

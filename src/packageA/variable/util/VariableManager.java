@@ -4,6 +4,7 @@ import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.function.StringUtil;
 import packageA.storage.Storage;
 import packageA.variable.Value;
 import packageA.variable.Variable;
@@ -20,6 +21,7 @@ public class VariableManager {
 	
 	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError {
 		if(variable.setValue(value)) {
+			System.out.println(variable.getVarName() + "'s value changed to " + value.getValue());
 			return true;
 		}
 		return false;
@@ -36,5 +38,28 @@ public class VariableManager {
 			throw new MultipleVariableDeclarationError(variable.getVarSimpleName());
 		}
 		return Storage.getInstance().addVariable(variable);
+	}
+
+	public static Variable searchVariable(String varSimpleName, String varScope) {
+		String toSearch = "";
+		Variable toEdit = null;
+		
+		do {
+			toSearch = (new StringBuilder()).append(varScope).append("$").append(varSimpleName).toString();				
+			toEdit = getVariable(toSearch);
+			if(toEdit != null) {
+				return toEdit;
+			}
+			varScope = StringUtil.scopeIncrease(varScope);
+		}while(varScope.indexOf("$") != -1); 
+			
+		toSearch = (new StringBuilder()).append(varScope).append("$").append(varSimpleName).toString();
+		toEdit = getVariable(toSearch);
+		if(toEdit != null) {
+			return toEdit;
+		}else {
+			return null;		
+		}
+		
 	}
 }

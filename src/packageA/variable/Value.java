@@ -6,11 +6,13 @@ import packageA.variable.util.ValueUtil;
 public class Value {
 	private String type;
 	private Object value;
+	private boolean isConstant;
 	
-	public Value(String type, Object value) throws IncompatibleVariableDataTypeError {
+	public Value(String type, Object value, boolean isConstant) throws IncompatibleVariableDataTypeError {
 		super();
 		this.type = type;
 		setValue(value);
+		this.isConstant = isConstant; 
 	}
 	
 	public String getType() {
@@ -26,11 +28,15 @@ public class Value {
 	}
 	
 	public void setValue(Object value) throws IncompatibleVariableDataTypeError {
-		String inferredType = ValueUtil.inferVarType(value.toString());
-		if(this.type.equals(inferredType)){
-			this.value = value;
+		if(this.isConstant == false) {
+			String inferredType = ValueUtil.inferVarType(value.toString());
+			if(this.type.equals(inferredType)){
+				this.value = value;
+			}else {
+				throw new IncompatibleVariableDataTypeError(this.type, inferredType);
+			}
 		}else {
-			throw new IncompatibleVariableDataTypeError(this.type, inferredType);
+			System.out.println("CANNOT CHANGE!");
 		}
 	}
 	

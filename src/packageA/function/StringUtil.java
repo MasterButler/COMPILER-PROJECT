@@ -28,4 +28,9 @@ public class StringUtil {
 	public static String constructEscapedString(String s, int formatNo) {
 		return s.replaceAll(DETECT[formatNo], APPEND[formatNo]);
 	}
+	
+	public static String scopeIncrease(String scope) {
+		int topScope = scope.lastIndexOf("$");
+		return scope.substring(0, topScope);
+	}
 }
