@@ -22,6 +22,7 @@ import packageA.JavaParser.ExpressionListContext;
 import packageA.JavaParser.FieldDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationStatementContext;
+import packageA.JavaParser.Math_expressionContext;
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.SetStatementContext;
@@ -233,7 +234,19 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
 		
-		assignValueToVariable(ctx, varSimpleName, varValue);
+		System.out.println("CHILDCOUNT: " + ctx.varValue.getChild(0).getChild(0).getChildCount());
+		for(int i = 0; i < ctx.varValue.getChild(0).getChild(0).getChildCount(); i++) {
+			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
+		}
+		
+		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
+			assignValueToVariable(ctx, varSimpleName, varValue);
+		}
+		else {
+			int ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
+			System.out.println("ANSWER: " + ans);
+			assignValueToVariable(ctx, varSimpleName, ""+ans);
+		}
 		
 		return super.visitVariableAssignment(ctx);
 	}
@@ -330,9 +343,19 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		return super.visitMethodDeclaration(ctx);
 	}
 	
-	
-	
-	
+	@Override
+	public Integer visitMath_expression(Math_expressionContext ctx) {
+		System.out.println("CHILDCOUNT: " + ctx.getChildCount());
+		for(int i = 0; i < ctx.getChildCount(); i++) {
+			System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
+		}
+		
+		if(ctx.getChildCount() == 1)
+			return Integer.parseInt(ctx.getChild(0).getText());
+		else {
+			return (Integer) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+		}
+	}
 	
 	@Override
 	public Integer visitExpression(ExpressionContext ctx) {

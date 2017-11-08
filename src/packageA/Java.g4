@@ -502,8 +502,10 @@ math_expression
 	:	primary   
 	|   primary '[' math_expression ']' 
 	|   primary '(' primaryList? ')'
+	|	'(' left=math_expression op=('*'|'/'|'%') right=math_expression ')' 
+    |   '(' left=math_expression op=('+'|'-') right=math_expression ')'
 	|	left=math_expression op=('*'|'/'|'%') right=math_expression 
-    |   left=math_expression op=('+'|'-') right=math_expression 
+    |   left=math_expression op=('+'|'-') right=math_expression  
     ;
 
 boolean_expression
@@ -549,9 +551,10 @@ expression
 
 
 primary
-    :   '(' expression ')'
+    //:   '(' expression ')'
 //    |   'this'
 //    |   'super'
+   	: constantVal=literal
     |   constantVal=literal
     |   variableVal=Identifier
 //    |   typeType '.' 'class'
