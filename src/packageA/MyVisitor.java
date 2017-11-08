@@ -189,9 +189,45 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		String varValue = null;
 		if(ctx.variableDeclarator().varValue != null) {
 			varValue = ctx.variableDeclarator().varValue.getText();
+			
+			if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getChildCount() == 1) {
+				declareVariable(ctx, varSimpleName, varType, varValue, false);
+			}
+			else if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
+				
+				System.out.println("I CAN'T IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName());
+				
+				System.out.println("UHHH IN EXPRESSION CONTEXT, IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName());
+				if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
+					int ans = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0));
+					System.out.println("ANSWER: " + ans);
+					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
+				}else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
+					System.out.println("BOOLEAN");
+					boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0)) == 1 ? true: false;
+					System.out.println("ANSWER: " + ans);
+					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
+				}
+				
+			}
+//				else {
+//				System.out.println("I WANT TO EVALUATE "+ctx.variableDeclarator().variableInitializer().getText() + " with class of " + ctx.variableDeclarator().variableInitializer().getClass().getSimpleName());
+//				if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
+//					if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
+//						int ans = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0));
+//						System.out.println("ANSWER: " + ans);
+//						assignValueToVariable(ctx, varSimpleName, ""+ans);					
+//					}else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
+//						boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0)) == 1 ? true: false;
+//						System.out.println("ANSWER: " + ans);
+//						assignValueToVariable(ctx, varSimpleName, ""+ans);										
+//					}
+//					
+//				}
+//			}
+		}else{
+			declareVariable(ctx, varSimpleName, varType, varValue, false);
 		}
-		
-		declareVariable(ctx, varSimpleName, varType, varValue, false);
 		return super.visitLocalVariableDeclaration(ctx);
 	}
 
@@ -241,11 +277,20 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		
 		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
 			assignValueToVariable(ctx, varSimpleName, varValue);
-		}
-		else {
-			int ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
-			System.out.println("ANSWER: " + ans);
-			assignValueToVariable(ctx, varSimpleName, ""+ans);
+		}else {
+			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
+			if(ctx.varValue.getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
+				if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
+					int ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
+					System.out.println("ANSWER: " + ans);
+					assignValueToVariable(ctx, varSimpleName, ""+ans);					
+				}else if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
+					boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.varValue.getChild(0).getChild(0)) == 1 ? true: false;
+					System.out.println("ANSWER: " + ans);
+					assignValueToVariable(ctx, varSimpleName, ""+ans);										
+				}
+				
+			}
 		}
 		
 		return super.visitVariableAssignment(ctx);
@@ -283,22 +328,36 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	@Override
 	public Integer visitBoolean_expression(Boolean_expressionContext ctx) {
 		
+        for(int i = 0; i < ctx.getChildCount(); i++) {
+            System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
+        }
+
 		
-//		System.out.println("THIS IS: " + ctx.getText());
-//		if(ctx.op != null) {
-//			super.visitBoolean_expression(ctx);
-//			System.out.println(ctx.left.getText());
-//			System.out.println(ctx.op.getText());
-//			System.out.println(ctx.right.getText());
-//			System.out.println("\t" + BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.left.getText())));
-//			return BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.left.getText())) == true ? 1 : 0;
-//		}else {
-//			System.out.println(ctx.getText());
-//		}
-//		System.out.println();
+		System.out.println("THIS IS: " + ctx.getText());
+		if(ctx.getChildCount() == 1) {
+			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
+			return Integer.valueOf(ctx.getText());
+		}else {
+			return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+//			if(ctx.op != null) {
+//				
+//				if(ctx.left.getChildCount() == 1 && ctx.right.getChildCount() == 1) {
+//					System.out.println(ctx.left.getChildCount() + " " + ctx.left.getText());
+//					System.out.println(ctx.op.getText());
+//					System.out.println(ctx.right.getChildCount() + " " + ctx.right.getText());
+//					System.out.println("\t" + ctx.left.getText() + ctx.op.getText() + ctx.right.getText() + "? " + BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.right.getText())));
+//					return BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.right.getText())) == true ? 1 : 0;
+//				}else {
+//					if(ctx.left.getChildCount() != 1) {
+//						return visitBoolean_expression(ctx.left);
+//					}
+//					if(ctx.right.getChildCount() != 1) {
+//						return visitBoolean_expression(ctx.right);
+//					}
+//				}
+//			}	
+		}
 //		
-//		return 0;
-		return super.visitBoolean_expression(ctx);
 	}
 	
 	@Override

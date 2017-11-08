@@ -34,6 +34,7 @@ public class Value {
 				if(this.type.equals(inferredType)){
 					this.value = value;
 				}else {
+					System.out.println("CAN'T UNDERSTAND " + value.toString());
 					throw new IncompatibleVariableDataTypeError(this.type, inferredType);
 				}
 			}

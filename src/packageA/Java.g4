@@ -394,10 +394,14 @@ localVariableDeclaration
     :   constantModifier? typeType variableDeclarator
     ;
 
+conditional
+	: 'if' parExpression statement ('else' statement)?
+	;
+
 statement
     :   set
 //    |   ASSERT expression (':' expression)? ';'
-    |   'if' parExpression statement ('else' statement)?
+    |   conditional
     |   'for' '(' forControl ')' statement
     |   'while' parExpression statement
     |   'dowhile' parExpression statement
