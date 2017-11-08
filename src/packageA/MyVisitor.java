@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import packageA.JavaParser.BaseDeclarationContext;
+import packageA.JavaParser.Boolean_expressionContext;
 import packageA.JavaParser.ConstDeclarationContext;
 import packageA.JavaParser.ConstantDeclaratorContext;
 import packageA.JavaParser.DataTypeContext;
@@ -34,10 +35,12 @@ import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.function.BooleanUtil;
 import packageA.function.FunctionDictionary;
+import packageA.function.MathUtil;
 import packageA.function.StringUtil;
 
-public class MyVisitor extends JavaBaseVisitor<Void> {
+public class MyVisitor extends JavaBaseVisitor<Integer> {
 
 	public static final String REFERENCE_STATEMENT_CONTEXT = "stmt";
 	public static final String REFERENCE_SET_STATEMENT_CONTEXT = "set_stmt";
@@ -149,7 +152,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	}
 
 	@Override
-    public Void visitStatement(StatementContext ctx) {
+    public Integer visitStatement(StatementContext ctx) {
     	return super.visitStatement(ctx);
     }
 	
@@ -161,7 +164,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	/* 003. VARIABLE INITIALIZATIONS AND DECLARATIONS                                                */
 	/*************************************************************************************************/	
 	@Override
-	public Void visitFieldDeclaration(FieldDeclarationContext ctx) {
+	public Integer visitFieldDeclaration(FieldDeclarationContext ctx) {
 		int total = ctx.getChildCount();
 		
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
@@ -177,7 +180,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	
 	@Override
-	public Void visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+	public Integer visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
 		int total = ctx.getChildCount();
 
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
@@ -192,7 +195,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	}
 
 	@Override
-	public Void visitConstDeclaration(ConstDeclarationContext ctx) {
+	public Integer visitConstDeclaration(ConstDeclarationContext ctx) {
 		int total = ctx.getChildCount();
 
 		String conType = ctx.constMod.getText(); 
@@ -206,11 +209,12 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		return super.visitConstDeclaration(ctx);
 	}
 	
-	public void declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
+	public Integer declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
 		Variable toStore = null;
 		try {
 			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
+			return 0;
 		} catch (MultipleVariableDeclarationError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
 			e.printStackTrace();
@@ -218,13 +222,14 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(varType, ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
 		}
+		return -1;
 	}
 
 	/*************************************************************************************************/
 	/* 007. VARIABLE ASSIGNMENT                                                                      */
 	/*************************************************************************************************/
 	@Override
-	public Void visitVariableAssignment(VariableAssignmentContext ctx) {
+	public Integer visitVariableAssignment(VariableAssignmentContext ctx) {
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
 		
@@ -233,14 +238,16 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 		return super.visitVariableAssignment(ctx);
 	}
 	
-	public void assignValueToVariable(ParserRuleContext ctx, String varSimpleName, String varValue){
+	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, String varValue){
 		Variable toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
 		try {
 			VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));
+			return 0;
 		} catch (IncompatibleVariableDataTypeError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
 		}
+		return -1;
 	}
 	
 	/*************************************************************************************************/
@@ -249,7 +256,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	
 	@Override
-	public Void visitVariableInitializer(VariableInitializerContext ctx) {
+	public Integer visitVariableInitializer(VariableInitializerContext ctx) {
 //		System.out.println("here at variable initializer");
 //		for(int j=0; j<ctx.getChildCount() ;j++)
 //    		System.out.println(j + " : " + ctx.getChild(j).getText());
@@ -257,9 +264,32 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	}
 	
 	
+	/*************************************************************************************************/
+	/* 011. BOOLEAN EXPRESSIONS                                                                      */
+	/*************************************************************************************************/	
+	@Override
+	public Integer visitBoolean_expression(Boolean_expressionContext ctx) {
+		
+		
+//		System.out.println("THIS IS: " + ctx.getText());
+//		if(ctx.op != null) {
+//			super.visitBoolean_expression(ctx);
+//			System.out.println(ctx.left.getText());
+//			System.out.println(ctx.op.getText());
+//			System.out.println(ctx.right.getText());
+//			System.out.println("\t" + BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.left.getText())));
+//			return BooleanUtil.solve(Integer.valueOf(ctx.left.getText()), ctx.op.getText(), Integer.valueOf(ctx.left.getText())) == true ? 1 : 0;
+//		}else {
+//			System.out.println(ctx.getText());
+//		}
+//		System.out.println();
+//		
+//		return 0;
+		return super.visitBoolean_expression(ctx);
+	}
 	
 	@Override
-	public Void visitVariableDeclarator(VariableDeclaratorContext ctx) {
+	public Integer visitVariableDeclarator(VariableDeclaratorContext ctx) {
 //		System.out.println("here at variable declarator with context" + ctx.getText());
 //		
 //		if(ctx.getChildCount() >=2)
@@ -275,7 +305,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	
 	@Override
-	public Void visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+	public Integer visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
 		System.out.println("here at variable id");
 		
 		
@@ -286,7 +316,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	}
 	
 	@Override
-	public Void visitDataType(DataTypeContext ctx) {
+	public Integer visitDataType(DataTypeContext ctx) {
 //		System.out.println("here at variable datatype");
 //		tempType = ctx.getChild(0).getText();
 //		
@@ -296,7 +326,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	}
 	
 	@Override
-	public Void visitMethodDeclaration(MethodDeclarationContext ctx) {
+	public Integer visitMethodDeclaration(MethodDeclarationContext ctx) {
 		return super.visitMethodDeclaration(ctx);
 	}
 	
@@ -305,7 +335,7 @@ public class MyVisitor extends JavaBaseVisitor<Void> {
 	
 	
 	@Override
-	public Void visitExpression(ExpressionContext ctx) {
+	public Integer visitExpression(ExpressionContext ctx) {
 		
 		
 //		System.out.println();

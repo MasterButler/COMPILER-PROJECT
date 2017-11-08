@@ -506,6 +506,16 @@ math_expression
     |   left=math_expression op=('+'|'-') right=math_expression 
     ;
 
+boolean_expression
+	:	primary   
+	|   primary '[' math_expression ']' 
+	|   primary '(' primaryList? ')'
+	|	left=boolean_expression (op='==' | op='!=') right=boolean_expression	
+    |   left=boolean_expression op='&&' right=boolean_expression	
+    |   left=boolean_expression op='||' right=boolean_expression	
+    |   left=boolean_expression (op='<=' | op='>=' | op='>' | op='<') right=boolean_expression
+    ;
+
 expression
     :   primary	
     |   expression '[' expression ']'	
@@ -523,13 +533,10 @@ expression
     |   expression ('++' | '--')	
 //    |   ('+'|'-'|'++'|'--'|'!') expression	
     |   ('-'|'!') expression
-    |	math_expression	
-    |   left=expression ('<=' | '>=' | '>' | '<') right=expression 
+    |	math_expression	 
+    |	boolean_expression
     |   expression 'instanceof' typeType	
-    |   expression ('==' | '!=') expression	
     |   expression '^' expression	
-    |   expression '&&' expression	
-    |   expression '||' expression	
     |   expression '?' expression ':' expression
     |   <assoc=right> expression	
         (   '+='
