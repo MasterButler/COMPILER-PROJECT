@@ -436,12 +436,27 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 					break;
                 case FunctionDictionary.FUNCTION_SCAN:
                 	System.out.println("SCANNING");
+                	PopUpGUI p = new PopUpGUI();
+            		
+            		System.out.println("showed ui");
+            		System.out.println("heree" + p.getInput());
+            		
+            		boolean temp = true;
+            		while(temp){
+            			if(!p.getInput().equals("")){
+            				temp = false;
+            				//get input here
+            				System.out.println("heree" + p.getInput());
+            			}
+            		}
                 	if(i + 2 < ctx.getChildCount() && ctx.getChild(i+2).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())){
-                		
+                		System.out.println("HERE");
                 		String varScope = constructVariableScope(ctx);
                 		String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
                 		System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
                 		System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
+                		
+                		
 //                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
                 	}
                     break;
