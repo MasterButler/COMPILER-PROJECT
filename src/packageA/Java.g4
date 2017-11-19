@@ -395,7 +395,7 @@ localVariableDeclaration
     ;
 
 conditional
-	: 'if' parExpression statement ('else' statement)?
+	: 'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
 	;
 
 statement
@@ -418,6 +418,7 @@ statement
     |   Identifier ':' statement
     | constDeclaration
     | 'output' parExpression ';'
+    | 'input' parExpression ';'
     | methodDeclaration
     ;
 

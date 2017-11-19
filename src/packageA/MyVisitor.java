@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import packageA.JavaParser.BaseDeclarationContext;
 import packageA.JavaParser.Boolean_expressionContext;
+import packageA.JavaParser.ConditionalContext;
 import packageA.JavaParser.ConstDeclarationContext;
 import packageA.JavaParser.ConstantDeclaratorContext;
 import packageA.JavaParser.DataTypeContext;
@@ -152,10 +153,49 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		this.tree = tree;
 	}
 
-	@Override
+    @Override
     public Integer visitStatement(StatementContext ctx) {
-    	return super.visitStatement(ctx);
+    
+        int total = ctx.getChildCount();
+        for(int i = 0; i < total; i++) {
+            
+            System.out.println("OUTSIDE");
+            System.out.println(ctx.getChild(i).getText());
+            switch(ctx.getChild(i).getText()) {
+                case FunctionDictionary.FUNCTION_PRINT:
+                    System.out.println("INSIDE");
+                    if(i+1 < ctx.getChildCount()) {
+                        //System.out.println("ADDING " + ctx.getChild(i+2).getText());
+                        OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+1).getChild(1).getText())));    
+                    }
+                    break;
+                case FunctionDictionary.FUNCTION_SCAN:
+                    System.out.println("SCANNING");
+                    if(i + 1 < ctx.getChildCount()
+//                     && ctx.getChild(i+1).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())
+                     ){
+                        
+//                        String varScope = constructVariableScope(ctx);
+//                        String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
+//                        System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
+//                        System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
+//                        InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
+                    }
+                    break;
+//                case FunctionDictionary.FUNCTION_FOR_LOOP:
+//                    System.out.println();
+//                    for(int j=0; j<ctx.getChildCount() ;j++)
+//                        System.out.println(j + " : " + ctx.getChild(j));
+//                        
+//                    break;
+                default: System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+            }
+        }
+        
+    
+        return super.visitStatement(ctx);
     }
+
 	
 	public static String getDataType(TypeTypeContext typeType) {
 		return null;
@@ -321,6 +361,19 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		return super.visitVariableInitializer(ctx);
 	}
 	
+    @Override
+    public Integer visitConditional(ConditionalContext ctx) {
+        boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
+        if(isExecuteIf){
+            if(ctx.ifAction.getClass().getSimpleName().equals(ConditionalContext.class.getSimpleName())){
+                //visitConditional((ConditionalContext)ctx.ifAction);
+            }else{
+                
+            }
+        }
+        return super.visitConditional(ctx);
+    }
+
 	
 	/*************************************************************************************************/
 	/* 011. BOOLEAN EXPRESSIONS                                                                      */
@@ -336,7 +389,13 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		System.out.println("THIS IS: " + ctx.getText());
 		if(ctx.getChildCount() == 1) {
 			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
-			return Integer.valueOf(ctx.getText());
+            if(ctx.getText().equals("true")){
+                return 1;
+            }else if(ctx.getText().equals("false")){
+                return 0;
+            }else{
+                return Integer.valueOf(ctx.getText());
+            }
 		}else {
 			return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
 //			if(ctx.op != null) {
@@ -359,6 +418,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		}
 //		
 	}
+	
 	
 	@Override
 	public Integer visitVariableDeclarator(VariableDeclaratorContext ctx) {
