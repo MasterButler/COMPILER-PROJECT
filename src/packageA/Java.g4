@@ -395,7 +395,8 @@ localVariableDeclaration
     ;
 
 conditional
-	: 'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
+	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
+	|	'while' '(' condition=boolean_expression ')' ifAction=statement?
 	;
 
 statement
@@ -403,7 +404,7 @@ statement
 //    |   ASSERT expression (':' expression)? ';'
     |   conditional
     |   'for' '(' forControl ')' statement
-    |   'while' parExpression statement
+//    |   'while' parExpression statement
     |   'dowhile' parExpression statement
 //    |   'try' set (catchClause+ finallySet? | finallySet)
 //    |   'try' resourceSpecification set catchClause* finallySet?

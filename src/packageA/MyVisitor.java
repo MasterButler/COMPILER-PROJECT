@@ -159,29 +159,27 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
         int total = ctx.getChildCount();
         for(int i = 0; i < total; i++) {
             
-            System.out.println("OUTSIDE");
+//            System.out.println("OUTSIDE");
             System.out.println(ctx.getChild(i).getText());
             switch(ctx.getChild(i).getText()) {
                 case FunctionDictionary.FUNCTION_PRINT:
-                    System.out.println("INSIDE");
+//                    System.out.println("INSIDE");
                     if(i+1 < ctx.getChildCount()) {
                         //System.out.println("ADDING " + ctx.getChild(i+2).getText());
                     	if(ctx.getChild(i+1).getChild(1).getText().charAt(0) == '"')
                     		OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+1).getChild(1).getText())));
                     	else{
                     		Variable v = VariableManager.searchVariable(ctx.getChild(i+1).getChild(1).getText(), constructVariableScope(ctx));
-                    		System.out.println("fetching " + ctx.getChild(i+1).getChild(1).getText());
-                    		System.out.println("scope: " + constructVariableScope(ctx));
                     		if(v != null)
                     			OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(v.getValue().getValue().toString() + "\n")));
                     	}
                     }
                     break;
                 case FunctionDictionary.FUNCTION_SCAN:
-                    System.out.println("SCANNING");
+//                    System.out.println("SCANNING");
                     PopUpGUI pg = new PopUpGUI();
                     String input = pg.getInput();
-                    System.out.println("input is: " + input);
+//                    System.out.println("input is: " + input);
                     if(i + 1 < ctx.getChildCount()
 //                     && ctx.getChild(i+1).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())
                      ){
@@ -199,7 +197,8 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //                        System.out.println(j + " : " + ctx.getChild(j));
 //                        
 //                    break;
-                default: System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+                default: 
+//                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }
         }
         
@@ -235,7 +234,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	@Override
 	public Integer visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
-		System.out.println("LOCAL VAR");
+//		System.out.println("LOCAL VAR");
 		int total = ctx.getChildCount();
 
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
@@ -245,22 +244,22 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			varValue = ctx.variableDeclarator().varValue.getText();
 			
 			if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getChildCount() == 1) {
-				System.out.println("DECLARING 1 : " + varValue);
+//				System.out.println("DECLARING 1 : " + varValue);
 				declareVariable(ctx, varSimpleName, varType, varValue, false);
 			}
 			else if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
-				System.out.println("DECLARING 2");
-				System.out.println("I CAN'T IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName());
-				
-				System.out.println("UHHH IN EXPRESSION CONTEXT, IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName());
+//				System.out.println("DECLARING 2");
+//				System.out.println("I CAN'T IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName());
+//				
+//				System.out.println("UHHH IN EXPRESSION CONTEXT, IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName());
 				if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
 					int ans = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0));
-					System.out.println("ANSWER: " + ans);
+//					System.out.println("ANSWER: " + ans);
 					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
 				}else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
-					System.out.println("BOOLEAN");
+//					System.out.println("BOOLEAN");
 					boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0)) == 1 ? true: false;
-					System.out.println("ANSWER: " + ans);
+//					System.out.println("ANSWER: " + ans);
 					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
 				}
 				
@@ -307,7 +306,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			
 			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
-			System.out.println("done adding var");
+//			System.out.println("done adding var");
 			return 0;
 		} catch (MultipleVariableDeclarationError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
@@ -324,27 +323,27 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/*************************************************************************************************/
 	@Override
 	public Integer visitVariableAssignment(VariableAssignmentContext ctx) {
-		System.out.println("HERE AT VARIABLES");
+//		System.out.println("HERE AT VARIABLES");
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
 		
-		System.out.println("CHILDCOUNT: " + ctx.varValue.getChild(0).getChild(0).getChildCount());
-		for(int i = 0; i < ctx.varValue.getChild(0).getChild(0).getChildCount(); i++) {
-			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
-		}
+//		System.out.println("CHILDCOUNT: " + ctx.varValue.getChild(0).getChild(0).getChildCount());
+//		for(int i = 0; i < ctx.varValue.getChild(0).getChild(0).getChildCount(); i++) {
+//			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
+//		}
 		
 		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
 			assignValueToVariable(ctx, varSimpleName, varValue);
 		}else {
-			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
+//			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
 			if(ctx.varValue.getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
 				if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
 					int ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
-					System.out.println("ANSWER: " + ans);
+//					System.out.println("ANSWER: " + ans);
 					assignValueToVariable(ctx, varSimpleName, ""+ans);					
 				}else if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
 					boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.varValue.getChild(0).getChild(0)) == 1 ? true: false;
-					System.out.println("ANSWER: " + ans);
+//					System.out.println("ANSWER: " + ans);
 					assignValueToVariable(ctx, varSimpleName, ""+ans);										
 				}
 				
@@ -381,23 +380,38 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
     @Override
     public Integer visitConditional(ConditionalContext ctx) {
-    	for(int i=0; i<ctx.getChildCount(); i++)
-    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
-        boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
-        System.out.println("CONDITIONAL FOUND : " + isExecuteIf );
-        if(isExecuteIf){
-        	System.out.println("here trying");
-        	visitStatement(ctx.ifAction);
-        	/*
-            if(ctx.ifAction.getClass().getSimpleName().equals(ConditionalContext.class.getSimpleName())){
-            	System.out.println("here trying");
+//    	for(int i=0; i<ctx.getChildCount(); i++)
+//    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
+    	
+    	if(ctx.getChild(0).getText().equals("if")){
+    		boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
+//            System.out.println("CONDITIONAL FOUND : " + isExecuteIf );
+            if(isExecuteIf){
+//            	System.out.println("here trying");
             	visitStatement(ctx.ifAction);
-                //visitConditional((ConditionalContext)ctx.ifAction);
-            }else{
-                
+            	/*
+                if(ctx.ifAction.getClass().getSimpleName().equals(ConditionalContext.class.getSimpleName())){
+                	System.out.println("here trying");
+                	visitStatement(ctx.ifAction);
+                    //visitConditional((ConditionalContext)ctx.ifAction);
+                }else{
+                    
+                }
+                */
             }
-            */
-        }
+    	}
+    	else if(ctx.getChild(0).getText().equals("while")){
+    		Boolean isExecuteWhile = true;
+    		while(isExecuteWhile){
+    			System.out.println("\t\tWHILE FOUND : " + isExecuteWhile );
+	    			System.out.println("\t\there trying");
+	            	visitStatement(ctx.ifAction);
+	            	isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
+            	
+    		}
+    		System.out.println("DONE DONE DONE");
+    	}
+        
         return super.visitConditional(ctx);
     }
 
@@ -408,26 +422,31 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	@Override
 	public Integer visitBoolean_expression(Boolean_expressionContext ctx) {
 		
-        for(int i = 0; i < ctx.getChildCount(); i++) {
-            System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
-        }
+		
+//        for(int i = 0; i < ctx.getChildCount(); i++) {
+//            System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
+//        }
 
 		
-		System.out.println("THIS IS: " + ctx.getText());
+//		System.out.println("THIS IS: " + ctx.getText());
 		if(ctx.getChildCount() == 1) {
-			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
+//			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
             if(ctx.getText().equals("true")){
-            	System.out.println("true");
                 return 1;
             }else if(ctx.getText().equals("false")){
-            	System.out.println("VALUE IS false");
                 return 0;
             }else{
+            	Variable v = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
+            	
+            	if(v != null){
+            		System.out.println("V : " + v.getValue().getValue().toString());
+        			return Integer.parseInt(v.getValue().getValue().toString());
+            	}
+        		
                 return Integer.valueOf(ctx.getText());
             }
 		}else {
 			int sample = BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
-			System.out.println("final answer: " + sample);
 			return sample;
 //			if(ctx.op != null) {
 //				
@@ -469,7 +488,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	@Override
 	public Integer visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
-		System.out.println("here at variable id");
+//		System.out.println("here at variable id");
 		
 		
 //	
@@ -495,13 +514,18 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	@Override
 	public Integer visitMath_expression(Math_expressionContext ctx) {
-		System.out.println("CHILDCOUNT: " + ctx.getChildCount());
-		for(int i = 0; i < ctx.getChildCount(); i++) {
-			System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
-		}
+//		System.out.println("CHILDCOUNT: " + ctx.getChildCount());
+//		for(int i = 0; i < ctx.getChildCount(); i++) {
+//			System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
+//		}
 		
-		if(ctx.getChildCount() == 1)
+		if(ctx.getChildCount() == 1){
+			Variable v = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
+        	if(v != null)
+    			return Integer.parseInt(v.getValue().getValue().toString());
+        	
 			return Integer.parseInt(ctx.getChild(0).getText());
+		}
 		else {
 			return (Integer) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
 		}
@@ -520,33 +544,33 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			
 			switch(ctx.getChild(i).getText()) {
 				case FunctionDictionary.FUNCTION_PRINT:
-					System.out.println("PRINTING HERE");
+//					System.out.println("PRINTING HERE");
 					if(i+2 < ctx.getChildCount()) {
 						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
 						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
 					}
 					break;
                 case FunctionDictionary.FUNCTION_SCAN:
-                	System.out.println("SCANNING");
+//                	System.out.println("SCANNING");
                 	PopUpGUI p = new PopUpGUI();
             		
-            		System.out.println("showed ui");
-            		System.out.println("heree" + p.getInput());
+//            		System.out.println("showed ui");
+//            		System.out.println("heree" + p.getInput());
             		
             		boolean temp = true;
             		while(temp){
             			if(!p.getInput().equals("")){
             				temp = false;
             				//get input here
-            				System.out.println("heree" + p.getInput());
+//            				System.out.println("heree" + p.getInput());
             			}
             		}
                 	if(i + 2 < ctx.getChildCount() && ctx.getChild(i+2).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())){
-                		System.out.println("HERE");
+//                		System.out.println("HERE");
                 		String varScope = constructVariableScope(ctx);
                 		String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
-                		System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
-                		System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
+//                		System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
+//                		System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
                 		
                 		
 //                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
@@ -558,7 +582,8 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //                		System.out.println(j + " : " + ctx.getChild(j));
 //                		
 //                	break;
-                default: System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+                default: 
+//                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
 			}
 		}
 		
@@ -571,7 +596,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	public String constructVariableScope(ParserRuleContext ctx) {
-		System.out.println("here at var scope");
+//		System.out.println("here at var scope");
 		ParserRuleContext parentFinder;
 		StringBuilder varName = new StringBuilder();
 		parentFinder = ctx.getParent();
