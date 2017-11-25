@@ -166,7 +166,15 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                     System.out.println("INSIDE");
                     if(i+1 < ctx.getChildCount()) {
                         //System.out.println("ADDING " + ctx.getChild(i+2).getText());
-                        OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+1).getChild(1).getText())));    
+                    	if(ctx.getChild(i+1).getChild(1).getText().charAt(0) == '"')
+                    		OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+1).getChild(1).getText())));
+                    	else{
+                    		Variable v = VariableManager.searchVariable(ctx.getChild(i+1).getChild(1).getText(), constructVariableScope(ctx));
+                    		System.out.println("fetching " + ctx.getChild(i+1).getChild(1).getText());
+                    		System.out.println("scope: " + constructVariableScope(ctx));
+                    		if(v != null)
+                    			OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(v.getValue().getValue().toString() + "\n")));
+                    	}
                     }
                     break;
                 case FunctionDictionary.FUNCTION_SCAN:
@@ -195,6 +203,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     
         return super.visitStatement(ctx);
     }
+    
 
 	
 	public static String getDataType(TypeTypeContext typeType) {
@@ -206,6 +215,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/*************************************************************************************************/	
 	@Override
 	public Integer visitFieldDeclaration(FieldDeclarationContext ctx) {
+		System.out.println("TRYING TO DECLARE");
 		int total = ctx.getChildCount();
 		
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
@@ -222,6 +232,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	@Override
 	public Integer visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+		System.out.println("LOCAL VAR");
 		int total = ctx.getChildCount();
 
 		String varType = ValueUtil.getDataType(ctx.typeType()); 
@@ -231,10 +242,11 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			varValue = ctx.variableDeclarator().varValue.getText();
 			
 			if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getChildCount() == 1) {
+				System.out.println("DECLARING 1 : " + varValue);
 				declareVariable(ctx, varSimpleName, varType, varValue, false);
 			}
 			else if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
-				
+				System.out.println("DECLARING 2");
 				System.out.println("I CAN'T IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName());
 				
 				System.out.println("UHHH IN EXPRESSION CONTEXT, IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName());
@@ -289,8 +301,10 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	public Integer declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
 		Variable toStore = null;
 		try {
+			
 			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
+			System.out.println("done adding var");
 			return 0;
 		} catch (MultipleVariableDeclarationError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
@@ -307,6 +321,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/*************************************************************************************************/
 	@Override
 	public Integer visitVariableAssignment(VariableAssignmentContext ctx) {
+		System.out.println("HERE AT VARIABLES");
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
 		

@@ -525,6 +525,7 @@ boolean_expression
 
 expression
     :   primary	
+    |   expression '"' expression '"'	
     |   expression '[' expression ']'	
     |   expression '(' expressionList? ')'
     |	variableAssignment
