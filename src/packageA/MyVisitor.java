@@ -179,6 +179,9 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                     break;
                 case FunctionDictionary.FUNCTION_SCAN:
                     System.out.println("SCANNING");
+                    PopUpGUI pg = new PopUpGUI();
+                    String input = pg.getInput();
+                    System.out.println("input is: " + input);
                     if(i + 1 < ctx.getChildCount()
 //                     && ctx.getChild(i+1).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())
                      ){
@@ -378,13 +381,22 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
     @Override
     public Integer visitConditional(ConditionalContext ctx) {
+    	for(int i=0; i<ctx.getChildCount(); i++)
+    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
         boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
+        System.out.println("CONDITIONAL FOUND : " + isExecuteIf );
         if(isExecuteIf){
+        	System.out.println("here trying");
+        	visitStatement(ctx.ifAction);
+        	/*
             if(ctx.ifAction.getClass().getSimpleName().equals(ConditionalContext.class.getSimpleName())){
+            	System.out.println("here trying");
+            	visitStatement(ctx.ifAction);
                 //visitConditional((ConditionalContext)ctx.ifAction);
             }else{
                 
             }
+            */
         }
         return super.visitConditional(ctx);
     }
@@ -405,14 +417,18 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		if(ctx.getChildCount() == 1) {
 			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
             if(ctx.getText().equals("true")){
+            	System.out.println("true");
                 return 1;
             }else if(ctx.getText().equals("false")){
+            	System.out.println("VALUE IS false");
                 return 0;
             }else{
                 return Integer.valueOf(ctx.getText());
             }
 		}else {
-			return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+			int sample = BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+			System.out.println("final answer: " + sample);
+			return sample;
 //			if(ctx.op != null) {
 //				
 //				if(ctx.left.getChildCount() == 1 && ctx.right.getChildCount() == 1) {
@@ -504,6 +520,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			
 			switch(ctx.getChild(i).getText()) {
 				case FunctionDictionary.FUNCTION_PRINT:
+					System.out.println("PRINTING HERE");
 					if(i+2 < ctx.getChildCount()) {
 						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
 						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
