@@ -169,6 +169,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
             switch(ctx.getChild(i).getText()) {
                 case FunctionDictionary.FUNCTION_PRINT:
 //                    System.out.println("INSIDE");
+                	/*
                     if(i+1 < ctx.getChildCount()) {
                         //System.out.println("ADDING " + ctx.getChild(i+2).getText());
                     	if(ctx.getChild(i+1).getChild(1).getText().charAt(0) == '"')
@@ -183,7 +184,34 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 							}
                     	}
                     }
-                    break;
+                    */
+                	String argument = ctx.getChild(i+1).getChild(1).getText();
+                	String[] segments = argument.split("\\+");
+                	StringBuilder sb = new StringBuilder();
+                	
+                	for(int j = 0; j < segments.length; j++) {
+                		System.out.println("SEGMENT:dick" + segments[j] + "dick");
+                		if(segments[j].charAt(0) == '"') {
+                			sb.append(segments[j]);
+                		} else
+							try {
+								if(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)) != null) {
+									System.out.println("VARIABLE");
+									sb.append(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)).getValue().getValue().toString());
+								}
+								else {
+									System.out.println("NANI");
+									sb.append(visit(segments[j]));
+								}
+							} catch (VariableNotFoundError e) {
+								OutputCollector.getInstance().append("No such variable found");
+								
+							}
+                		
+                		System.out.println(segments[j]);
+                	}
+                	OutputCollector.getInstance().append(sb.toString());
+                	return 0;
                 case FunctionDictionary.FUNCTION_SCAN:
 //                    System.out.println("SCANNING");
                     PopUpGUI pg = new PopUpGUI();
@@ -199,7 +227,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //                        System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
 //                        InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
                     }
-                    break;
+                    return 0;
 //                case FunctionDictionary.FUNCTION_FOR_LOOP:
 //                    System.out.println();
 //                    for(int j=0; j<ctx.getChildCount() ;j++)
