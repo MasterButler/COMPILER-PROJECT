@@ -521,6 +521,10 @@ boolean_expression
 	:	primary   
 	|   primary '[' math_expression ']' 
 	|   primary '(' primaryList? ')'
+	|	'(' left=boolean_expression (op='==' | op='!=') right=boolean_expression ')'	
+    |   '(' left=boolean_expression op='&&' right=boolean_expression ')'
+    |   '(' left=boolean_expression op='||' right=boolean_expression ')'
+    |   '(' left=boolean_expression (op='<=' | op='>=' | op='>' | op='<') right=boolean_expression ')'
 	|	left=boolean_expression (op='==' | op='!=') right=boolean_expression	
     |   left=boolean_expression op='&&' right=boolean_expression	
     |   left=boolean_expression op='||' right=boolean_expression	

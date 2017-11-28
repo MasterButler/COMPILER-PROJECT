@@ -539,7 +539,11 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     				return Integer.parseInt(ctx.getChild(0).getText());
     			}else {
     				try {
-    					return Integer.parseInt(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+    					if(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString().equals("true")) {
+    						return 1;
+    					}
+    					else 
+    						return 0;
     				} catch (VariableNotFoundError e) {
     					e.printStackTrace();
     				}			
