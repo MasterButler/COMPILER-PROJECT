@@ -380,6 +380,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
     @Override
     public Integer visitConditional(ConditionalContext ctx) {
+    	System.out.println("VISITCONDITIONAL");
 //    	for(int i=0; i<ctx.getChildCount(); i++)
 //    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
     	
@@ -388,7 +389,6 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     		boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
 //            System.out.println("CONDITIONAL FOUND : " + isExecuteIf );
             if(isExecuteIf){
-            	System.out.println("FUCK OFFF STATEMENT");
 //            	System.out.println("here trying");
             	return visitStatement(ctx.ifAction);
             	/*
@@ -408,10 +408,34 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     		while(isExecuteWhile){
     			System.out.println("\t\tWHILE FOUND : " + isExecuteWhile );
 	    			System.out.println("\t\there trying");
-	    			isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
 	            	visitStatement(ctx.ifAction);
+	            	isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
     		}
     		System.out.println("DONE DONE DONE");
+    	}
+    	else if(ctx.getChild(0).getText().equals("dowhile")){
+    		System.out.println("DOWHILE STATEMENT");
+    		Boolean isExecuteWhile = true;
+    		do{
+    			System.out.println("\t\tWHILE FOUND : " + isExecuteWhile );
+	    			System.out.println("\t\there trying");
+	            	visitStatement(ctx.ifAction);
+	            	isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
+    		}while(isExecuteWhile);
+    		System.out.println("DONE DONE DONE");
+    	}
+    	else if(ctx.getChild(0).getText().equals("for")) {
+    		//System.out.println("FUCK SHIT" + ctx.getChild(2).getChild(0).getText());
+    		visit(ctx.control.getChild(0));
+    		Boolean isExecuteWhile = true;
+    		
+    		while(isExecuteWhile) {
+    			System.out.println("\t\there trying");
+            	visitStatement(ctx.ifAction);
+            	visit(ctx.control.getChild(4));
+            	System.out.println("CONDITION" + ctx.control.condition.getText());
+            	isExecuteWhile = visitBoolean_expression(ctx.control.condition) == 1 ? true: false;
+    		}
     	}
     	else {
     		return super.visitConditional(ctx);

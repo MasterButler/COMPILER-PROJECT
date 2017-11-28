@@ -397,15 +397,17 @@ localVariableDeclaration
 conditional
 	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
 	|	'while' '(' condition=boolean_expression ')' ifAction=statement?
+	|   'dowhile' '(' condition=boolean_expression ')' ifAction=statement?
+	|   'for' '(' control=forControl ')' ifAction=statement?
 	;
 
 statement
     :   set
 //    |   ASSERT expression (':' expression)? ';'
     |   conditional
-    |   'for' '(' forControl ')' statement
+//    |   'for' '(' forControl ')' statement
 //    |   'while' parExpression statement
-    |   'dowhile' parExpression statement
+//    |   'dowhile' parExpression statement
 //    |   'try' set (catchClause+ finallySet? | finallySet)
 //    |   'try' resourceSpecification set catchClause* finallySet?
     |   'switch' parExpression '{' switchSetStatementGroup* switchLabel* '}'
@@ -462,7 +464,7 @@ switchLabel
 
 forControl
     :   enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
+    |   forInit? ';' condition=boolean_expression? ';' forUpdate?
     ;
 
 forInit
