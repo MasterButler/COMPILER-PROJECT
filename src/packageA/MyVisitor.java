@@ -26,6 +26,7 @@ import packageA.JavaParser.LocalVariableDeclarationStatementContext;
 import packageA.JavaParser.Math_expressionContext;
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.MethodDeclarationContext;
+import packageA.JavaParser.SetContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
 import packageA.JavaParser.TypeTypeContext;
@@ -44,6 +45,7 @@ import packageA.function.StringUtil;
 
 public class MyVisitor extends JavaBaseVisitor<Integer> {
 
+	public static final String REFERENCE_SET_CONTEXT = "set";
 	public static final String REFERENCE_STATEMENT_CONTEXT = "stmt";
 	public static final String REFERENCE_SET_STATEMENT_CONTEXT = "set_stmt";
 	
@@ -635,7 +637,16 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //			}else if(parentFinder.getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
 //				varName.append(new StringBuffer(REFERENCE_SET_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}else if(parentFinder.getClass().getSimpleName().equals(StatementContext.class.getSimpleName())) {
-				varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
+				if(parentFinder.getParent().getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {					
+					//VERY EXPERIMENTAL
+//					System.out.println("FOUND IT!!!");
+					varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().getParent().children.indexOf(parentFinder.getParent())).reverse().toString()).append('$');
+				}else {
+					System.out.println("NO SET STATEMENT");
+					varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');					
+				}
+			}else if(parentFinder.getClass().getSimpleName().equals(SetContext.class.getSimpleName())) {
+				varName.append(new StringBuffer(REFERENCE_SET_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}
 		}while(!parentFinder.getClass().getSimpleName().equals(BaseDeclarationContext.class.getSimpleName()));
 		
@@ -643,6 +654,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
 	public String constructVariableName(ParserRuleContext ctx, String simpleName) {
+		System.out.println("VAR IS " + (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString());
 		return (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString();
 	}
 }
