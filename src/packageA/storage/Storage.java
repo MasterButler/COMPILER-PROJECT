@@ -2,11 +2,13 @@ package packageA.storage;
 
 import java.util.HashMap;
 
+import packageA.variable.Function;
 import packageA.variable.Variable;
 
 public class Storage {
 	private static Storage instance; 
 	private HashMap<String, Variable> varList;
+	private HashMap<String, Function> funcList;
 	
 	public static Storage getInstance() {
 		if(instance == null) {
@@ -21,6 +23,7 @@ public class Storage {
 	
 	public void reset() {
 		this.varList = new HashMap<String, Variable>();
+		this.funcList = new HashMap<String, Function>();
 	}
 	
 	/**
@@ -36,5 +39,15 @@ public class Storage {
 	
 	public Variable getVariable(String variableName) {
 		return varList.get(variableName);
+	}
+
+	public Function addFunction(Function function) {
+		System.out.println("ADDING THE ONE NAMED " + function.getFuncSimpleName());
+		
+		return funcList.put(function.getFuncSimpleName(), function);
+	}
+	
+	public Function getFunction(String functionName) {
+		return funcList.get(functionName);
 	}
 }
