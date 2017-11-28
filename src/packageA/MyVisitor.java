@@ -384,11 +384,13 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
     	
     	if(ctx.getChild(0).getText().equals("if")){
+    		System.out.println("IF STATEMENT");
     		boolean isExecuteIf = visitBoolean_expression(ctx.condition) == 1 ? true: false;
 //            System.out.println("CONDITIONAL FOUND : " + isExecuteIf );
             if(isExecuteIf){
+            	System.out.println("FUCK OFFF STATEMENT");
 //            	System.out.println("here trying");
-            	visitStatement(ctx.ifAction);
+            	return visitStatement(ctx.ifAction);
             	/*
                 if(ctx.ifAction.getClass().getSimpleName().equals(ConditionalContext.class.getSimpleName())){
                 	System.out.println("here trying");
@@ -401,18 +403,20 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
             }
     	}
     	else if(ctx.getChild(0).getText().equals("while")){
+    		System.out.println("WHILE STATEMENT");
     		Boolean isExecuteWhile = true;
     		while(isExecuteWhile){
     			System.out.println("\t\tWHILE FOUND : " + isExecuteWhile );
 	    			System.out.println("\t\there trying");
+	    			isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
 	            	visitStatement(ctx.ifAction);
-	            	isExecuteWhile = visitBoolean_expression(ctx.condition) == 1 ? true: false;
-            	
     		}
     		System.out.println("DONE DONE DONE");
     	}
-        
-        return super.visitConditional(ctx);
+    	else {
+    		return super.visitConditional(ctx);
+    	}
+    	return null;
     }
 
 	
