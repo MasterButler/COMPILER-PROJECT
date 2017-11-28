@@ -28,6 +28,29 @@ public class FunctionManager {
 		return Storage.getInstance().addFunction(function);
 	}
 	
+	public static Function searchFunction(String funcSimpleName, String funcScope) throws VariableNotFoundError{
+		String toSearch = "";
+		Function toEdit = null;
+		
+		do {
+			toSearch = (new StringBuilder()).append(funcScope).append("$").append(funcSimpleName).toString();				
+			toEdit = getFunction(toSearch);
+			if(toEdit != null) {
+				return toEdit;
+			}
+			funcScope = StringUtil.scopeIncrease(funcScope);
+		}while(funcScope.indexOf("$") != -1); 
+			
+		toSearch = (new StringBuilder()).append(funcScope).append("$").append(funcSimpleName).toString();
+		toEdit = getFunction(toSearch);
+		if(toEdit != null) {
+			return toEdit;
+		}else {
+			throw new VariableNotFoundError(funcSimpleName);		
+		}
+		
+	}
+	
 	/*
 	
 	

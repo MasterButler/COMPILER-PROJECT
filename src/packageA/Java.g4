@@ -130,7 +130,7 @@ classBodyDeclaration
     ;
 
 baseDeclaration
-    :   methodDeclaration 
+    :   method=methodDeclaration 
     |   genericMethodDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
@@ -146,6 +146,9 @@ baseDeclaration
    renders the [] matching as a context-sensitive issue or a semantic check
    for invalid return type after parsing.
  */
+ 
+ 
+ /*
 methodDeclaration
     :   'function' (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
@@ -153,6 +156,23 @@ methodDeclaration
         |   ';'
         )
     ;
+    * */
+    
+    
+methodDeclaration
+//parameterList
+    :   'function' (returntype=typeType|'void') funcname=Identifier params=parameters ('[' ']')*
+//		: 'function' (returntype=typeType|'void') funcname=Identifier params=parameterList?
+        ('throws' qualifiedNameList)?
+        (   statements=methodBody
+        |   ';'
+        )
+    ;
+
+methodCall
+	:	 '('funcname=Identifier params=parameters ('[' ']')* ')'
+	;
+
 
 genericMethodDeclaration
     :   typeParameters methodDeclaration
@@ -423,6 +443,7 @@ statement
     | 'output' parExpression ';'
     | 'input' parExpression ';'
     | methodDeclaration
+    |	'call' methodCall ';'
     ;
 
 catchClause
@@ -970,6 +991,7 @@ CLASS         : 'class';
 CONST         : 'CONST';
 DEFAULT       : 'default';
 DOWHILE       : 'dowhile';
+CALL		  : 'call';
 ELSE          : 'else';
 FLOAT         : 'float';
 FOR           : 'for';

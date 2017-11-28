@@ -27,6 +27,7 @@ import packageA.JavaParser.LocalVariableDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationStatementContext;
 import packageA.JavaParser.Math_expressionContext;
 import packageA.JavaParser.MethodBodyContext;
+import packageA.JavaParser.MethodCallContext;
 import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.ParameterContext;
 import packageA.JavaParser.ParameterListContext;
@@ -766,10 +767,9 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		return super.visitParameters(ctx);
 	}
 	
-	
 	@Override
-	public Integer visitGenericMethodDeclaration(GenericMethodDeclarationContext ctx) {
-		System.out.println("\t\t\t\t\t HERE " + ctx.method.funcname.getText());
+	public Integer visitBaseDeclaration(BaseDeclarationContext ctx) {
+		System.out.println("\t\t\t\t\t HERE AT GENERICMETHOD " + ctx.method.funcname.getText());
 		try {
 			if(ctx.method.returntype != null)
 				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), null, ctx.method.statements));
@@ -785,30 +785,22 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		}
 		
 		System.out.println("\t\t\t\tRESULT : " +  ctx.method.statements.getText());
-		return super.visitGenericMethodDeclaration(ctx);
+		return super.visitBaseDeclaration(ctx);
 	}
 	
-	
-	/*
 	@Override
-	public Integer visitMethodDeclaration(MethodDeclarationContext ctx) {
-		System.out.println("\t\t\t\t\t HERE " + ctx.funcname.getText());
-		try {
-			if(ctx.returntype != null)
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.funcname.getText(),ctx.returntype.getText(), null, ctx.statements));
-			
-			else //void return
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.funcname.getText(),"", null, ctx.statements));
-		} catch (MultipleVariableDeclarationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncompatibleVariableDataTypeError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public Integer visitMethodCall(MethodCallContext ctx) {
+		System.out.println("\t\t\t\t\tAT METHOD CALL");
+		if(FunctionManager.isExisting(ctx.funcname.getText())){
+			Function f = FunctionManager.getFunction(ctx.funcname.getText());
+			System.out.println("\t\t\t FOUND FUNCTION");
+			visitMethodBody(f.getSc());
+			System.out.println("\t\t\t DONE EXECUTING");
 		}
-		
-		System.out.println("\t\t\t\tRESULT : " +  ctx.statements.getText());
-		return super.visitMethodDeclaration(ctx);
+		else{
+			System.out.println("\t\t\t NOT FOUND FUNCTION");
+		}
+		return super.visitMethodCall(ctx);
 	}
-	*/
+	
 }
