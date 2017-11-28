@@ -2,6 +2,7 @@ package packageA.variable.util;
 
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
+import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
 import packageA.error.VariableNotFoundError;
@@ -20,7 +21,7 @@ public class VariableManager {
 		return Storage.getInstance().getVariable(variableName);
 	}
 	
-	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError {
+	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		if(variable.setValue(value)) {
 			System.out.println(variable.getVarName() + "'s value changed to " + value.getValue());
 			return true;

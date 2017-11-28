@@ -1,5 +1,6 @@
 package packageA.variable;
 
+import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 
 public class Variable {
@@ -12,13 +13,13 @@ public class Variable {
 	private Value value;
 	
 	
-	public Variable(String varScope, String varSimpleName, Value value) throws IncompatibleVariableDataTypeError {
+	public Variable(String varScope, String varSimpleName, Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		this.varScope = varScope;
 		this.varSimpleName = varSimpleName;
 		setValue(value);
 	}
 	
-	public Variable(String varName, Value value) throws IncompatibleVariableDataTypeError {
+	public Variable(String varName, Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		int lastIndex = varName.lastIndexOf("$");
 		if(lastIndex == -1) {
 			this.varScope = "";
@@ -31,7 +32,7 @@ public class Variable {
 	}
 	
 	//TODO some type of checking to see if datatype entered matches. If not, throw error.
-	public boolean setValue(Value value) throws IncompatibleVariableDataTypeError {
+	public boolean setValue(Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		if(this.value == null) {
 			this.value = value;
 		}else {

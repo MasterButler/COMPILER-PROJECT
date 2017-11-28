@@ -1,5 +1,6 @@
 package packageA.variable;
 
+import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.variable.util.ValueUtil;
 
@@ -8,7 +9,7 @@ public class Value {
 	private Object value;
 	private boolean isConstant;
 	
-	public Value(String type, Object value, boolean isConstant) throws IncompatibleVariableDataTypeError {
+	public Value(String type, Object value, boolean isConstant) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		super();
 		this.type = type;
 		setValue(value);
@@ -27,7 +28,7 @@ public class Value {
 		return value;
 	}
 	
-	public void setValue(Object value) throws IncompatibleVariableDataTypeError {
+	public void setValue(Object value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		if(this.isConstant == false) {
 			if(value != null) {
 				String inferredType = ValueUtil.inferVarType(value.toString());
@@ -39,7 +40,7 @@ public class Value {
 				}
 			}
 		}else {
-			System.out.println("CANNOT CHANGE!");
+			throw new ConstantEditError();
 		}
 	}
 	
