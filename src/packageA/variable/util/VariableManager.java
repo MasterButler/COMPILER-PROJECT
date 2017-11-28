@@ -4,6 +4,7 @@ import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.error.VariableNotFoundError;
 import packageA.function.StringUtil;
 import packageA.storage.Storage;
 import packageA.variable.Value;
@@ -40,7 +41,7 @@ public class VariableManager {
 		return Storage.getInstance().addVariable(variable);
 	}
 
-	public static Variable searchVariable(String varSimpleName, String varScope) {
+	public static Variable searchVariable(String varSimpleName, String varScope) throws VariableNotFoundError{
 		String toSearch = "";
 		Variable toEdit = null;
 		
@@ -58,7 +59,7 @@ public class VariableManager {
 		if(toEdit != null) {
 			return toEdit;
 		}else {
-			return null;		
+			throw new VariableNotFoundError(varSimpleName);		
 		}
 		
 	}
