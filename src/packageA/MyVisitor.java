@@ -37,6 +37,7 @@ import packageA.JavaParser.VariableDeclaratorIdContext;
 import packageA.JavaParser.VariableInitializerContext;
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
+import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
 import packageA.error.VariableNotFoundError;
@@ -348,9 +349,10 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitConstDeclaration(ConstDeclarationContext ctx) {
+		System.out.println("DECLARING CONSTANT");
 		int total = ctx.getChildCount();
 
-		String conType = ctx.constMod.getText(); 
+		String conType = ctx.conType.getText(); 
 		String conSimpleName = ctx.constantDeclarator().conName.getText();
 		String conValue = null;
 		if(ctx.constantDeclarator().conValue != null) {
@@ -375,6 +377,9 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		} catch( IncompatibleVariableDataTypeError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(varType, ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
+		} catch (ConstantEditError e) {
+			// TODO Auto-generated catch block
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
 		}
 		return -1;
 	}
@@ -425,6 +430,8 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		} catch (IncompatibleVariableDataTypeError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
+		} catch (ConstantEditError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(varSimpleName).getErrorMessage());
 		}
 		return -1;
 	}

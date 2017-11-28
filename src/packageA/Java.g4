@@ -391,7 +391,7 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   constantModifier? typeType variableDeclarator
+    :   typeType variableDeclarator
     ;
 
 conditional
@@ -463,8 +463,7 @@ switchLabel
     ;
 
 forControl
-    :   enhancedForControl
-    |   forInit? ';' condition=boolean_expression? ';' forUpdate?
+    :   forInit? ';' condition=boolean_expression? ';' forUpdate?
     ;
 
 forInit
@@ -472,9 +471,11 @@ forInit
     |   expressionList
     ;
 
+/*
 enhancedForControl
     :   constantModifier* typeType variableDeclaratorId ':' expression
     ;
+    */
 
 forUpdate
     :   expressionList
@@ -525,6 +526,15 @@ boolean_expression
     |   left=boolean_expression op='||' right=boolean_expression	
     |   left=boolean_expression (op='<=' | op='>=' | op='>' | op='<') right=boolean_expression
     ;
+    
+    /*
+string_expression
+	:	string_expression '+' string_expression
+	|   math_expression
+	|   boolean_expression
+	|   '"' (StringCharacters?)* '"'
+	;
+	*/
 
 expression
     :   primary	
