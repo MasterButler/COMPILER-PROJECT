@@ -3,6 +3,7 @@ package packageA;
 import packageA.variable.util.*;
 import packageA.variable.*;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.CharStreams;
@@ -38,9 +39,11 @@ import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.error.VariableNotFoundError;
 import packageA.function.BooleanUtil;
 import packageA.function.FunctionDictionary;
 import packageA.function.MathUtil;
+import packageA.function.PatternDictionary;
 import packageA.function.StringUtil;
 
 public class MyVisitor extends JavaBaseVisitor<Integer> {
@@ -171,9 +174,13 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                     	if(ctx.getChild(i+1).getChild(1).getText().charAt(0) == '"')
                     		OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+1).getChild(1).getText())));
                     	else{
-                    		Variable v = VariableManager.searchVariable(ctx.getChild(i+1).getChild(1).getText(), constructVariableScope(ctx));
-                    		if(v != null)
-                    			OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(v.getValue().getValue().toString() + "\n")));
+                    		Variable v;
+							try {
+								v = VariableManager.searchVariable(ctx.getChild(i+1).getChild(1).getText(), constructVariableScope(ctx));
+								OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(v.getValue().getValue().toString() + "\n")));
+							} catch (VariableNotFoundError e) {
+								e.printStackTrace();
+							}
                     	}
                     }
                     break;
@@ -356,10 +363,13 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
 	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, String varValue){
-		Variable toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
+		Variable toEdit;
 		try {
+			toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
 			VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));
 			return 0;
+		} catch (VariableNotFoundError e1) {
+			e1.printStackTrace();
 		} catch (IncompatibleVariableDataTypeError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
@@ -466,14 +476,16 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
             }else if(ctx.getText().equals("false")){
                 return 0;
             }else{
-            	Variable v = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
-            	
-            	if(v != null){
-            		System.out.println("V : " + v.getValue().getValue().toString());
-        			return Integer.parseInt(v.getValue().getValue().toString());
-            	}
-        		
-                return Integer.valueOf(ctx.getText());
+            	if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
+    				return Integer.parseInt(ctx.getChild(0).getText());
+    			}else {
+    				try {
+    					return Integer.parseInt(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+    				} catch (VariableNotFoundError e) {
+    					e.printStackTrace();
+    				}			
+    				return -1;
+    			}
             }
 		}else {
 			int sample = BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
@@ -550,11 +562,16 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //		}
 		
 		if(ctx.getChildCount() == 1){
-			Variable v = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
-        	if(v != null)
-    			return Integer.parseInt(v.getValue().getValue().toString());
-        	
-			return Integer.parseInt(ctx.getChild(0).getText());
+			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
+				return Integer.parseInt(ctx.getChild(0).getText());
+			}else {
+				try {
+					return Integer.parseInt(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+				} catch (VariableNotFoundError e) {
+					e.printStackTrace();
+				}			
+				return -1;
+			}
 		}
 		else {
 			return (Integer) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
