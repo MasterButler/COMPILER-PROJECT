@@ -192,23 +192,31 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                 	for(int j = 0; j < segments.length; j++) {
                 		System.out.println("SEGMENT:dick" + segments[j] + "dick");
                 		if(segments[j].charAt(0) == '"') {
+                			System.out.println("LITERAL");
+                			if(segments[j].startsWith("\"") && segments[j].endsWith("\"")) {
+                				segments[j] = segments[j].substring(1, segments[j].length()-1);
+                			}
                 			sb.append(segments[j]);
                 		} else
-							try {
-								if(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)) != null) {
-									System.out.println("VARIABLE");
-									sb.append(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)).getValue().getValue().toString());
-								}
-								else {
-									System.out.println("NANI");
-									sb.append(visit(segments[j]));
-								}
-							} catch (VariableNotFoundError e) {
-								OutputCollector.getInstance().append("No such variable found");
-								
-							}
-                		
-                		System.out.println(segments[j]);
+                			try {
+                                if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
+                                    sb.append(segments[j]);
+                                }else { 
+                                	if(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)) != null) {
+	                                    System.out.println("VARIABLE");
+	                                    sb.append(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)).getValue().getValue().toString());
+	                                }
+	                                else {
+	                                    System.out.println("NANI");
+	                                    sb.append(visit(segments[j]));
+	                                }
+                                }
+                            } catch (VariableNotFoundError e) {
+                                OutputCollector.getInstance().append("No such variable found");
+
+                            }
+
+                        System.out.println(segments[j]);
                 	}
                 	OutputCollector.getInstance().append(sb.toString());
                 	return 0;
