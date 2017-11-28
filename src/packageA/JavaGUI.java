@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -28,10 +29,12 @@ import org.antlr.v4.gui.TreeViewer;
 
 import packageA.collector.InputCollector;
 import packageA.collector.OutputCollector;
+import packageA.collector.StandardInputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.storage.Storage;
 import packageA.variable.Variable;
 import packageA.variable.util.VariableManager;
+import javax.swing.JLabel;
 
 public class JavaGUI extends JFrame implements MouseListener{
 
@@ -47,6 +50,9 @@ public class JavaGUI extends JFrame implements MouseListener{
 	private JScrollPane spResult;
 	private JTextArea taResult;
 	private JTextField tfStatus;
+	
+	private JTextArea taInputField;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -86,7 +92,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 		
 		scrollPane = new JScrollPane();
 		scrollPane.setRowHeaderView(taLineNumber);
-		scrollPane.setBounds(10, 45, 678, 414);
+		scrollPane.setBounds(10, 62, 471, 397);
 		contentPane.add(scrollPane);
 		scrollPane.setViewportView(taField);
 		
@@ -97,6 +103,7 @@ public class JavaGUI extends JFrame implements MouseListener{
  		taLineNumber.setEditable(false);
  				
  		taField = new JTextArea();       
+ 		taField.setTabSize(2);
 		taField.setFont(new Font("Consolas", Font.PLAIN, 13));
 
 		scrollPane.setViewportView(taField);
@@ -135,6 +142,27 @@ public class JavaGUI extends JFrame implements MouseListener{
 		tfStatus.setBounds(10, 690, 678, 20);
 		contentPane.add(tfStatus);
 		tfStatus.setColumns(10);
+		
+		JLabel lblCode = new JLabel("Code:");
+		lblCode.setForeground(Color.WHITE);
+		lblCode.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblCode.setBounds(10, 45, 100, 15);
+		contentPane.add(lblCode);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(491, 62, 194, 397);
+		scrollPane_1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		contentPane.add(scrollPane_1);
+		
+		taInputField = new JTextArea();
+		scrollPane_1.setViewportView(taInputField);
+		
+		JLabel lblInput = new JLabel("Input:");
+		lblInput.setForeground(Color.WHITE);
+		lblInput.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblInput.setBounds(491, 45, 100, 15);
+		contentPane.add(lblInput);
 		
 	}
 	
@@ -288,6 +316,11 @@ public class JavaGUI extends JFrame implements MouseListener{
 			}else {
 				taResult.setText(SyntaxErrorCollector.getInstance().listErrors());			
 			}
+			
+			StandardInputCollector.getInstance().recordInput(getUserInput());
+			System.out.println("==========");
+			System.out.println(StandardInputCollector.getInstance().getNextLine());
+			System.out.println(StandardInputCollector.getInstance().getNext());
 		}
 	}
 	
@@ -295,6 +328,27 @@ public class JavaGUI extends JFrame implements MouseListener{
 		OutputCollector.getInstance().reset();
 		Storage.getInstance().reset();
 		InputCollector.getInstance().reset();
+		StandardInputCollector.getInstance().reset();
 		SyntaxErrorCollector.getInstance().reset();
+		
+	}
+	
+	public ArrayList<ArrayList<String>> getUserInput(){
+		ArrayList<ArrayList<String>> input = new ArrayList<ArrayList<String>>();
+		
+		String[] raw = taInputField.getText().split("\n");
+		for(int i = 0; i < raw.length; i++) {
+			ArrayList<String> preCut = new ArrayList<>(Arrays.asList(raw[i].split(" "))); 
+			input.add(preCut);
+		}
+		
+		for(int i = 0; i < input.size(); i++) {
+			for(int j = 0; j < input.get(i).size(); j++) {
+				System.out.print(input.get(i).get(j));
+			}
+			System.out.println();
+		}
+		
+		return input;
 	}
 }
