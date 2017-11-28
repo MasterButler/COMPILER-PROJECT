@@ -185,38 +185,54 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                     	}
                     }
                     */
-                	String argument = ctx.getChild(i+1).getChild(1).getText();
+                	String argument = ctx.getChild(i+1).getChild(1).getChild(0).getText();
+                	ParseTree parseTreeArguments = ctx.getChild(i+1).getChild(1).getChild(0);
+                	System.out.println("MY ARGUMENT IS " + argument);
                 	String[] segments = argument.split("\\+");
                 	StringBuilder sb = new StringBuilder();
                 	
-                	for(int j = 0; j < segments.length; j++) {
-                		System.out.println("SEGMENT:dick" + segments[j] + "dick");
-                		if(segments[j].charAt(0) == '"') {
-                			System.out.println("LITERAL");
-                			if(segments[j].startsWith("\"") && segments[j].endsWith("\"")) {
-                				segments[j] = segments[j].substring(1, segments[j].length()-1);
-                			}
-                			sb.append(segments[j]);
-                		} else
+                	for(int j = 0; j < parseTreeArguments.getChildCount(); j+=2) {
+                		System.out.println("SEGMENT:dick" + parseTreeArguments.getChild(j).getText() + "dick");
+                		
+                		System.out.println("Examining " + parseTreeArguments.getChild(j).getText());
+                		if(parseTreeArguments.getChild(j).getText().charAt(0) == '"') {
+                			//if(segments[j].charAt(0) == '"') {
+                			sb.append(StringUtil.constructStringFromPrintStatement(parseTreeArguments.getChild(j).getText()));
+//                			System.out.println("LITERAL");
+//                			if(parseTreeArguments.getChild(j).getText().startsWith("\"") && parseTreeArguments.getChild(j).getText().endsWith("\"")) {
+//                				sb.append(parseTreeArguments.getChild(j).getText().substring(1, parseTreeArguments.getChild(j).getText().length()-1));
+//                			}else {
+//                				sb.append(parseTreeArguments.getChild(j).getText());
+//                			}
+                		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
+                			System.out.println("BEFORE");
+                			System.out.println("TO VIEW " + parseTreeArguments.getText());
+                			Integer result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
+                			System.out.println("GOT " + result);
+                			sb.append(result);
+                			
+                		} else {
                 			try {
-                                if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
-                                    sb.append(segments[j]);
-                                }else { 
-                                	if(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)) != null) {
-	                                    System.out.println("VARIABLE");
-	                                    sb.append(VariableManager.searchVariable(segments[j], constructVariableScope(ctx)).getValue().getValue().toString());
-	                                }
-	                                else {
-	                                    System.out.println("NANI");
-	                                    sb.append(visit(segments[j]));
-	                                }
-                                }
-                            } catch (VariableNotFoundError e) {
-                                OutputCollector.getInstance().append("No such variable found");
+                				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
+                					sb.append(parseTreeArguments.getChild(j).getText());
+                				}else { 
+                					if(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)) != null) {
+                						System.out.println("VARIABLE");
+                						sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+                					}
+                					else {
+                						System.out.println("NANI");
+                						sb.append(visit(parseTreeArguments.getChild(j).getText()));
+                					}
+                				}
+                			} catch (VariableNotFoundError e) {
+                				OutputCollector.getInstance().append("No such variable found");
+                				
+                			}
+                		}
+                		
 
-                            }
-
-                        System.out.println(segments[j]);
+                        System.out.println(parseTreeArguments.getChild(j).getText());
                 	}
                 	OutputCollector.getInstance().append(sb.toString());
                 	return 0;
