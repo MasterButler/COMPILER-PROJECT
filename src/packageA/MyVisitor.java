@@ -22,11 +22,15 @@ import packageA.JavaParser.DataTypeContext;
 import packageA.JavaParser.ExpressionContext;
 import packageA.JavaParser.ExpressionListContext;
 import packageA.JavaParser.FieldDeclarationContext;
+import packageA.JavaParser.GenericMethodDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationContext;
 import packageA.JavaParser.LocalVariableDeclarationStatementContext;
 import packageA.JavaParser.Math_expressionContext;
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.MethodDeclarationContext;
+import packageA.JavaParser.ParameterContext;
+import packageA.JavaParser.ParameterListContext;
+import packageA.JavaParser.ParametersContext;
 import packageA.JavaParser.SetContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
@@ -737,4 +741,74 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		System.out.println("VAR IS " + (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString());
 		return (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString();
 	}
+	
+	@Override
+	public Integer visitParameter(ParameterContext ctx) {
+		System.out.println("\t\t\t\t\t CHecking Param ");
+		for(int i=0; i<ctx.getChildCount(); i++)
+			System.out.println(i + " : " + ctx.getChild(i).getText());
+		
+		return super.visitParameter(ctx);
+	}
+	@Override
+	public Integer visitParameterList(ParameterListContext ctx) {
+		System.out.println("\t\t\t\t\t CHecking Param List ");
+		for(int i=0; i<ctx.getChildCount(); i++)
+			System.out.println(i + " : " + ctx.getChild(i).getText());
+		return super.visitParameterList(ctx);
+	}
+	
+	@Override
+	public Integer visitParameters(ParametersContext ctx) {
+		 System.out.println("\t\t\t\t\t CHecking Paramters");
+		for(int i=0; i<ctx.getChildCount(); i++)
+			System.out.println(i + " : " + ctx.getChild(i).getClass().getSimpleName() + " : " + ctx.getChild(i).getText());
+		return super.visitParameters(ctx);
+	}
+	
+	
+	@Override
+	public Integer visitGenericMethodDeclaration(GenericMethodDeclarationContext ctx) {
+		System.out.println("\t\t\t\t\t HERE " + ctx.method.funcname.getText());
+		try {
+			if(ctx.method.returntype != null)
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), null, ctx.method.statements));
+			
+			else //void return
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),"", null, ctx.method.statements));
+		} catch (MultipleVariableDeclarationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncompatibleVariableDataTypeError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("\t\t\t\tRESULT : " +  ctx.method.statements.getText());
+		return super.visitGenericMethodDeclaration(ctx);
+	}
+	
+	
+	/*
+	@Override
+	public Integer visitMethodDeclaration(MethodDeclarationContext ctx) {
+		System.out.println("\t\t\t\t\t HERE " + ctx.funcname.getText());
+		try {
+			if(ctx.returntype != null)
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.funcname.getText(),ctx.returntype.getText(), null, ctx.statements));
+			
+			else //void return
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.funcname.getText(),"", null, ctx.statements));
+		} catch (MultipleVariableDeclarationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IncompatibleVariableDataTypeError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("\t\t\t\tRESULT : " +  ctx.statements.getText());
+		return super.visitMethodDeclaration(ctx);
+	}
+	*/
 }
