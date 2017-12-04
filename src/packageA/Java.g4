@@ -298,7 +298,7 @@ parameterList
     ;
 
 parameter
-    :   typeType variableDeclaratorId
+    :   type=typeType vardec=variableDeclaratorId
     ;
 
 lastFormalParameter

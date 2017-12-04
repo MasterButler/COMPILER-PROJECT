@@ -31,6 +31,10 @@ public class Function {
 		this.funcParameter = funcParameter;
 		this.sc = sc;
 		
+		for(int i=0; i<funcParameter.size(); i++){
+			System.out.println("RECEIVED PARAM " + i + " : " + funcParameter.get(i).getVarSimpleName());
+		}
+		
 	}
 
 	public String getFuncScope() {

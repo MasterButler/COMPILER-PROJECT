@@ -3,6 +3,7 @@ package packageA;
 import packageA.variable.util.*;
 import packageA.variable.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -743,39 +744,32 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		return (new StringBuilder()).append(constructVariableScope(ctx)).append("$").append(simpleName).toString();
 	}
 	
-	@Override
-	public Integer visitParameter(ParameterContext ctx) {
-		System.out.println("\t\t\t\t\t CHecking Param ");
-		for(int i=0; i<ctx.getChildCount(); i++)
-			System.out.println(i + " : " + ctx.getChild(i).getText());
-		
-		return super.visitParameter(ctx);
-	}
-	@Override
-	public Integer visitParameterList(ParameterListContext ctx) {
-		System.out.println("\t\t\t\t\t CHecking Param List ");
-		for(int i=0; i<ctx.getChildCount(); i++)
-			System.out.println(i + " : " + ctx.getChild(i).getText());
-		return super.visitParameterList(ctx);
-	}
-	
-	@Override
-	public Integer visitParameters(ParametersContext ctx) {
-		 System.out.println("\t\t\t\t\t CHecking Paramters");
-		for(int i=0; i<ctx.getChildCount(); i++)
-			System.out.println(i + " : " + ctx.getChild(i).getClass().getSimpleName() + " : " + ctx.getChild(i).getText());
-		return super.visitParameters(ctx);
-	}
 	
 	@Override
 	public Integer visitBaseDeclaration(BaseDeclarationContext ctx) {
-		System.out.println("\t\t\t\t\t HERE AT GENERICMETHOD " + ctx.method.funcname.getText());
+		ArrayList<Variable> variableList = new ArrayList<Variable> ();
+		if(ctx.method.params.parameterList() != null){
+			List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
+			for(int i=0; i<paramCont.size(); i++){
+				try {
+					variableList.add(new Variable(ctx.getParent().getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
+				} catch (IncompatibleVariableDataTypeError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConstantEditError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	
 		try {
 			if(ctx.method.returntype != null)
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), null, ctx.method.statements));
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements));
 			
 			else //void return
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),"", null, ctx.method.statements));
+				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements));
 		} catch (MultipleVariableDeclarationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
