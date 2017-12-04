@@ -1,6 +1,8 @@
 package packageA.variable;
 
 
+import java.util.ArrayList;
+
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.IncompatibleVariableDataTypeError;
@@ -50,6 +52,19 @@ public class FunctionManager {
 		}
 		
 	}
+	
+	public static void setParam(int index, Value value, String funcSimpleName){
+		Function f = getFunction(funcSimpleName);
+		
+		f.setFuncParameter(index, value);		
+	}
+	
+	public static ArrayList getParam(String funcSimpleName){
+		Function f = getFunction(funcSimpleName);
+		return f.getFuncParameter();
+	}
+	
+	
 	
 	/*
 	

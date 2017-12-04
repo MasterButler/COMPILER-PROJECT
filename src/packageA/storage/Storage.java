@@ -40,6 +40,12 @@ public class Storage {
 	public Variable getVariable(String variableName) {
 		return varList.get(variableName);
 	}
+	
+	public void removeVariable(String variableName) {
+		varList.remove(variableName);
+	}
+	
+	
 
 	public Function addFunction(Function function) {
 		System.out.println("ADDING THE ONE NAMED " + function.getFuncSimpleName());

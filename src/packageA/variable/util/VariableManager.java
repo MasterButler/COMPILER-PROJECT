@@ -21,6 +21,12 @@ public class VariableManager {
 		return Storage.getInstance().getVariable(variableName);
 	}
 	
+	public static void removeVariable(String variableName) {
+		Storage.getInstance().removeVariable(variableName);
+	}
+	
+	
+	
 	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		if(variable.setValue(value)) {
 			System.out.println(variable.getVarName() + "'s value changed to " + value.getValue());

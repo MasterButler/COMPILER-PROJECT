@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.StatementContext;
+import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 
 public class Function {
@@ -30,10 +31,6 @@ public class Function {
 		this.funcReturnType = funcReturnType;
 		this.funcParameter = funcParameter;
 		this.sc = sc;
-		
-		for(int i=0; i<funcParameter.size(); i++){
-			System.out.println("RECEIVED PARAM " + i + " : " + funcParameter.get(i).getVarSimpleName());
-		}
 		
 	}
 
@@ -77,10 +74,32 @@ public class Function {
 		this.sc = sc;
 	}
 	
+	public int getParamIndex(String s){
+		for(int i=0; i<funcParameter.size(); i++){
+			if(s.equals(funcParameter.get(i).getVarSimpleName()))
+				return i;
+		}
+		return -1;
+		
+	}
 	
-
+	public void setFuncParameter(int index, Object value) {
+		try {
+			funcParameter.get(index).getValue().setValue(value);
+		} catch (IncompatibleVariableDataTypeError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConstantEditError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
-	
-	
-	
+	public Variable getParam(int index){
+		if(funcParameter.size() > index)
+			return funcParameter.get(index);
+		return null;
+		
+		
+	}
 }

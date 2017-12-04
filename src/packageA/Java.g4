@@ -170,8 +170,9 @@ methodDeclaration
     ;
 
 methodCall
-	:	 '('funcname=Identifier params=parameters ('[' ']')* ')'
+	:	 'call''('funcname=Identifier '('passedParam=expressionList ')' ')'
 	;
+	
 
 
 genericMethodDeclaration
@@ -443,7 +444,7 @@ statement
     | 'output' parExpression ';'
     | 'input' parExpression ';'
     | methodDeclaration
-    |	'call' methodCall ';'
+    |	methodCall ';'
     ;
 
 catchClause

@@ -175,6 +175,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
             System.out.println(ctx.getChild(i).getText());
             switch(ctx.getChild(i).getText()) {
                 case FunctionDictionary.FUNCTION_PRINT:
+                	System.out.println("\t\t\t\t\tAT VISIT STATEMENT");
 //                    System.out.println("INSIDE");
                 	/*
                     if(i+1 < ctx.getChildCount()) {
@@ -259,12 +260,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //                        InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
                     }
                     return 0;
-//                case FunctionDictionary.FUNCTION_FOR_LOOP:
-//                    System.out.println();
-//                    for(int j=0; j<ctx.getChildCount() ;j++)
-//                        System.out.println(j + " : " + ctx.getChild(j));
-//                        
-//                    break;
+                    
                 default: 
 //                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }
@@ -386,6 +382,27 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		} catch (ConstantEditError e) {
 			// TODO Auto-generated catch block
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
+		}
+		return -1;
+	}
+	
+	public Integer declareVariable(String scope, String varSimpleName, String varType, String varValue, boolean isConst) {
+		Variable toStore = null;
+		try {
+			
+			toStore = new Variable(scope, varSimpleName, new Value(varType, varValue, isConst));
+			VariableManager.addVariable(toStore);
+//			System.out.println("done adding var");
+			return 0;
+		} catch (MultipleVariableDeclarationError e) {
+			System.out.println("MULTIPLE VAR");
+			e.printStackTrace();
+		} catch( IncompatibleVariableDataTypeError e) {
+			System.out.println("INCOMPATIBLE");
+			e.printStackTrace();
+		} catch (ConstantEditError e) {
+			// TODO Auto-generated catch block
+			System.out.println("EDIT ERROR");
 		}
 		return -1;
 	}
@@ -660,6 +677,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			
 			switch(ctx.getChild(i).getText()) {
 				case FunctionDictionary.FUNCTION_PRINT:
+					System.out.println("\t\t\t\t\tAT VISIT EXPRESSION");
 //					System.out.println("PRINTING HERE");
 					if(i+2 < ctx.getChildCount()) {
 						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
@@ -692,6 +710,8 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
                 	}
                     break;
+                    
+                
 //                case FunctionDictionary.FUNCTION_FOR_LOOP:
 //                	System.out.println();
 //                	for(int j=0; j<ctx.getChildCount() ;j++)
@@ -752,7 +772,9 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
 			for(int i=0; i<paramCont.size(); i++){
 				try {
-					variableList.add(new Variable(ctx.getParent().getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
+					
+					variableList.add(new Variable(ctx.method.funcname.getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
+					System.out.println("BASE DECLARED " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
 				} catch (IncompatibleVariableDataTypeError e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -766,10 +788,11 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 		try {
 			if(ctx.method.returntype != null)
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements));
+				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements));
 			
 			else //void return
-				FunctionManager.addFunction(new Function(ctx.getParent().getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements));
+				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements));
+			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
 		} catch (MultipleVariableDeclarationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -785,16 +808,84 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	@Override
 	public Integer visitMethodCall(MethodCallContext ctx) {
 		System.out.println("\t\t\t\t\tAT METHOD CALL");
-		if(FunctionManager.isExisting(ctx.funcname.getText())){
-			Function f = FunctionManager.getFunction(ctx.funcname.getText());
-			System.out.println("\t\t\t FOUND FUNCTION");
-			visitMethodBody(f.getSc());
-			System.out.println("\t\t\t DONE EXECUTING");
+//		Function f = FunctionManager.getFunction(ctx.funcname.getText());
+		String funcName = ctx.funcname.getText();
+		if(FunctionManager.isExisting(funcName)){
+			System.out.println("DONE METHOD CALL STUFF");
+			
+			List<ExpressionContext> expList = ctx.passedParam.expression();
+			System.out.println("expList : " + expList.size());
+			for(int i=0; i<expList.size(); i++){
+				//assign value to parameter in function parameters
+	            FunctionManager.getFunction(funcName).setFuncParameter(i, getExpValueMethodCall(expList.get(i).getText(), expList.get(i), ctx));
+			}
+			
+//			public Integer declareVariable(String scope, String varSimpleName, String varType, String varValue, boolean isConst) {
+			
+			//declare variables
+			ArrayList <Variable> paramList = FunctionManager.getParam(funcName);
+			System.out.println("PARAM LIST");
+			for(int i=0; i<paramList.size(); i++){
+				declareVariable(FunctionManager.getFunction(funcName).getFuncScope(), 
+								paramList.get(i).getVarSimpleName(),
+								paramList.get(i).getVarType(),
+								paramList.get(i).getValue().getValue().toString(),
+								false);
+				System.out.println(i  + " " + paramList.get(i).getVarSimpleName() + " : " + paramList.get(i).getValue().getValue().toString());
+				
+			}
+			
+			visitMethodBody(FunctionManager.getFunction(funcName).getSc());
+			
+			//delete variables
+			VariableManager.removeVariable(FunctionManager.getFunction(funcName).getFuncScope());
 		}
 		else{
 			System.out.println("\t\t\t NOT FOUND FUNCTION");
 		}
 		return super.visitMethodCall(ctx);
+	}
+	
+	public String getExpValueMethodCall(String argument, ParseTree parseTreeArguments, MethodCallContext ctx){
+		
+    	String[] segments = argument.split("\\+");
+    	StringBuilder sb = new StringBuilder();
+    	
+    	for(int j = 0; j < parseTreeArguments.getChildCount(); j+=2) {
+    		if(parseTreeArguments.getChild(j).getText().charAt(0) == '"') {
+    			sb.append(StringUtil.constructStringFromPrintStatement(parseTreeArguments.getChild(j).getText()));
+    		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
+    			Integer result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
+    			System.out.println("GOT " + result);
+    			sb.append(result);
+    			
+    		} else {
+    			try {
+    				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
+    					sb.append(parseTreeArguments.getChild(j).getText());
+    				}else { 
+    					if(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)) != null) {
+    						System.out.println("VARIABLE");
+    						sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+    					}
+    					else {
+    						System.out.println("NANI");
+    						sb.append(visit(parseTreeArguments.getChild(j).getText()));
+    					}
+    				}
+    			} catch (VariableNotFoundError e) {
+    				OutputCollector.getInstance().append("No such variable found");
+    				
+    			}
+    		}
+    		
+
+            
+            
+
+    	}
+    	
+    	return sb.toString();
 	}
 	
 }
