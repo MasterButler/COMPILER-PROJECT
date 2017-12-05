@@ -442,7 +442,7 @@ statement
     |   Identifier ':' statement
     | constDeclaration
     | 'output' parExpression ';'
-    | 'input' parExpression ';'
+    | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ');'
     | methodDeclaration
     |	methodCall ';'
     ;

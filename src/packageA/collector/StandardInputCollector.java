@@ -26,11 +26,23 @@ public class StandardInputCollector {
 	}
 	
 	public String getNext() {
-		while(stdinList.get(0).get(0).trim().equals("")) {
-			stdinList.get(0).remove(0);
+		boolean stop = false;
+		while(!stop) {
+			if(!stdinList.isEmpty()) {
+				if(!stdinList.get(0).isEmpty()) {
+					if(!stdinList.get(0).get(0).trim().equals("")) {
+						return stdinList.get(0).remove(0);
+					}else {
+						stdinList.get(0).remove(0);
+					}
+				}else {
+					stdinList.remove(0);	
+				}
+			}else {
+				stop = true;
+			}
 		}
-		System.out.println(stdinList.get(0));
-		return stdinList.get(0).remove(0);
+		return null;
 	}
 	
 	public String getNextLine() {

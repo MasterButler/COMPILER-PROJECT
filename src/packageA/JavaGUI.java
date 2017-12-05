@@ -294,6 +294,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 			resetSingleton();
 			
 			taResult.setText("");
+			StandardInputCollector.getInstance().recordInput(getUserInput());
 			
 			MyVisitor mv = new MyVisitor();
 			System.out.println("Input is: \n");
@@ -304,6 +305,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 			
 //			VariableManager.addVariable(new Variable("String", "adsads"));
 //			VariableManager.addVariable(new Variable("String", "adsads"));
+			
 			
 			TreeViewer viewr = new TreeViewer(Arrays.asList(
 	                mv.getParser().getRuleNames()), mv.getTree());
@@ -317,10 +319,9 @@ public class JavaGUI extends JFrame implements MouseListener{
 				taResult.setText(SyntaxErrorCollector.getInstance().listErrors());			
 			}
 			
-			StandardInputCollector.getInstance().recordInput(getUserInput());
-			System.out.println("==========");
-			System.out.println(StandardInputCollector.getInstance().getNextLine());
-			System.out.println(StandardInputCollector.getInstance().getNext());
+//			System.out.println("==========");
+//			System.out.println(StandardInputCollector.getInstance().getNextLine());
+//			System.out.println(StandardInputCollector.getInstance().getNext());
 		}
 	}
 	
