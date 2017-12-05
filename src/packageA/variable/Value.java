@@ -45,6 +45,9 @@ public class Value {
 					this.value = Math.round(Float.parseFloat((String)valueString));
 				}
 				else if (this.type.contains("[]") && inferredType.equals("array")) {
+					System.out.println("ARRAY IS LIEK THIS: " + valueString);
+					valueString = valueString.substring(1, valueString.length()-1);
+					System.out.println("RESULTING IS " + valueString);
 					this.value = valueString;
 				}
 				else {
@@ -57,5 +60,7 @@ public class Value {
 		}
 	}
 	
-	
+	public void setValueArrayBypassChecking(Object value) {
+		this.value = value;
+	}
 }

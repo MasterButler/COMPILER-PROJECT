@@ -49,6 +49,7 @@ import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.error.ReferencingError;
 import packageA.error.VariableNotFoundError;
 import packageA.function.BooleanUtil;
 import packageA.function.FunctionDictionary;
@@ -286,7 +287,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                     }
                     System.out.println("VAR VALUE  IS " + varValue);
                     if(varValue != null) {
-                        assignValueToVariable(ctx, varSimpleName, varValue);
+                        assignValueToVariable(ctx, varSimpleName, -1, varValue);
                     }else {
                         throw new NoSuchElementException();
                     }
@@ -523,6 +524,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //		System.out.println("HERE AT VARIABLES");
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
+		int varIndex = -1;
+		if(!ctx.varIndex.getText().trim().equals("")) {
+			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.varIndex.getText())) {
+				varIndex = Integer.valueOf(ctx.varIndex.getText());
+			}			
+		}
 		
 //		System.out.println("CHILDCOUNT: " + ctx.varValue.getChild(0).getChild(0).getChildCount());
 //		for(int i = 0; i < ctx.varValue.getChild(0).getChild(0).getChildCount(); i++) {
@@ -530,18 +537,18 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //		}
 		
 		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
-			assignValueToVariable(ctx, varSimpleName, varValue);
+			assignValueToVariable(ctx, varSimpleName, varIndex, varValue);
 		}else {
 //			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
 			if(ctx.varValue.getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
 				if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
 					float ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
 //					System.out.println("ANSWER: " + ans);
-					assignValueToVariable(ctx, varSimpleName, ""+ans);					
+					assignValueToVariable(ctx, varSimpleName, varIndex, ""+ans);					
 				}else if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
 					boolean ans = visitBoolean_expression((Boolean_expressionContext)ctx.varValue.getChild(0).getChild(0)) == 1 ? true: false;
 //					System.out.println("ANSWER: " + ans);
-					assignValueToVariable(ctx, varSimpleName, ""+ans);										
+					assignValueToVariable(ctx, varSimpleName, varIndex, ""+ans);										
 				}
 				
 			}
@@ -550,11 +557,15 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		return super.visitVariableAssignment(ctx);
 	}
 	
-	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, String varValue){
+	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, int varIndex, String varValue){
 		Variable toEdit;
 		try {
 			toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
-			VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));
+			if(varIndex > -1) {
+				VariableManager.storeValueToVariableArray(toEdit, varIndex, new Value(ValueUtil.inferVarType(varValue), varValue, false));	
+			}else {
+				VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));				
+			}
 			return 0;
 		} catch (VariableNotFoundError e1) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(varSimpleName).getErrorMessage());
@@ -564,6 +575,9 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			e.printStackTrace();
 		} catch (ConstantEditError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(varSimpleName).getErrorMessage());
+		} catch (ReferencingError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ReferencingError(varSimpleName).getErrorMessage());
+			e.printStackTrace();
 		}
 		return -1;
 	}

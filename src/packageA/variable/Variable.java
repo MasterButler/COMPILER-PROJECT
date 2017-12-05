@@ -52,6 +52,24 @@ public class Variable {
 		return false;
 	}
 	
+	public boolean setValueArrayNoChecking(Value value, int index) {
+		String input = getValue().getValue().toString();
+		String[] content = input.split(",");
+		content[index] = value.getValue().toString();
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < content.length; i++) {
+			sb.append(content[i]).append(",");
+		}
+		input = sb.toString();
+		input = input.substring(0, input.length()-1);
+		
+		System.out.println("CHANGING VLAUE OF " + getVarName() + " TO " + input);
+		getValue().setValueArrayBypassChecking(input);
+		
+		return true;
+	}
+	
 	/**
 	 * Returns the variable type
 	 * @return

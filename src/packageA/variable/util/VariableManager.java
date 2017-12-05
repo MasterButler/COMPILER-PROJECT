@@ -5,6 +5,7 @@ import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
+import packageA.error.ReferencingError;
 import packageA.error.VariableNotFoundError;
 import packageA.function.StringUtil;
 import packageA.storage.Storage;
@@ -25,7 +26,19 @@ public class VariableManager {
 		Storage.getInstance().removeVariable(variableName);
 	}
 	
-	
+	public static boolean storeValueToVariableArray(Variable variable, int varIndex, Value value) throws ReferencingError {
+		if(variable.getValue().getType().contains("[]")) {
+			String type = variable.getValue().getType().substring(0, variable.getValue().getType().length()-2);
+			System.out.println("TYPE OF ARR: " + type.trim());
+			System.out.println("TYPE OF INP: " + value.getType());
+			if(type.trim().equals(value.getType())) {
+				variable.setValueArrayNoChecking(value, varIndex);
+			}
+		}else {
+			throw new ReferencingError(variable.getVarSimpleName());
+		}
+		return false;
+	}
 	
 	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		if(variable.setValue(value)) {

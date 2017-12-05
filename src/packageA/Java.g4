@@ -529,7 +529,7 @@ constantExpression
     ;
 
 variableAssignment
-    :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
+    :   varName=variableDeclaratorId ('[' varIndex=primary ']')? ('=' varValue=variableInitializer)?
     ;
 
 math_expression
