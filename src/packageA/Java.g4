@@ -568,7 +568,7 @@ string_expression
 expression
     :   primary	
     |   expression '"' expression '"'	
-    |   expression '[' expression ']'	
+//    |   expression '[' expression ']'	
     |   expression '(' expressionList? ')'
     |	variableAssignment
     |   expression '.' Identifier	 
@@ -602,8 +602,8 @@ primary
     //:   '(' expression ')'
 //    |   'this'
 //    |   'super'
-   	: constantVal=literal
-    |   constantVal=literal
+   	: 	constantVal=literal
+    |   variableName=Identifier '[' indexValue=math_expression ']'
     |   variableVal=Identifier
 //    |   typeType '.' 'class'
 //    |   'void' '.' 'class'

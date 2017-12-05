@@ -219,7 +219,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //                			}else {
 //                				sb.append(parseTreeArguments.getChild(j).getText());
 //                			}
-                		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
+                		}
+                		else if(parseTreeArguments.getChild(j).getChildCount() > 1){
                 			System.out.println("BEFORE");
                 			System.out.println("TO VIEW " + parseTreeArguments.getText());
                 			float result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
@@ -230,7 +231,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 			try {
                 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
                 					sb.append(parseTreeArguments.getChild(j).getText());
-                				}else { 
+                				}
+                				else { 
                 					if(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)) != null) {
                 						System.out.println("VARIABLE");
                 						String vartype = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getVarType();
@@ -381,14 +383,15 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 				for(int i = 1; i < ctx.variableDeclarator().variableInitializer().getChild(0).getChildCount(); i = i + 2) {
 					String value = ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getText();
 					
-					if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChildCount() > 1) {
-						if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
-							float arrayAns = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0));
+					System.out.println("THINGO " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText());
+					if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getChildCount() > 1) {
+						if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
+							float arrayAns = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0));
 							
 							ans.add(arrayAns);
 						}
-						else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
-							boolean arrayAns = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0))  == 1 ? true: false;
+						else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
+							boolean arrayAns = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0))  == 1 ? true: false;
 							
 							ans.add(arrayAns);
 						}
@@ -466,6 +469,9 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	}
 	
 	public Integer declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
+		System.out.println("DECLARED VARIABLE VALUE");
+		System.out.println(varValue);
+		
 		Variable toStore = null;
 		try {
 			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
