@@ -130,7 +130,7 @@ classBodyDeclaration
     ;
 
 baseDeclaration
-    :   methodDeclaration 
+    :   method=methodDeclaration 
     |   genericMethodDeclaration
     |   fieldDeclaration
     |   constructorDeclaration
@@ -146,6 +146,9 @@ baseDeclaration
    renders the [] matching as a context-sensitive issue or a semantic check
    for invalid return type after parsing.
  */
+ 
+ 
+ /*
 methodDeclaration
     :   'function' (typeType|'void') Identifier parameters ('[' ']')*
         ('throws' qualifiedNameList)?
@@ -153,6 +156,24 @@ methodDeclaration
         |   ';'
         )
     ;
+    * */
+    
+    
+methodDeclaration
+//parameterList
+    :   'function' (returntype=typeType|'void') funcname=Identifier params=parameters ('[' ']')*
+//		: 'function' (returntype=typeType|'void') funcname=Identifier params=parameterList?
+        ('throws' qualifiedNameList)?
+        (   statements=methodBody
+        |   ';'
+        )
+    ;
+
+methodCall
+	:	 'call''('funcname=Identifier '('passedParam=expressionList ')' ')'
+	;
+	
+
 
 genericMethodDeclaration
     :   typeParameters methodDeclaration
@@ -193,14 +214,14 @@ interfaceMemberDeclaration
     */
 
 constDeclaration
-    :   constantModifier* typeType pointerModifier* constantDeclarator (',' constantDeclarator)* ';'
+    :   constMod=constantModifier? conType=typeType pointerModifier* conDeclare=constantDeclarator';'
     ;
     
 pointerModifier
 	:	'*';
 
 constantDeclarator
-    :   Identifier ('[' ']')* '=' variableInitializer
+    :   conName=Identifier ('[' ']')* '=' conValue=variableInitializer
     ;
 
 // see matching of [] comment in methodDeclaratorRest
@@ -252,7 +273,7 @@ dataType
     |   type='char'
     |   type='int'
     |   type='float'
-    |	type='string'
+    |   type='string'
 	;
 	
 typeArguments
@@ -278,7 +299,7 @@ parameterList
     ;
 
 parameter
-    :   typeType variableDeclaratorId
+    :   type=typeType vardec=variableDeclaratorId
     ;
 
 lastFormalParameter
@@ -391,16 +412,23 @@ localVariableDeclarationStatement
     ;
 
 localVariableDeclaration
-    :   constantModifier? typeType variableDeclarator
+    :   typeType variableDeclarator
     ;
+
+conditional
+	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
+	|	'while' '(' condition=boolean_expression ')' ifAction=statement?
+	|   'dowhile' '(' condition=boolean_expression ')' ifAction=statement?
+	|   'for' '(' control=forControl ')' ifAction=statement
+	;
 
 statement
     :   set
 //    |   ASSERT expression (':' expression)? ';'
-    |   'if' parExpression statement ('else' statement)?
-    |   'for' '(' forControl ')' statement
-    |   'while' parExpression statement
-    |   'dowhile' parExpression statement
+    |   conditional
+//    |   'for' '(' forControl ')' statement
+//    |   'while' parExpression statement
+//    |   'dowhile' parExpression statement
 //    |   'try' set (catchClause+ finallySet? | finallySet)
 //    |   'try' resourceSpecification set catchClause* finallySet?
     |   'switch' parExpression '{' switchSetStatementGroup* switchLabel* '}'
@@ -413,8 +441,13 @@ statement
     |   statementExpression ';'
     |   Identifier ':' statement
     | constDeclaration
-    | 'output' parExpression ';'
+    | 'output' '(' expression ');'
+    | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ');'
+    | 'setInAddress' '(' address=Identifier ',' variable=Identifier ');'
+    | 'getVarInAddress' '(' address=Identifier ');'
+    | 'freeAddress' '(' address=Identifier ');'
     | methodDeclaration
+    |	methodCall ';'
     ;
 
 catchClause
@@ -455,8 +488,7 @@ switchLabel
     ;
 
 forControl
-    :   enhancedForControl
-    |   forInit? ';' expression? ';' forUpdate?
+    :   forInit? ';' condition=boolean_expression? ';' forUpdate?
     ;
 
 forInit
@@ -464,9 +496,11 @@ forInit
     |   expressionList
     ;
 
+/*
 enhancedForControl
     :   constantModifier* typeType variableDeclaratorId ':' expression
     ;
+    */
 
 forUpdate
     :   expressionList
@@ -481,6 +515,10 @@ parExpression
 expressionList
     :   expression (',' expression)*
     ;
+    
+primaryList
+	: primary (',' primary)*
+	;
 
 statementExpression
     :   expression
@@ -490,9 +528,49 @@ constantExpression
     :   expression
     ;
 
+variableAssignment
+    :   varName=variableDeclaratorId ('=' varValue=variableInitializer)?
+    ;
+
+math_expression
+	:	primary   
+	|   primary '[' math_expression ']' 
+	|   primary '(' primaryList? ')'
+	|	'(' left=math_expression op=('*'|'/'|'%') right=math_expression ')' 
+    |   '(' left=math_expression op=('+'|'-') right=math_expression ')'
+	|	left=math_expression op=('*'|'/'|'%') right=math_expression 
+    |   left=math_expression op=('+'|'-') right=math_expression  
+    ;
+
+boolean_expression
+	:	primary   
+	|   primary '[' math_expression ']' 
+	|   primary '(' primaryList? ')'
+	|	'(' left=boolean_expression (op='==' | op='!=') right=boolean_expression ')'	
+    |   '(' left=boolean_expression op='&&' right=boolean_expression ')'
+    |   '(' left=boolean_expression op='||' right=boolean_expression ')'
+    |   '(' left=boolean_expression (op='<=' | op='>=' | op='>' | op='<') right=boolean_expression ')'
+	|	left=boolean_expression (op='==' | op='!=') right=boolean_expression	
+    |   left=boolean_expression op='&&' right=boolean_expression	
+    |   left=boolean_expression op='||' right=boolean_expression	
+    |   left=boolean_expression (op='<=' | op='>=' | op='>' | op='<') right=boolean_expression
+    ;
+    
+    /*
+string_expression
+	:	string_expression '+' string_expression
+	|   math_expression
+	|   boolean_expression
+	|   '"' (StringCharacters?)* '"'
+	;
+	*/
 
 expression
     :   primary	
+    |   expression '"' expression '"'	
+    |   expression '[' expression ']'	
+    |   expression '(' expressionList? ')'
+    |	variableAssignment
     |   expression '.' Identifier	 
     |   expression '.' 'this'	
 //    |   expression '.' 'new' nonWildcardTypeArguments? innerCreator	
@@ -504,19 +582,14 @@ expression
 //    |   '(' typeType ')' expression	
     |   expression ('++' | '--')	
 //    |   ('+'|'-'|'++'|'--'|'!') expression	
-    |   ('+'|'-'|'!') expression	
-    |   left=expression op=('*'|'/'|'%') right=expression 
-    |   left=expression op=('+'|'-') right=expression 
-    |   left=expression ('<=' | '>=' | '>' | '<') right=expression 
+    |   ('-'|'!') expression
+    |	math_expression	 
+    |	boolean_expression
     |   expression 'instanceof' typeType	
-    |   expression ('==' | '!=') expression	
     |   expression '^' expression	
-    |   expression '&&' expression	
-    |   expression '||' expression	
     |   expression '?' expression ':' expression
     |   <assoc=right> expression	
-        (   '='
-        |   '+='
+        (   '+='
         |   '-='
         |   '*='
         |   '/='
@@ -526,9 +599,10 @@ expression
 
 
 primary
-    :   '(' expression ')'
+    //:   '(' expression ')'
 //    |   'this'
 //    |   'super'
+   	: constantVal=literal
     |   constantVal=literal
     |   variableVal=Identifier
 //    |   typeType '.' 'class'
@@ -606,7 +680,7 @@ IntegerLiteral
 
 fragment
 DecimalIntegerLiteral
-    :   DecimalNumeral IntegerTypeSuffix?
+    :   '-'? DecimalNumeral IntegerTypeSuffix?
     ;
 
 /*
@@ -921,6 +995,7 @@ CLASS         : 'class';
 CONST         : 'CONST';
 DEFAULT       : 'default';
 DOWHILE       : 'dowhile';
+CALL		  : 'call';
 ELSE          : 'else';
 FLOAT         : 'float';
 FOR           : 'for';
