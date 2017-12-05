@@ -4,6 +4,7 @@ import packageA.variable.util.*;
 import packageA.variable.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.ANTLRErrorStrategy;
@@ -42,6 +43,7 @@ import packageA.JavaParser.VariableDeclaratorContext;
 import packageA.JavaParser.VariableDeclaratorIdContext;
 import packageA.JavaParser.VariableInitializerContext;
 import packageA.collector.OutputCollector;
+import packageA.collector.StandardInputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
@@ -245,22 +247,28 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                 	OutputCollector.getInstance().append(sb.toString());
                 	return 0;
                 case FunctionDictionary.FUNCTION_SCAN:
-//                    System.out.println("SCANNING");
-                    PopUpGUI pg = new PopUpGUI();
-                    String input = pg.getInput();
-//                    System.out.println("input is: " + input);
-                    if(i + 1 < ctx.getChildCount()
-//                     && ctx.getChild(i+1).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())
-                     ){
-                        
-//                        String varScope = constructVariableScope(ctx);
-//                        String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
-//                        System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
-//                        System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
-//                        InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
+//                  System.out.println(ctx.getText());
+                    String varSimpleName = ctx.inputReceiver.getText();
+                    String varFormat = ctx.inputFormat.getText();
+                    String varValue= "";
+                    System.out.println("VAR FORMAT IS " + varFormat);
+                    switch(varFormat) {
+                        case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
+                            varValue = StandardInputCollector.getInstance().getNextLine();
+                            break;
+                        case FunctionDictionary.FUNCTION_SCAN_NEXT:
+                            varValue = StandardInputCollector.getInstance().getNext();
+                            break;
+                        default:
+                            varValue = StandardInputCollector.getInstance().getNext();
                     }
-                    return 0;
-                    
+                    System.out.println("VAR VALUE  IS " + varValue);
+                    if(varValue != null) {
+                        assignValueToVariable(ctx, varSimpleName, varValue);
+                    }else {
+                        throw new NoSuchElementException();
+                    }
+                	
                 default: 
 //                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }
@@ -525,6 +533,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     		
     		while(isExecuteWhile) {
     			System.out.println("\t\there trying");
+    			System.out.println("ifAction text is: " + ctx.ifAction.getText());
             	visitStatement(ctx.ifAction);
             	visit(ctx.control.getChild(4));
             	System.out.println("CONDITION" + ctx.control.condition.getText());
@@ -548,17 +557,14 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //        for(int i = 0; i < ctx.getChildCount(); i++) {
 //            System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
 //        }
-
-		
-//		System.out.println("THIS IS: " + ctx.getText());
-		if(ctx.getChildCount() == 1) {
-//			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
-            if(ctx.getText().equals("true")){
-                return 1;
-            }else if(ctx.getText().equals("false")){
-                return 0;
-            }else{
-            	if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
+		String toCompare = ctx.getText().trim();
+		if(toCompare.equals("true")) {
+			return 1;
+		}else if(toCompare.equals("false")){
+			
+		}else {
+			if(ctx.getChildCount() == 1) {
+				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
     				return Integer.parseInt(ctx.getChild(0).getText());
     			}else {
     				try {
@@ -572,10 +578,25 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     				}			
     				return -1;
     			}
-            }
-		}else {
-			int sample = BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
-			return sample;
+			}else{
+				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+			}
+		}
+		System.out.println("MISSING: " + ctx.getText());
+		return visitBoolean_expression(ctx);
+		
+//		System.out.println("THIS IS: " + ctx.getText());
+//		if(ctx.getChildCount() == 1) {
+//			System.out.println("THE VALUE OF THE CONTEXT IS " + ctx.getText());
+//            if(ctx.getText().equals("true")){
+//                return 1;
+//            }else if(ctx.getText().equals("false")){
+//                return 0;
+//            }else{
+//            	
+//            }
+//		}else {
+			
 //			if(ctx.op != null) {
 //				
 //				if(ctx.left.getChildCount() == 1 && ctx.right.getChildCount() == 1) {
@@ -593,7 +614,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //					}
 //				}
 //			}	
-		}
+//		}
 //		
 	}
 	
@@ -667,66 +688,63 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	@Override
 	public Integer visitExpression(ExpressionContext ctx) {
 		
-		
-//		System.out.println();
-//		System.out.println("EXPRESSION START");
-//		System.out.println();
-		
-		int total = ctx.getChildCount();
-		for(int i = 0; i < total; i++) {
-			
-			switch(ctx.getChild(i).getText()) {
-				case FunctionDictionary.FUNCTION_PRINT:
-					System.out.println("\t\t\t\t\tAT VISIT EXPRESSION");
-//					System.out.println("PRINTING HERE");
-					if(i+2 < ctx.getChildCount()) {
-						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
-						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
-					}
-					break;
-                case FunctionDictionary.FUNCTION_SCAN:
-//                	System.out.println("SCANNING");
-                	PopUpGUI p = new PopUpGUI();
-            		
-//            		System.out.println("showed ui");
-//            		System.out.println("heree" + p.getInput());
-            		
-            		boolean temp = true;
-            		while(temp){
-            			if(!p.getInput().equals("")){
-            				temp = false;
-            				//get input here
-//            				System.out.println("heree" + p.getInput());
-            			}
-            		}
-                	if(i + 2 < ctx.getChildCount() && ctx.getChild(i+2).getClass().getSimpleName().equals(ExpressionListContext.class.getSimpleName())){
-//                		System.out.println("HERE");
-                		String varScope = constructVariableScope(ctx);
-                		String varName = varScope + "$" + ctx.getChild(i+2).getChild(0).getText();
-//                		System.out.println("SCAN SAYS: Scope of given variable is at " + varScope);
-//                		System.out.println("SCAN SAYS: Entering value entered at variable " + varName);
-                		
-                		
-//                		InputCollector.getInstance().store(, ctx.getChild(i+2).getChild(2).getText());
-                	}
-                    break;
-                    
-                
-//                case FunctionDictionary.FUNCTION_FOR_LOOP:
-//                	System.out.println();
-//                	for(int j=0; j<ctx.getChildCount() ;j++)
-//                		System.out.println(j + " : " + ctx.getChild(j));
-//                		
+//		
+////		System.out.println();
+////		System.out.println("EXPRESSION START");
+////		System.out.println();
+//		
+//		int total = ctx.getChildCount();
+//		for(int i = 0; i < total; i++) {
+//			
+//			switch(ctx.getChild(i).getText()) {
+//				case FunctionDictionary.FUNCTION_PRINT:
+//					System.out.println("\t\t\t\t\tAT VISIT EXPRESSION");
+////					System.out.println("PRINTING HERE");
+//					if(i+2 < ctx.getChildCount()) {
+//						//System.out.println("ADDING " + ctx.getChild(i+2).getText());
+//						OutputCollector.getInstance().append((StringUtil.constructStringFromPrintStatement(ctx.getChild(i+2).getText())));	
+//					}
+//					break;
+//                case FunctionDictionary.FUNCTION_SCAN:
+////                	System.out.println(ctx.getText());
+//                    String varSimpleName = ctx.inputReceiver.getText();
+//                    String varFormat = ctx.inputFormat.getText();
+//                    String varValue= "";
+//                    System.out.println("VAR FORMAT IS " + varFormat);
+//                    switch(varFormat) {
+//                        case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
+//                            varValue = StandardInputCollector.getInstance().getNextLine();
+//                            break;
+//                        case FunctionDictionary.FUNCTION_SCAN_NEXT:
+//                            varValue = StandardInputCollector.getInstance().getNext();
+//                            break;
+//                        default:
+//                            varValue = StandardInputCollector.getInstance().getNext();
+//                    }
+//                    System.out.println("VAR VALUE  IS " + varValue);
+//                    if(varValue != null) {
+//                        assignValueToVariable(ctx, varSimpleName, varValue);
+//                    }else {
+//                        throw new NoSuchElementException();
+//                    }
 //                	break;
-                default: 
-//                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
-			}
-		}
-		
-//		System.out.println();
-//		System.out.println("EXPRESSION END");
-//		System.out.println();
-		// TODO Auto-generated method stub
+//                    
+//                
+////                case FunctionDictionary.FUNCTION_FOR_LOOP:
+////                	System.out.println();
+////                	for(int j=0; j<ctx.getChildCount() ;j++)
+////                		System.out.println(j + " : " + ctx.getChild(j));
+////                		
+////                	break;
+//                default: 
+////                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+//			}
+//		}
+//		
+////		System.out.println();
+////		System.out.println("EXPRESSION END");
+////		System.out.println();
+//		// TODO Auto-generated method stub
 		return super.visitExpression(ctx);
 	}
 	
