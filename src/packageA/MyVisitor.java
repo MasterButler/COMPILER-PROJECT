@@ -460,6 +460,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));
 			return 0;
 		} catch (VariableNotFoundError e1) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(varSimpleName).getErrorMessage());
 			e1.printStackTrace();
 		} catch (IncompatibleVariableDataTypeError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
