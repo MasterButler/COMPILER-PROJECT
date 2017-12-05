@@ -208,6 +208,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 	String[] segments = argument.split("\\+");
                 	StringBuilder sb = new StringBuilder();
                 	
+                	System.out.println("SEGMENTS: " + segments[0]);
                 	for(int j = 0; j < parseTreeArguments.getChildCount(); j+=2) {
                 		System.out.println("SEGMENT:dick" + parseTreeArguments.getChild(j).getText() + "dick");
                 		
@@ -222,6 +223,17 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //                			}else {
 //                				sb.append(parseTreeArguments.getChild(j).getText());
 //                			}
+                		}
+                		else if(Pattern.matches(PatternDictionary.ARRAY_PATTERN, parseTreeArguments.getChild(j).getText())){
+                			try {
+								Variable var = VariableManager.searchVariable(ctx.getChild(i+2).getChild(j).getChild(0).getText(), constructVariableScope(ctx));
+								int index = Integer.parseInt(ctx.getChild(i+2).getChild(j).getChild(2).getText());
+								String varValue = (String)var.getValue().getValue();
+								String[] value = varValue.split(",");
+								sb.append(value[index]);
+							} catch (VariableNotFoundError e) {
+								OutputCollector.getInstance().append("No variable " + ctx.getChild(i+2).getChild(j).getChild(0).getText() + " was found");
+							}
                 		}
                 		else if(parseTreeArguments.getChild(j).getChildCount() > 1){
                 			System.out.println("IF 2");
@@ -686,7 +698,20 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			}else{
 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
     				return Float.parseFloat(ctx.getChild(0).getText());
-    			}else {
+    			}
+				else if(Pattern.matches(PatternDictionary.ARRAY_PATTERN, ctx.getChild(0).getText())){
+	    			try {
+						Variable var = VariableManager.searchVariable(ctx.getChild(0).getChild(0).getText(), constructVariableScope(ctx));
+						int index = Integer.parseInt(ctx.getChild(0).getChild(2).getText());
+						String varValue = (String)var.getValue().getValue();
+						String[] value = varValue.split(",");
+						System.out.println("FLIPPANT BEAVER: " + value[index]);
+						return Float.parseFloat(value[index]);
+					} catch (VariableNotFoundError e) {
+						OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
+					}
+	    		}
+				else {
     				try {
     					Variable var = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
     					
@@ -705,6 +730,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
     			}
 			}
 		}
+		return null;
 		
 //		System.out.println("THIS IS: " + ctx.getText());
 //		if(ctx.getChildCount() == 1) {
@@ -792,7 +818,19 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		if(ctx.getChildCount() == 1){
 			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
 				return Float.parseFloat(ctx.getChild(0).getText());
-			}else {
+			}
+			else if(Pattern.matches(PatternDictionary.ARRAY_PATTERN, ctx.getChild(0).getText())){
+    			try {
+					Variable var = VariableManager.searchVariable(ctx.getChild(0).getChild(0).getText(), constructVariableScope(ctx));
+					int index = Integer.parseInt(ctx.getChild(0).getChild(2).getText());
+					String varValue = (String)var.getValue().getValue();
+					String[] value = varValue.split(",");
+					return Float.parseFloat(value[index]);
+				} catch (VariableNotFoundError e) {
+					OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
+				}
+    		}
+			else {
 				try {
 					return Float.parseFloat(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
 				} catch (VariableNotFoundError e) {
@@ -804,6 +842,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		else {
 			return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
 		}
+		return null;
 	}
 	
 	@Override
