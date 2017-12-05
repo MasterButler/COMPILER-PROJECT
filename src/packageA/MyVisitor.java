@@ -236,6 +236,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 							String temp = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString();
                 							sb.append(temp.substring(1, temp.length()-1));
                 						}
+                						else if(vartype.equals("char")){
+                							String temp = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString();
+                							sb.append(temp.substring(1, temp.length()-1));
+                						}
                 						else
                 							sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());
                 					}
