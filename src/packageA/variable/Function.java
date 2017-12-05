@@ -1,6 +1,8 @@
 package packageA.variable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.StatementContext;
@@ -17,7 +19,7 @@ public class Function {
 	private String funcReturnType;
 	//List of parameters
 	private ArrayList<Variable> funcParameter = new ArrayList<Variable>();
-	
+	private HashMap<String, Variable> varList;
 	private MethodBodyContext sc;
 	
 	
@@ -31,6 +33,7 @@ public class Function {
 		this.funcReturnType = funcReturnType;
 		this.funcParameter = funcParameter;
 		this.sc = sc;
+		this.varList = new HashMap<String, Variable>();
 		
 	}
 
@@ -101,5 +104,34 @@ public class Function {
 		return null;
 		
 		
+	}
+	public Variable addVariable(Variable variable) {
+		System.out.println("ADDING THE ONE NAMED " + variable.getVarName());
+		
+		return varList.put(variable.getVarName(), variable);
+	}
+	
+	public Variable getVariable(String variableName) {
+		return varList.get(variableName);
+	}
+	
+	public void removeVariable(String variableName) {
+		varList.remove(variableName);
+	}
+	
+	public void destroyVariables(){
+		varList.clear();
+	}
+	
+	public void printVariables(){
+		System.out.println("\t\t\t\t PUTANGINA");
+		Iterator it = varList.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry pair = (HashMap.Entry)it.next();
+	        Variable v = (Variable) pair.getValue();
+	        System.out.println(pair.getKey());
+	        System.out.println("v: " + v.getValue().getValue().toString());
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
 	}
 }

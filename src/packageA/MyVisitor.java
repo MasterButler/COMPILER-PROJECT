@@ -919,6 +919,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		return super.visitBaseDeclaration(ctx);
 	}
 	
+	/*
+	
 	@Override
 	public Float visitMethodCall(MethodCallContext ctx) {
 		System.out.println("\t\t\t\t\tAT METHOD CALL");
@@ -953,6 +955,47 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			
 			//delete variables
 			VariableManager.removeVariable(FunctionManager.getFunction(funcName).getFuncScope());
+		}
+		else{
+			System.out.println("\t\t\t NOT FOUND FUNCTION");
+		}
+		return super.visitMethodCall(ctx);
+	}
+	*/
+	
+	@Override
+	public Float visitMethodCall(MethodCallContext ctx) {
+		System.out.println("\t\t\t\t\tAT METHOD CALL");
+		String funcName = ctx.funcname.getText();
+		Function f = FunctionManager.getFunction(funcName);
+		if(FunctionManager.isExisting(funcName)){
+			System.out.println("DONE METHOD CALL STUFF");
+			
+			List<ExpressionContext> expList = ctx.passedParam.expression();
+			System.out.println("expList : " + expList.size());
+			for(int i=0; i<expList.size(); i++){
+				Variable temp = f.getParam(i);
+				if(temp != null){
+					Value tempval = temp.getValue();
+					try {
+						tempval.setValue(getExpValueMethodCall(expList.get(i).getText(), expList.get(i), ctx));
+						temp.setValue(tempval);
+						f.addVariable(temp);
+					} catch (IncompatibleVariableDataTypeError e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ConstantEditError e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			f.printVariables();
+			visitMethodBody(f.getSc());
+			
+			//delete variables
+			f.destroyVariables();
 		}
 		else{
 			System.out.println("\t\t\t NOT FOUND FUNCTION");
