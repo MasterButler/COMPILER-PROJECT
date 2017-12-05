@@ -100,4 +100,7 @@ public class Variable {
 		return varSimpleName;
 	}
 	
+	public String getScope() {
+		return (new StringBuilder()).append(varScope).toString();
+	}
 }

@@ -8,6 +8,7 @@ import packageA.JavaParser.MethodBodyContext;
 import packageA.JavaParser.StatementContext;
 import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
+import packageA.storage.Storage;
 
 public class Function {
 	
@@ -131,7 +132,6 @@ public class Function {
 	        Variable v = (Variable) pair.getValue();
 	        System.out.println(pair.getKey());
 	        System.out.println("v: " + v.getValue().getValue().toString());
-	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
 
@@ -141,6 +141,12 @@ public class Function {
 
 	public void setVarList(HashMap<String, Variable> varList) {
 		this.varList = varList;
+	}
+	
+	public void addValuesToStorage(){
+		Storage.getInstance().transferVarList(varList);
+		System.out.println("Done transfer");
+		printVariables();
 	}
 	
 	
