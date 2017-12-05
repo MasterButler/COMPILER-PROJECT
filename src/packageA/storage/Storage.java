@@ -3,6 +3,8 @@ package packageA.storage;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import packageA.error.ConstantEditError;
+import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.variable.Function;
 import packageA.variable.Variable;
 
@@ -27,6 +29,9 @@ public class Storage {
 		this.varList = new HashMap<String, Variable>();
 		this.funcList = new HashMap<String, Function>();
 		this.pointerList = new Variable[1000];
+		for(int i = 0 ; i < 1000; i++) {
+			pointerList[i] = null;
+		}
 	}
 	
 	/**
@@ -63,16 +68,32 @@ public class Storage {
 	
 	
 	public Variable getVariableAtAddress(int address) {
+		if(pointerList[address] != null) {
+			System.out.println(pointerList[address].getVarName() + " EXISTING!");
+			
+		}else {
+			System.out.println("NEW FILE");
+		}
 		return pointerList[address];
 	}
 	
 	public void setAddressVariable(int address, Variable variable) {
-		pointerList[address] = variable;
+		try {
+			if(variable == null) {
+				pointerList[address] = null;
+			}else {
+				pointerList[address] = new Variable(variable.getScope(), variable.getVarSimpleName(), variable.getValue());
+				System.out.println("SUCCESSFULLY SET ADDRESS " + address + " WITH VARIABLE " + variable.getVarName());
+			}
+		} catch (IncompatibleVariableDataTypeError | ConstantEditError e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void releaseAddress(int address) {
 		pointerList[address] = null;
 	}
+	
 	
 	public void transferVarList(HashMap<String, Variable> varList2){
 		System.out.println("\t\t\t\t PUTANGINA2");

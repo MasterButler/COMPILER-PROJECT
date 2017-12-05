@@ -306,26 +306,55 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 	break;
                 	
                 case FunctionDictionary.FUNCTION_POINTER_SET:
-					try {
-						int addressToSet = Math.round(visit(ctx.getChild(i+2)));
+                    try {
+                        System.out.println(ctx.getText());
+                        System.err.println("tht's for set pointer");
+                        System.out.println(ctx.getChild(i+2).getText());
+                        System.err.println("tht's for i+2");
+                        
+                        Float output = 0f;
+                        if(ctx.getChild(i+2).getChildCount() > 0) {                            
+                            output = visit(ctx.getChild(i+2));
+                        }else {
+                            output = Float.valueOf(ctx.getChild(i+2).getText());
+                        }
+                        System.out.println("RESULT IS " + output);
+                        
+                        int addressToSet = Math.round(output);
 						Variable variable = VariableManager.searchVariable(ctx.variable.getText(), constructVariableScope(ctx));
 						PointerManager.setAddress(addressToSet, variable);
 					} catch (VariableNotFoundError e1) {
 						SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(ctx.variable.getText()).getErrorMessage());
 						e1.printStackTrace();
 					}
-					break;
+					return 0f;
 					
                 case FunctionDictionary.FUNCTION_POINTER_GET:
-					int addressToGet = Math.round(visit(ctx.getChild(i+2)));
+                    Float output = 0f;
+                    if(ctx.getChild(i+2).getChildCount() > 0) {                            
+                        output = visit(ctx.getChild(i+2));
+                    }else {
+                        output = Float.valueOf(ctx.getChild(i+2).getText());
+                    }
+                    System.out.println("RESULT IS " + output);
+                    
+                    int addressToGet = Math.round(output);
 					Variable variable = PointerManager.getVariableAtAddress(addressToGet);
-                	break;
+                	return 0f;
                 	
                 case FunctionDictionary.FUNCTION_POINTER_FREE:
-                	int addressToFree = Math.round(visit(ctx.getChild(i+2)));
+                    Float freeOutput = 0f;
+                    if(ctx.getChild(i+2).getChildCount() > 0) {                            
+                        freeOutput = visit(ctx.getChild(i+2));
+                    } else {
+                        freeOutput = Float.valueOf(ctx.getChild(i+2).getText());
+                    }
+                    System.out.println("RESULT IS " + freeOutput);
+                    
+                    int addressToFree = Math.round(freeOutput);
 					PointerManager.clearAddress(addressToFree);
 					
-					break;
+					return 0f;
                 default: 
 //                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }
@@ -537,7 +566,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
 		int varIndex = -1;
-		if(!ctx.varIndex.getText().trim().equals("")) {
+		if(ctx.varIndex != null) {
 			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.varIndex.getText())) {
 				varIndex = Integer.valueOf(ctx.varIndex.getText());
 			}			

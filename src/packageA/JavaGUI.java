@@ -312,7 +312,7 @@ public class JavaGUI extends JFrame implements MouseListener{
 			viewr.setScale(1.5);
 		    viewr.open();
 			
-			
+			System.out.println("DISPLAYING ERRORS/OUTPUT");
 			if(SyntaxErrorCollector.getInstance().countErrors() == 0) {
 				taResult.setText(OutputCollector.getInstance().getOutput());				
 			}else {
