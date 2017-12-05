@@ -592,6 +592,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                     
                 }
                 */
+            }else {
+            	return visitStatement(ctx.elseAction);
             }
     	}
     	else if(ctx.getChild(0).getText().equals("while")){

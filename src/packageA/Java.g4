@@ -416,7 +416,7 @@ localVariableDeclaration
     ;
 
 conditional
-	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
+	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' elseAction=statement)?
 	|	'while' '(' condition=boolean_expression ')' ifAction=statement?
 	|   'dowhile' '(' condition=boolean_expression ')' ifAction=statement?
 	|   'for' '(' control=forControl ')' ifAction=statement
