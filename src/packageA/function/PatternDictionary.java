@@ -8,4 +8,6 @@ public class PatternDictionary {
 	public static String STRING_PATTERN = "\"(.)+\"";
 	
 	public static String BOOLEAN_PATTERN = "(true)|(false)";
+
+	public static String ARRAY_PATTERN = "\\[(.\\,)*.\\]";
 }
