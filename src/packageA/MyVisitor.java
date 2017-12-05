@@ -564,9 +564,11 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		if(toCompare.equals("true")) {
 			return 1;
 		}else if(toCompare.equals("false")){
-			
+			return 0;
 		}else {
-			if(ctx.getChildCount() == 1) {
+			if(ctx.getChildCount() > 1) {
+				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+			}else{
 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
     				return Integer.parseInt(ctx.getChild(0).getText());
     			}else {
@@ -581,12 +583,8 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     				}			
     				return -1;
     			}
-			}else{
-				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
 			}
 		}
-		System.out.println("MISSING: " + ctx.getText());
-		return visitBoolean_expression(ctx);
 		
 //		System.out.println("THIS IS: " + ctx.getText());
 //		if(ctx.getChildCount() == 1) {
