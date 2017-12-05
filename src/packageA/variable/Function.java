@@ -134,4 +134,14 @@ public class Function {
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
+
+	public HashMap<String, Variable> getVarList() {
+		return varList;
+	}
+
+	public void setVarList(HashMap<String, Variable> varList) {
+		this.varList = varList;
+	}
+	
+	
 }
