@@ -231,7 +231,13 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 				}else { 
                 					if(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)) != null) {
                 						System.out.println("VARIABLE");
-                						sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+                						String vartype = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getVarType();
+                						if(vartype.equals("string")){
+                							String temp = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString();
+                							sb.append(temp.substring(1, temp.length()-1));
+                						}
+                						else
+                							sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());
                 					}
                 					else {
                 						System.out.println("NANI");
@@ -247,7 +253,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 
                         System.out.println(parseTreeArguments.getChild(j).getText());
                 	}
-                	OutputCollector.getInstance().append(sb.toString());
+                	OutputCollector.getInstance().append(sb.toString() + "\n");
                 	return (float)0;
                 case FunctionDictionary.FUNCTION_SCAN:
 //                  System.out.println(ctx.getText());
@@ -316,10 +322,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		String varSimpleName = ctx.variableDeclarator().varName.getText();
 		String varValue = null;
 		if(ctx.variableDeclarator().varValue != null) {
+			System.out.println("\t\t\tAT VARVALE IF");
 			varValue = ctx.variableDeclarator().varValue.getText();
 			
 			if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getChildCount() == 1) {
-//				System.out.println("DECLARING 1 : " + varValue);
 				declareVariable(ctx, varSimpleName, varType, varValue, false);
 			}
 			else if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
@@ -355,6 +361,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //				}
 //			}
 		}else{
+			
 			declareVariable(ctx, varSimpleName, varType, varValue, false);
 		}
 		return super.visitLocalVariableDeclaration(ctx);
@@ -379,10 +386,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	public Integer declareVariable(ParserRuleContext ctx, String varSimpleName, String varType, String varValue, boolean isConst) {
 		Variable toStore = null;
 		try {
-			
 			toStore = new Variable(constructVariableScope(ctx), varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
-//			System.out.println("done adding var");
 			return 0;
 		} catch (MultipleVariableDeclarationError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new MultipleVariableDeclarationError(toStore.getVarSimpleName()).getErrorMessage());
@@ -403,7 +408,6 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			
 			toStore = new Variable(scope, varSimpleName, new Value(varType, varValue, isConst));
 			VariableManager.addVariable(toStore);
-//			System.out.println("done adding var");
 			return 0;
 		} catch (MultipleVariableDeclarationError e) {
 			System.out.println("MULTIPLE VAR");
