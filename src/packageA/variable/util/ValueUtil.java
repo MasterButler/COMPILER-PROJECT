@@ -17,6 +17,8 @@ public class ValueUtil {
 	}
 	
 	public static String inferVarType(String value) {
+		System.out.println("INFERRING " + value);
+		
 		if(isMatch(value, PatternDictionary.CHAR_PATTERN)) {
 			return "char";
 		}else if(isMatch(value, PatternDictionary.INTEGER_PATTERN)) {
@@ -27,7 +29,9 @@ public class ValueUtil {
 			return "boolean";
 		}else if(isMatch(value, PatternDictionary.STRING_PATTERN)) {
 			return "string";
-		}		
+		}else if(Pattern.matches(PatternDictionary.ARRAY_PATTERN, value)) {
+			return "array";
+		}
 		return "unknown";
 	}
 	

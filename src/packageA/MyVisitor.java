@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import packageA.JavaParser.ArrayInitializerContext;
 import packageA.JavaParser.BaseDeclarationContext;
 import packageA.JavaParser.Boolean_expressionContext;
 import packageA.JavaParser.ConditionalContext;
@@ -371,6 +372,60 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
 				}
 				
+			}
+			else if(ctx.variableDeclarator().variableInitializer().getChild(0).getClass().getSimpleName().equals(ArrayInitializerContext.class.getSimpleName())) {
+				System.out.println("ARRAY");
+				
+				ArrayList ans = new ArrayList();
+				
+				for(int i = 1; i < ctx.variableDeclarator().variableInitializer().getChild(0).getChildCount(); i = i + 2) {
+					String value = ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getText();
+					
+					if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChildCount() > 1) {
+						if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
+							float arrayAns = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0));
+							
+							ans.add(arrayAns);
+						}
+						else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
+							boolean arrayAns = visitBoolean_expression((Boolean_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0))  == 1 ? true: false;
+							
+							ans.add(arrayAns);
+						}
+					}
+					else {
+						if(ValueUtil.isMatch(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText(), PatternDictionary.INTEGER_PATTERN)) {
+							if(varType.equals("int")) {
+								ans.add(value);
+							}
+						} 
+						else if(ValueUtil.isMatch(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText(), PatternDictionary.FLOAT_PATTERN)) {
+							if(varType.equals("float")) {
+								ans.add(value);
+							}
+						}
+						else if(ValueUtil.isMatch(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText(), PatternDictionary.BOOLEAN_PATTERN)) {
+							if(varType.equals("boolean")) {
+								ans.add(value);
+							}
+						}
+						else if(ValueUtil.isMatch(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText(), PatternDictionary.CHAR_PATTERN)) {
+							if(varType.equals("char")) {
+								ans.add(value);
+							}
+						}
+						else if(ValueUtil.isMatch(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(i).getChild(0).getChild(0).getText(), PatternDictionary.STRING_PATTERN)) {
+							if(varType.equals("string")) {
+								ans.add(value);
+							}
+						}
+					}
+				}
+				
+				System.out.println("ARRAYDECLARE");
+				
+				varType = varType + "[]";
+				declareVariable(ctx, varSimpleName, varType, ""+ans, false);
 			}
 //				else {
 //				System.out.println("I WANT TO EVALUATE "+ctx.variableDeclarator().variableInitializer().getText() + " with class of " + ctx.variableDeclarator().variableInitializer().getClass().getSimpleName());

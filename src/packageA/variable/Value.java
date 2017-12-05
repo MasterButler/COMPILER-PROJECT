@@ -29,20 +29,25 @@ public class Value {
 	}
 	
 	public void setValue(Object value) throws IncompatibleVariableDataTypeError, ConstantEditError {
+		String valueString = value.toString().replaceAll(" ", "");
+		
 		if(this.isConstant == false) {
 			if(value != null) {
-				String inferredType = ValueUtil.inferVarType(value.toString());
+				String inferredType = ValueUtil.inferVarType(valueString);
 				if(this.type.equals(inferredType)){
-					this.value = value;
+					this.value = valueString;
 				}
 				else if (this.type.equals("float") && inferredType.equals("int")){
-					this.value = Float.parseFloat((String)value);
+					this.value = Float.parseFloat((String)valueString);
 				}
 				else if (this.type.equals("int") && inferredType.equals("float")) {
-					this.value = Math.round(Float.parseFloat((String)value));
+					this.value = Math.round(Float.parseFloat((String)valueString));
+				}
+				else if (this.type.contains("[]") && inferredType.equals("array")) {
+					this.value = valueString;
 				}
 				else {
-					System.out.println("CAN'T UNDERSTAND " + value.toString());
+					System.out.println("CAN'T UNDERSTAND " + valueString.toString());
 					throw new IncompatibleVariableDataTypeError(this.type, inferredType);
 				}
 			}
