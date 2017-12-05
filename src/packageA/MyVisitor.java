@@ -56,6 +56,7 @@ import packageA.function.MathUtil;
 import packageA.function.PatternDictionary;
 import packageA.function.StringUtil;
 import packageA.pointers.PointerManager;
+import packageA.storage.Storage;
 
 public class MyVisitor extends JavaBaseVisitor<Float> {
 
@@ -211,6 +212,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 		
                 		System.out.println("Examining " + parseTreeArguments.getChild(j).getText());
                 		if(parseTreeArguments.getChild(j).getText().charAt(0) == '"') {
+                			System.out.println("IF 1");
                 			//if(segments[j].charAt(0) == '"') {
                 			sb.append(StringUtil.constructStringFromPrintStatement(parseTreeArguments.getChild(j).getText()));
 //                			System.out.println("LITERAL");
@@ -220,6 +222,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //                				sb.append(parseTreeArguments.getChild(j).getText());
 //                			}
                 		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
+                			System.out.println("IF 2");
                 			System.out.println("BEFORE");
                 			System.out.println("TO VIEW " + parseTreeArguments.getText());
                 			float result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
@@ -227,10 +230,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 			sb.append(result);
                 			
                 		} else {
+                			System.out.println("IF 3");
                 			try {
                 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
                 					sb.append(parseTreeArguments.getChild(j).getText());
                 				}else { 
+                					System.out.println("constructVariableScope(ctx): " + constructVariableScope(ctx));
                 					if(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)) != null) {
                 						System.out.println("VARIABLE");
                 						String vartype = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getVarType();
@@ -257,7 +262,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 		}
                 		
 
-                        System.out.println(parseTreeArguments.getChild(j).getText());
+                        System.out.println("work okay: " + parseTreeArguments.getChild(j).getText());
                 	}
                 	OutputCollector.getInstance().append(sb.toString() + "\n");
                 	return (float)0;
@@ -850,6 +855,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		ParserRuleContext parentFinder;
 		StringBuilder varName = new StringBuilder();
 		parentFinder = ctx.getParent();
+		
 		do {
 			parentFinder = parentFinder.getParent();
 			if(parentFinder.getClass().getSimpleName().equals(MethodDeclarationContext.class.getSimpleName())) {
@@ -857,7 +863,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //			}else if(parentFinder.getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
 //				varName.append(new StringBuffer(REFERENCE_SET_STATEMENT_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}else if(parentFinder.getClass().getSimpleName().equals(StatementContext.class.getSimpleName())) {
-				if(parentFinder.getParent().getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {					
+				if(parentFinder.getParent().getClass().getSimpleName().equals(SetStatementContext.class.getSimpleName())) {
 					//VERY EXPERIMENTAL
 //					System.out.println("FOUND IT!!!");
 					varName.append(new StringBuffer(REFERENCE_STATEMENT_CONTEXT+parentFinder.getParent().getParent().children.indexOf(parentFinder.getParent())).reverse().toString()).append('$');
@@ -868,6 +874,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			}else if(parentFinder.getClass().getSimpleName().equals(SetContext.class.getSimpleName())) {
 				varName.append(new StringBuffer(REFERENCE_SET_CONTEXT+parentFinder.getParent().children.indexOf(parentFinder)).reverse().toString()).append('$');
 			}
+			
 		}while(!parentFinder.getClass().getSimpleName().equals(BaseDeclarationContext.class.getSimpleName()));
 		
 		return new StringBuffer(varName.toString()).reverse().toString().substring(1, varName.length());
@@ -884,11 +891,23 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		ArrayList<Variable> variableList = new ArrayList<Variable> ();
 		if(ctx.method.params.parameterList() != null){
 			List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
+			
 			for(int i=0; i<paramCont.size(); i++){
 				try {
+//					System.out.println("ctx.method.funcname.getText() + '$' " + ctx.method.funcname.getText() + '$');
+//					System.out.println("paramCont.get(i).vardec.getText() " + paramCont.get(i).vardec.getText());
+//					System.out.println("ctx simple class: " + ctx.method.getClass().getSimpleName());
+//					System.out.println("constructVariableScope(ctx) " + constructVariableScope(paramCont.get(i)));
 					
-					variableList.add(new Variable(ctx.method.funcname.getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
-					System.out.println("BASE DECLARED " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
+//					constructVariableScope(ctx);
+					Variable v = new Variable(constructVariableScope(paramCont.get(i)), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
+					variableList.add(v);
+					System.out.println("BASE DECLARED varName: " + v.getVarName());
+					System.out.println("BASE DECLARED varSimpleName: " + v.getVarSimpleName());
+					System.out.println("BASE DECLARED Const: " + constructVariableScope(paramCont.get(i)));
+//					variableList.add(new Variable(ctx.method.funcname.getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
+//					variableList.add(new Variable(constructVariableScope(ctx), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
+//					System.out.println("BASE DECLARED " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
 				} catch (IncompatibleVariableDataTypeError e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -896,17 +915,21 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
+				
 			}
 		}
 		
 	
 		try {
-			if(ctx.method.returntype != null)
+			if(ctx.method.returntype != null){
 				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements));
+			}
 			
 			else //void return
 				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements));
-			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
+//			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
 		} catch (MultipleVariableDeclarationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -978,6 +1001,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 				if(temp != null){
 					Value tempval = temp.getValue();
 					try {
+						System.out.println("expList.get(i).getText(): " + expList.get(i).getText());
+						System.out.println("temp.getVarName: " + temp.getVarName().toString());
 						tempval.setValue(getExpValueMethodCall(expList.get(i).getText(), expList.get(i), ctx));
 						temp.setValue(tempval);
 						f.addVariable(temp);
@@ -992,10 +1017,13 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 				}
 			}
 			f.printVariables();
+			Storage.getInstance().transferVarList(f.getVarList());
+			
 			visitMethodBody(f.getSc());
 			
 			//delete variables
-			f.destroyVariables();
+//			f.destroyVariables();
+//			Storage.getInstance().removeVarList(f.getVarList());
 		}
 		else{
 			System.out.println("\t\t\t NOT FOUND FUNCTION");
@@ -1010,13 +1038,16 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
     	
     	for(int j = 0; j < parseTreeArguments.getChildCount(); j+=2) {
     		if(parseTreeArguments.getChild(j).getText().charAt(0) == '"') {
+    			System.out.println("TEST 1");
     			sb.append(StringUtil.constructStringFromPrintStatement(parseTreeArguments.getChild(j).getText()));
     		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
+    			System.out.println("TEST 2");
     			float result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
     			System.out.println("GOT " + result);
     			sb.append(result);
     			
     		} else {
+    			System.out.println("TEST 3");
     			try {
     				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
     					sb.append(parseTreeArguments.getChild(j).getText());

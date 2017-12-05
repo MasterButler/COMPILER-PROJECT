@@ -1,6 +1,7 @@
 package packageA.storage;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import packageA.variable.Function;
 import packageA.variable.Variable;
@@ -71,6 +72,27 @@ public class Storage {
 	
 	public void releaseAddress(int address) {
 		pointerList[address] = null;
+	}
+	
+	public void transferVarList(HashMap<String, Variable> varList2){
+		System.out.println("\t\t\t\t PUTANGINA2");
+		Iterator it = varList2.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry pair = (HashMap.Entry)it.next();
+	        addVariable((Variable) pair.getValue());
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	}
+	
+	public void removeVarList(HashMap<String, Variable> varList2){
+		System.out.println("\t\t\t\t PUTANGINA3");
+		Iterator it = varList2.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry pair = (HashMap.Entry)it.next();
+	        Variable v = (Variable) pair.getValue();
+	        removeVariable(v.getVarName());
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
 	}
 	
 }
