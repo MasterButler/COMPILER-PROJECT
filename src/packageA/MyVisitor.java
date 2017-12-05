@@ -195,9 +195,12 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                     	}
                     }
                     */
-                	String argument = ctx.getChild(i+1).getChild(1).getChild(0).getText();
-                	ParseTree parseTreeArguments = ctx.getChild(i+1).getChild(1).getChild(0);
+                	System.out.println("MY CURR CONTENT IN VISIT IS: " + ctx.getText());
+                	String argument = ctx.getChild(i+2).getText();
                 	System.out.println("MY ARGUMENT IS " + argument);
+                	ParseTree parseTreeArguments = ctx.getChild(i+2);
+                	System.out.println("MY ARGUMENT IS " + parseTreeArguments.getText());
+                	
                 	String[] segments = argument.split("\\+");
                 	StringBuilder sb = new StringBuilder();
                 	
