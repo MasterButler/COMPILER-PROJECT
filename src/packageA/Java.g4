@@ -419,7 +419,7 @@ conditional
 	: 	'if' '(' condition=boolean_expression ')' ifAction=statement ('else' statement)?
 	|	'while' '(' condition=boolean_expression ')' ifAction=statement?
 	|   'dowhile' '(' condition=boolean_expression ')' ifAction=statement?
-	|   'for' '(' control=forControl ')' ifAction=statement?
+	|   'for' '(' control=forControl ')' ifAction=statement
 	;
 
 statement
