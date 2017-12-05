@@ -577,7 +577,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
 //		}
 		
-		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
+		if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.varValue.getChild(0).getText())) {
+		//if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
 			assignValueToVariable(ctx, varSimpleName, varIndex, varValue);
 		}else {
 //			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
