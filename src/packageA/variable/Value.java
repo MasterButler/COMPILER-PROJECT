@@ -12,7 +12,8 @@ public class Value {
 	public Value(String type, Object value, boolean isConstant) throws IncompatibleVariableDataTypeError, ConstantEditError {
 		super();
 		this.type = type;
-		setValue(value);
+		if(value != null)
+			setValue(value);
 		this.isConstant = isConstant; 
 	}
 	
