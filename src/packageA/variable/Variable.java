@@ -36,7 +36,13 @@ public class Variable {
 		if(this.value == null) {
 			this.value = value;
 		}else {
-			if(this.value.getType().equals(value.getType())) {
+			if(this.value.getType().equals("float") && value.getType().equals("int")) {
+				this.value.setValue(value.getValue());
+			}
+			else if(this.value.getType().equals("int") && value.getType().equals("float")) {
+				this.value.setValue(value.getValue());
+			}
+			else if(this.value.getType().equals(value.getType())) {
 				this.value.setValue(value.getValue());
 				return true;
 			}else {

@@ -55,7 +55,7 @@ import packageA.function.MathUtil;
 import packageA.function.PatternDictionary;
 import packageA.function.StringUtil;
 
-public class MyVisitor extends JavaBaseVisitor<Integer> {
+public class MyVisitor extends JavaBaseVisitor<Float> {
 
 	public static final String REFERENCE_SET_CONTEXT = "set";
 	public static final String REFERENCE_STATEMENT_CONTEXT = "stmt";
@@ -168,7 +168,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 
     @Override
-    public Integer visitStatement(StatementContext ctx) {
+    public Float visitStatement(StatementContext ctx) {
     
         int total = ctx.getChildCount();
         for(int i = 0; i < total; i++) {
@@ -220,7 +220,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                 		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
                 			System.out.println("BEFORE");
                 			System.out.println("TO VIEW " + parseTreeArguments.getText());
-                			Integer result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
+                			float result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
                 			System.out.println("GOT " + result);
                 			sb.append(result);
                 			
@@ -248,7 +248,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
                         System.out.println(parseTreeArguments.getChild(j).getText());
                 	}
                 	OutputCollector.getInstance().append(sb.toString());
-                	return 0;
+                	return (float)0;
                 case FunctionDictionary.FUNCTION_SCAN:
 //                  System.out.println(ctx.getText());
                     String varSimpleName = ctx.inputReceiver.getText();
@@ -291,7 +291,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/* 003. VARIABLE INITIALIZATIONS AND DECLARATIONS                                                */
 	/*************************************************************************************************/	
 	@Override
-	public Integer visitFieldDeclaration(FieldDeclarationContext ctx) {
+	public Float visitFieldDeclaration(FieldDeclarationContext ctx) {
 		System.out.println("TRYING TO DECLARE");
 		int total = ctx.getChildCount();
 		
@@ -308,7 +308,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	@Override
-	public Integer visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+	public Float visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
 //		System.out.println("LOCAL VAR");
 		int total = ctx.getChildCount();
 
@@ -328,7 +328,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //				
 //				System.out.println("UHHH IN EXPRESSION CONTEXT, IT'S " + ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName());
 				if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
-					int ans = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0));
+					float ans = visitMath_expression((Math_expressionContext)ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0));
 //					System.out.println("ANSWER: " + ans);
 					declareVariable(ctx, varSimpleName, varType, ""+ans, false);
 				}else if(ctx.variableDeclarator().variableInitializer().getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
@@ -361,7 +361,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 
 	@Override
-	public Integer visitConstDeclaration(ConstDeclarationContext ctx) {
+	public Float visitConstDeclaration(ConstDeclarationContext ctx) {
 		System.out.println("DECLARING CONSTANT");
 		int total = ctx.getChildCount();
 
@@ -422,7 +422,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/* 007. VARIABLE ASSIGNMENT                                                                      */
 	/*************************************************************************************************/
 	@Override
-	public Integer visitVariableAssignment(VariableAssignmentContext ctx) {
+	public Float visitVariableAssignment(VariableAssignmentContext ctx) {
 //		System.out.println("HERE AT VARIABLES");
 		String varSimpleName = ctx.varName.getText();
 		String varValue = ctx.varValue.getText();
@@ -438,7 +438,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //			System.out.println("I WANT TO EVALUATE "+ctx.varValue.getText() + " with class of " + ctx.varValue.getClass().getSimpleName());
 			if(ctx.varValue.getChild(0).getClass().getSimpleName().equals(ExpressionContext.class.getSimpleName())) {
 				if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Math_expressionContext.class.getSimpleName())) {
-					int ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
+					float ans = visitMath_expression((Math_expressionContext)ctx.varValue.getChild(0).getChild(0));
 //					System.out.println("ANSWER: " + ans);
 					assignValueToVariable(ctx, varSimpleName, ""+ans);					
 				}else if(ctx.varValue.getChild(0).getChild(0).getClass().getSimpleName().equals(Boolean_expressionContext.class.getSimpleName())) {
@@ -476,7 +476,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	@Override
-	public Integer visitVariableInitializer(VariableInitializerContext ctx) {
+	public Float visitVariableInitializer(VariableInitializerContext ctx) {
 //		System.out.println("here at variable initializer");
 //		for(int j=0; j<ctx.getChildCount() ;j++)
 //    		System.out.println(j + " : " + ctx.getChild(j).getText());
@@ -484,7 +484,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
     @Override
-    public Integer visitConditional(ConditionalContext ctx) {
+    public Float visitConditional(ConditionalContext ctx) {
     	System.out.println("VISITCONDITIONAL");
 //    	for(int i=0; i<ctx.getChildCount(); i++)
 //    		System.out.println(i + " : " + ctx.getChild(i).getText() + " : " + ctx.getChild(i).getClass().getSimpleName());
@@ -554,7 +554,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	/* 011. BOOLEAN EXPRESSIONS                                                                      */
 	/*************************************************************************************************/	
 	@Override
-	public Integer visitBoolean_expression(Boolean_expressionContext ctx) {
+	public Float visitBoolean_expression(Boolean_expressionContext ctx) {
 		
 		
 //        for(int i = 0; i < ctx.getChildCount(); i++) {
@@ -562,24 +562,24 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 //        }
 		String toCompare = ctx.getText().trim();
 		if(toCompare.equals("true")) {
-			return 1;
+			return (float)1;
 		}else if(toCompare.equals("false")){
-			return 0;
+			return (float)0;
 		}else {
 			if(ctx.getChildCount() > 1) {
 				System.out.println("TO COMPARE :" + ctx.left.getText() + ctx.op.getText() + ctx.right.getText());
-				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
+				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? (float)1 : (float)0;
 			}else{
 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
-    				return Integer.parseInt(ctx.getChild(0).getText());
+    				return Float.parseFloat(ctx.getChild(0).getText());
     			}else {
     				try {
     					Variable var = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
     					
     					if(var.getValue().getValue().toString().equals("true")) {
-    						return 1;
+    						return (float)1;
     					}else {
-    						return Integer.valueOf(var.getValue().getValue().toString());
+    						return Float.valueOf(var.getValue().getValue().toString());
     					}
     						
     				} catch (VariableNotFoundError e) {
@@ -587,7 +587,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     				} catch(NumberFormatException e1) {
     					e1.printStackTrace(); 
     				}
-    				return -1;
+    				return (float)-1;
     			}
 			}
 		}
@@ -627,7 +627,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	@Override
-	public Integer visitVariableDeclarator(VariableDeclaratorContext ctx) {
+	public Float visitVariableDeclarator(VariableDeclaratorContext ctx) {
 //		System.out.println("here at variable declarator with context" + ctx.getText());
 //		
 //		if(ctx.getChildCount() >=2)
@@ -643,7 +643,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	@Override
-	public Integer visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+	public Float visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
 //		System.out.println("here at variable id");
 		
 		
@@ -654,7 +654,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
 	@Override
-	public Integer visitDataType(DataTypeContext ctx) {
+	public Float visitDataType(DataTypeContext ctx) {
 //		System.out.println("here at variable datatype");
 //		tempType = ctx.getChild(0).getText();
 //		
@@ -664,12 +664,12 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
 	@Override
-	public Integer visitMethodDeclaration(MethodDeclarationContext ctx) {
+	public Float visitMethodDeclaration(MethodDeclarationContext ctx) {
 		return super.visitMethodDeclaration(ctx);
 	}
 	
 	@Override
-	public Integer visitMath_expression(Math_expressionContext ctx) {
+	public Float visitMath_expression(Math_expressionContext ctx) {
 //		System.out.println("CHILDCOUNT: " + ctx.getChildCount());
 //		for(int i = 0; i < ctx.getChildCount(); i++) {
 //			System.out.println("CHILD " + i + ": " + ctx.getChild(i).getText());
@@ -677,23 +677,23 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 		
 		if(ctx.getChildCount() == 1){
 			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
-				return Integer.parseInt(ctx.getChild(0).getText());
+				return Float.parseFloat(ctx.getChild(0).getText());
 			}else {
 				try {
-					return Integer.parseInt(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
+					return Float.parseFloat(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
 				} catch (VariableNotFoundError e) {
 					e.printStackTrace();
 				}			
-				return -1;
+				return (float)-1;
 			}
 		}
 		else {
-			return (Integer) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+			return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
 		}
 	}
 	
 	@Override
-	public Integer visitExpression(ExpressionContext ctx) {
+	public Float visitExpression(ExpressionContext ctx) {
 		
 //		
 ////		System.out.println();
@@ -791,7 +791,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	
 	
 	@Override
-	public Integer visitBaseDeclaration(BaseDeclarationContext ctx) {
+	public Float visitBaseDeclaration(BaseDeclarationContext ctx) {
 		ArrayList<Variable> variableList = new ArrayList<Variable> ();
 		if(ctx.method.params.parameterList() != null){
 			List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
@@ -831,7 +831,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 	}
 	
 	@Override
-	public Integer visitMethodCall(MethodCallContext ctx) {
+	public Float visitMethodCall(MethodCallContext ctx) {
 		System.out.println("\t\t\t\t\tAT METHOD CALL");
 //		Function f = FunctionManager.getFunction(ctx.funcname.getText());
 		String funcName = ctx.funcname.getText();
@@ -880,7 +880,7 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
     		if(parseTreeArguments.getChild(j).getText().charAt(0) == '"') {
     			sb.append(StringUtil.constructStringFromPrintStatement(parseTreeArguments.getChild(j).getText()));
     		} else if(parseTreeArguments.getChild(j).getChildCount() > 1){
-    			Integer result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
+    			float result = visitMath_expression((Math_expressionContext) parseTreeArguments.getChild(j));
     			System.out.println("GOT " + result);
     			sb.append(result);
     			

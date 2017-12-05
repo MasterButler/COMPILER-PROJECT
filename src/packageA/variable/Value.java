@@ -34,7 +34,14 @@ public class Value {
 				String inferredType = ValueUtil.inferVarType(value.toString());
 				if(this.type.equals(inferredType)){
 					this.value = value;
-				}else {
+				}
+				else if (this.type.equals("float") && inferredType.equals("int")){
+					this.value = Float.parseFloat((String)value);
+				}
+				else if (this.type.equals("int") && inferredType.equals("float")) {
+					this.value = Math.round(Float.parseFloat((String)value));
+				}
+				else {
 					System.out.println("CAN'T UNDERSTAND " + value.toString());
 					throw new IncompatibleVariableDataTypeError(this.type, inferredType);
 				}

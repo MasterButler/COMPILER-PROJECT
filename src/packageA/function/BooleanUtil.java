@@ -2,7 +2,7 @@ package packageA.function;
 
 public class BooleanUtil {
 	
-	public static boolean solve(int left, String op, int right) {
+	public static boolean solve(float left, String op, float right) {
 		switch (op) {
 	        
 			case ">": return left > right;
