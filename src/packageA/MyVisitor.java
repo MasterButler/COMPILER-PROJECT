@@ -54,6 +54,7 @@ import packageA.function.FunctionDictionary;
 import packageA.function.MathUtil;
 import packageA.function.PatternDictionary;
 import packageA.function.StringUtil;
+import packageA.pointers.PointerManager;
 
 public class MyVisitor extends JavaBaseVisitor<Float> {
 
@@ -281,7 +282,29 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                     }else {
                         throw new NoSuchElementException();
                     }
+                	break;
                 	
+                case FunctionDictionary.FUNCTION_POINTER_SET:
+					try {
+						int addressToSet = Math.round(visit(ctx.getChild(i+2)));
+						Variable variable = VariableManager.searchVariable(ctx.variable.getText(), constructVariableScope(ctx));
+						PointerManager.setAddress(addressToSet, variable);
+					} catch (VariableNotFoundError e1) {
+						SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(ctx.variable.getText()).getErrorMessage());
+						e1.printStackTrace();
+					}
+					break;
+					
+                case FunctionDictionary.FUNCTION_POINTER_GET:
+					int addressToGet = Math.round(visit(ctx.getChild(i+2)));
+					Variable variable = PointerManager.getVariableAtAddress(addressToGet);
+                	break;
+                	
+                case FunctionDictionary.FUNCTION_POINTER_FREE:
+                	int addressToFree = Math.round(visit(ctx.getChild(i+2)));
+					PointerManager.clearAddress(addressToFree);
+					
+					break;
                 default: 
 //                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }

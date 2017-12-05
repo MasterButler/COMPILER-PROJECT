@@ -9,6 +9,7 @@ public class Storage {
 	private static Storage instance; 
 	private HashMap<String, Variable> varList;
 	private HashMap<String, Function> funcList;
+	private Variable[] pointerList;
 	
 	public static Storage getInstance() {
 		if(instance == null) {
@@ -24,6 +25,7 @@ public class Storage {
 	public void reset() {
 		this.varList = new HashMap<String, Variable>();
 		this.funcList = new HashMap<String, Function>();
+		this.pointerList = new Variable[1000];
 	}
 	
 	/**
@@ -56,4 +58,19 @@ public class Storage {
 	public Function getFunction(String functionName) {
 		return funcList.get(functionName);
 	}
+	
+	
+	
+	public Variable getVariableAtAddress(int address) {
+		return pointerList[address];
+	}
+	
+	public void setAddressVariable(int address, Variable variable) {
+		pointerList[address] = variable;
+	}
+	
+	public void releaseAddress(int address) {
+		pointerList[address] = null;
+	}
+	
 }
