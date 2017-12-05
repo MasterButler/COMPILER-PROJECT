@@ -680,7 +680,7 @@ IntegerLiteral
 
 fragment
 DecimalIntegerLiteral
-    :   DecimalNumeral IntegerTypeSuffix?
+    :   '-'? DecimalNumeral IntegerTypeSuffix?
     ;
 
 /*
