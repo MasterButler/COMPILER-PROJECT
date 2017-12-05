@@ -567,20 +567,26 @@ public class MyVisitor extends JavaBaseVisitor<Integer> {
 			return 0;
 		}else {
 			if(ctx.getChildCount() > 1) {
+				System.out.println("TO COMPARE :" + ctx.left.getText() + ctx.op.getText() + ctx.right.getText());
 				return BooleanUtil.solve(visitBoolean_expression(ctx.left), ctx.op.getText(), visitBoolean_expression(ctx.right)) ? 1 : 0;
 			}else{
 				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.getChild(0).getText())) {
     				return Integer.parseInt(ctx.getChild(0).getText());
     			}else {
     				try {
-    					if(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString().equals("true")) {
+    					Variable var = VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx));
+    					
+    					if(var.getValue().getValue().toString().equals("true")) {
     						return 1;
+    					}else {
+    						return Integer.valueOf(var.getValue().getValue().toString());
     					}
-    					else 
-    						return 0;
+    						
     				} catch (VariableNotFoundError e) {
     					e.printStackTrace();
-    				}			
+    				} catch(NumberFormatException e1) {
+    					e1.printStackTrace(); 
+    				}
     				return -1;
     			}
 			}
