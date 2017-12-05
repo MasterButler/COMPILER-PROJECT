@@ -443,6 +443,9 @@ statement
     | constDeclaration
     | 'output' '(' expression ');'
     | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ');'
+    | 'setInAddress' '(' address=Identifier ',' variable=Identifier ');'
+    | 'getVarInAddress' '(' address=Identifier ');'
+    | 'freeAddress' '(' address=Identifier ');'
     | methodDeclaration
     |	methodCall ';'
     ;
