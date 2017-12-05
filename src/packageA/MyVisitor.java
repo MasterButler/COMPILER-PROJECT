@@ -953,20 +953,15 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			
 			for(int i=0; i<paramCont.size(); i++){
 				try {
-//					System.out.println("ctx.method.funcname.getText() + '$' " + ctx.method.funcname.getText() + '$');
-//					System.out.println("paramCont.get(i).vardec.getText() " + paramCont.get(i).vardec.getText());
-//					System.out.println("ctx simple class: " + ctx.method.getClass().getSimpleName());
-//					System.out.println("constructVariableScope(ctx) " + constructVariableScope(paramCont.get(i)));
-					
-//					constructVariableScope(ctx);
-					Variable v = new Variable(constructVariableScope(paramCont.get(i)), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
+					StringBuilder sb = new StringBuilder();
+                    sb.append(ctx.method.funcname.getText()).append("$set0");
+                    
+                    
+                    Variable v = new Variable(sb.toString(), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
+//					Variable v = new Variable(constructVariableScope(paramCont.get(i)), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
 					variableList.add(v);
-					System.out.println("BASE DECLARED varName: " + v.getVarName());
-					System.out.println("BASE DECLARED varSimpleName: " + v.getVarSimpleName());
-					System.out.println("BASE DECLARED Const: " + constructVariableScope(paramCont.get(i)));
-//					variableList.add(new Variable(ctx.method.funcname.getText() + '$', paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
-//					variableList.add(new Variable(constructVariableScope(ctx), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false)));
-//					System.out.println("BASE DECLARED " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
+//					System.out.println("BASE DECLARED varName: " + v.getVarName());
+					System.out.println(ctx.method.funcname.getText() + " BASE DECLARED varName: " + sb.toString());
 				} catch (IncompatibleVariableDataTypeError e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -974,20 +969,22 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
-				
 			}
 		}
-		
 	
+		Function f;
 		try {
 			if(ctx.method.returntype != null){
-				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements));
+				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements);
+				FunctionManager.addFunction(f);
+				f.printVariables();
 			}
 			
-			else //void return
-				FunctionManager.addFunction(new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements));
+			else{ //void return
+				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements);
+				FunctionManager.addFunction(f);
+				f.printVariables();
+			}
 //			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
 		} catch (MultipleVariableDeclarationError e) {
 			// TODO Auto-generated catch block
@@ -997,53 +994,11 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			e.printStackTrace();
 		}
 		
-		System.out.println("\t\t\t\tRESULT : " +  ctx.method.statements.getText());
+		
+		
+		System.out.println("\t\t\t\t " + ctx.method.funcname.getText() + '$' + " RESULT : " +  ctx.method.statements.getText());
 		return super.visitBaseDeclaration(ctx);
 	}
-	
-	/*
-	
-	@Override
-	public Float visitMethodCall(MethodCallContext ctx) {
-		System.out.println("\t\t\t\t\tAT METHOD CALL");
-//		Function f = FunctionManager.getFunction(ctx.funcname.getText());
-		String funcName = ctx.funcname.getText();
-		if(FunctionManager.isExisting(funcName)){
-			System.out.println("DONE METHOD CALL STUFF");
-			
-			List<ExpressionContext> expList = ctx.passedParam.expression();
-			System.out.println("expList : " + expList.size());
-			for(int i=0; i<expList.size(); i++){
-				//assign value to parameter in function parameters
-	            FunctionManager.getFunction(funcName).setFuncParameter(i, getExpValueMethodCall(expList.get(i).getText(), expList.get(i), ctx));
-			}
-			
-//			public Integer declareVariable(String scope, String varSimpleName, String varType, String varValue, boolean isConst) {
-			
-			//declare variables
-			ArrayList <Variable> paramList = FunctionManager.getParam(funcName);
-			System.out.println("PARAM LIST");
-			for(int i=0; i<paramList.size(); i++){
-				declareVariable(FunctionManager.getFunction(funcName).getFuncScope(), 
-								paramList.get(i).getVarSimpleName(),
-								paramList.get(i).getVarType(),
-								paramList.get(i).getValue().getValue().toString(),
-								false);
-				System.out.println(i  + " " + paramList.get(i).getVarSimpleName() + " : " + paramList.get(i).getValue().getValue().toString());
-				
-			}
-			
-			visitMethodBody(FunctionManager.getFunction(funcName).getSc());
-			
-			//delete variables
-			VariableManager.removeVariable(FunctionManager.getFunction(funcName).getFuncScope());
-		}
-		else{
-			System.out.println("\t\t\t NOT FOUND FUNCTION");
-		}
-		return super.visitMethodCall(ctx);
-	}
-	*/
 	
 	@Override
 	public Float visitMethodCall(MethodCallContext ctx) {
@@ -1055,13 +1010,15 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			
 			List<ExpressionContext> expList = ctx.passedParam.expression();
 			System.out.println("expList : " + expList.size());
+			f.printVariables();
 			for(int i=0; i<expList.size(); i++){
 				Variable temp = f.getParam(i);
+				System.out.println("PARAM: " + f.getParam(i).getVarName());
 				if(temp != null){
 					Value tempval = temp.getValue();
 					try {
-						System.out.println("expList.get(i).getText(): " + expList.get(i).getText());
-						System.out.println("temp.getVarName: " + temp.getVarName().toString());
+						
+						System.out.println("temp.getVarName: " + temp.getScope().toString());
 						tempval.setValue(getExpValueMethodCall(expList.get(i).getText(), expList.get(i), ctx));
 						temp.setValue(tempval);
 						f.addVariable(temp);
@@ -1076,13 +1033,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 				}
 			}
 			f.printVariables();
-			Storage.getInstance().transferVarList(f.getVarList());
+			f.addValuesToStorage();
 			
 			visitMethodBody(f.getSc());
 			
-			//delete variables
-//			f.destroyVariables();
-//			Storage.getInstance().removeVarList(f.getVarList());
 		}
 		else{
 			System.out.println("\t\t\t NOT FOUND FUNCTION");

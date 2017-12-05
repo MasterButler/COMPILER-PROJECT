@@ -442,10 +442,10 @@ statement
     |   Identifier ':' statement
     | constDeclaration
     | 'output' '(' expression ');'
-    | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ');'
-    | 'setInAddress' '(' address=Identifier ',' variable=Identifier ');'
-    | 'getVarInAddress' '(' address=Identifier ');'
-    | 'freeAddress' '(' address=Identifier ');'
+    | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ')' ';'
+    | 'setInAddress' '(' address=IntegerLiteral ',' variable=Identifier ')' ';'
+    | 'getVarInAddress' '(' address=IntegerLiteral ')' ';'
+    | 'freeAddress' '(' address=IntegerLiteral ')' ';'
     | methodDeclaration
     |	methodCall ';'
     ;
