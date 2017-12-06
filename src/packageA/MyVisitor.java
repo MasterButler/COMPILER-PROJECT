@@ -206,6 +206,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 	System.out.println("MY ARGUMENT IS " + parseTreeArguments.getText());
                 	
                 	String[] segments = argument.split("\\+");
+                	System.out.println(segments.length);
                 	StringBuilder sb = new StringBuilder();
                 	
                 	System.out.println("SEGMENTS: " + segments[0]);
@@ -246,7 +247,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 		} else {
                 			System.out.println("IF 3");
                 			try {
-                				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, segments[j])) {
+                				if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, parseTreeArguments.getChild(j).getText())) {
                 					sb.append(parseTreeArguments.getChild(j).getText());
                 				}
                 				else {
@@ -260,7 +261,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 						}
                 						else if(vartype.equals("char")){
                 							String temp = VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString();
-                							sb.append(temp.substring(1, temp.length()-1));
+                							if(temp.length() != 1) {
+                								temp = temp.substring(1, temp.length()-1);
+                							}
+                							sb.append(temp);
                 						}
                 						else
                 							sb.append(VariableManager.searchVariable(parseTreeArguments.getChild(j).getText(), constructVariableScope(ctx)).getValue().getValue().toString());

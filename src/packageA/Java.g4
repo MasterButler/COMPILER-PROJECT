@@ -441,7 +441,7 @@ statement
     |   statementExpression ';'
     |   Identifier ':' statement
     | constDeclaration
-    | 'output' '(' expression ');'
+    | 'output' '(' listToPrint ');'
     | 'input' '(' inputReceiver=Identifier ',' inputFormat=Identifier ')' ';'
     | 'setInAddress' '(' address=IntegerLiteral ',' variable=Identifier ')' ';'
     | 'getVarInAddress' '(' address=IntegerLiteral ')' ';'
@@ -449,6 +449,14 @@ statement
     | methodDeclaration
     |	methodCall ';'
     ;
+
+listToPrint
+	:  primary ('+' primary)*
+	;
+
+parPrimary
+	: primary
+	| expression;
 
 catchClause
     :   'catch' '(' catchType Identifier ')' set
