@@ -22,6 +22,7 @@ public class Function {
 	private ArrayList<Variable> funcParameter = new ArrayList<Variable>();
 	private HashMap<String, Variable> varList;
 	private MethodBodyContext sc;
+	private Variable retObject;
 	
 	
 	
@@ -35,6 +36,7 @@ public class Function {
 		this.funcParameter = funcParameter;
 		this.sc = sc;
 		this.varList = new HashMap<String, Variable>();
+		this.retObject = null;
 		
 	}
 
@@ -148,6 +150,16 @@ public class Function {
 		System.out.println("Done transfer");
 		printVariables();
 	}
+
+	public Variable getRetObject() {
+		return retObject;
+	}
+
+	public void setRetObject(Variable retObject) {
+		this.retObject = retObject;
+	}
+	
+	
 	
 	
 }
