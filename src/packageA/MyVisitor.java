@@ -685,7 +685,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 }
                 */
             }else {
-            	return visitStatement(ctx.elseAction);
+            	if(ctx.elseAction == null){
+            		
+            	}else{
+            		return visitStatement(ctx.elseAction);
+            	}
+            	
             }
     	}
     	else if(ctx.getChild(0).getText().equals("while")){
@@ -1011,66 +1016,78 @@ return super.visitExpression(ctx);
 	
 	@Override
 	public Float visitBaseDeclaration(BaseDeclarationContext ctx) {
-		ArrayList<Variable> variableList = new ArrayList<Variable> ();
-		if(ctx.method.params.parameterList() != null){
-			List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
+		if(ctx.methodDeclaration() !=null){
+			System.out.println("IS MAIN?? : " + ctx.methodDeclaration().getChild(2).getText().trim());
+			if(ctx.methodDeclaration().getChild(2).getText().trim().equals("main")){
+				return visitMethodBody(ctx.methodDeclaration().statements);
+//				return visit(ctx);
+			}
+			else{
+				ArrayList<Variable> variableList = new ArrayList<Variable> ();
+				if(ctx.method.params.parameterList() != null){
+					List<ParameterContext> paramCont = ctx.methodDeclaration().parameters().parameterList().parameter();
+					
+					for(int i=0; i<paramCont.size(); i++){
+						try {
+							StringBuilder sb = new StringBuilder();
+		                    sb.append(ctx.method.funcname.getText()).append("$set0");
+		                    
+		                    Variable v = new Variable(sb.toString(), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
+							variableList.add(v);
+							System.out.println(ctx.method.funcname.getText() + " BASE DECLARED varName: " + sb.toString());
+						} catch (IncompatibleVariableDataTypeError e) {
+							SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+							e.printStackTrace();
+						} catch (ConstantEditError e) {
+							SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+							e.printStackTrace();
+						}
+					}
+				}
 			
-			for(int i=0; i<paramCont.size(); i++){
+				Function f;
 				try {
-					StringBuilder sb = new StringBuilder();
-                    sb.append(ctx.method.funcname.getText()).append("$set0");
-                    
-                    Variable v = new Variable(sb.toString(), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
-					variableList.add(v);
-					System.out.println(ctx.method.funcname.getText() + " BASE DECLARED varName: " + sb.toString());
+					if(ctx.method.returntype != null){
+						f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements);
+						try {
+							FunctionManager.addFunction(f);
+						} catch (MultipleFunctionDeclarationError e) {
+							// TODO Auto-generated catch block
+							OutputCollector.getInstance().append(e.getErrorMessage());
+						}
+						f.printVariables();
+					}
+					
+					else{ //void return
+						f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements);
+						try {
+							FunctionManager.addFunction(f);
+						} catch (MultipleFunctionDeclarationError e) {
+							// TODO Auto-generated catch block
+							OutputCollector.getInstance().append(e.getErrorMessage());
+						}
+						f.printVariables();
+					}
+//					System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
+					/*
+				} catch (MultipleVariableDeclarationError e) {
+					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+					e.printStackTrace();
+					*/
 				} catch (IncompatibleVariableDataTypeError e) {
 					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 					e.printStackTrace();
-				} catch (ConstantEditError e) {
-					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
-					e.printStackTrace();
 				}
+				
+				
+				
+				System.out.println("\t\t\t\t " + ctx.method.funcname.getText() + '$' + " RESULT : " +  ctx.method.statements.getText());
+				
 			}
 		}
-	
-		Function f;
-		try {
-			if(ctx.method.returntype != null){
-				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements);
-				try {
-					FunctionManager.addFunction(f);
-				} catch (MultipleFunctionDeclarationError e) {
-					// TODO Auto-generated catch block
-					OutputCollector.getInstance().append(e.getErrorMessage());
-				}
-				f.printVariables();
-			}
-			
-			else{ //void return
-				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements);
-				try {
-					FunctionManager.addFunction(f);
-				} catch (MultipleFunctionDeclarationError e) {
-					// TODO Auto-generated catch block
-					OutputCollector.getInstance().append(e.getErrorMessage());
-				}
-				f.printVariables();
-			}
-//			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
-			/*
-		} catch (MultipleVariableDeclarationError e) {
-			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
-			e.printStackTrace();
-			*/
-		} catch (IncompatibleVariableDataTypeError e) {
-			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
-			e.printStackTrace();
-		}
 		
-		
-		
-		System.out.println("\t\t\t\t " + ctx.method.funcname.getText() + '$' + " RESULT : " +  ctx.method.statements.getText());
-		return super.visitBaseDeclaration(ctx);
+//		return super.visitBaseDeclaration(ctx);
+		return null;
 	}
 	
 	@Override
