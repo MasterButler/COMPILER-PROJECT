@@ -50,6 +50,7 @@ import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
 import packageA.error.FunctionNotFoundError;
 import packageA.error.IncompatibleReturnTypeError;
+import packageA.error.DivisionByZeroError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleFunctionDeclarationError;
 import packageA.error.MultipleVariableDeclarationError;
@@ -237,7 +238,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 								String[] value = varValue.split(",");
 								sb.append(value[index]);
 							} catch (VariableNotFoundError e) {
-								OutputCollector.getInstance().append("No variable " + ctx.getChild(i+2).getChild(j).getChild(0).getText() + " was found");
+								//OutputCollector.getInstance().append("No variable " + ctx.getChild(i+2).getChild(j).getChild(0).getText() + " was found");
+								OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
 							}
                 		}
                 		else if(parseTreeArguments.getChild(j).getChildCount() > 1){
@@ -279,7 +281,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
                 					}
                 				}
                 			} catch (VariableNotFoundError e) {
-                				OutputCollector.getInstance().append("No such variable found");
+                				//OutputCollector.getInstance().append("No such variable found");
+                				OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
                 				
                 			}
                 		}
@@ -287,7 +290,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 
                         System.out.println("work okay: " + parseTreeArguments.getChild(j).getText());
                 	}
-                	OutputCollector.getInstance().append(sb.toString() + "\n");
+                	OutputCollector.getInstance().append(sb.toString());
                 	return (float)0;
                 case FunctionDictionary.FUNCTION_SCAN:
 //                  System.out.println(ctx.getText());
@@ -547,11 +550,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		} catch (ConstantEditError e) {
 			// TODO Auto-generated catch block
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
+			e.printStackTrace();
 		}
 		return -1;
 	}
 	
-	public Integer declareVariable(String scope, String varSimpleName, String varType, String varValue, boolean isConst) {
+	public Integer declareVariable(String scope, String varSimpleName, String varType, String varValue, boolean isConst, ParserRuleContext ctx) {
 		Variable toStore = null;
 		try {
 			
@@ -559,12 +563,14 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			VariableManager.addVariable(toStore);
 			return 0;
 		} catch (MultipleVariableDeclarationError e) {
-			System.out.println("MULTIPLE VAR");
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
 			e.printStackTrace();
 		} catch( IncompatibleVariableDataTypeError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
 			System.out.println("INCOMPATIBLE");
 			e.printStackTrace();
 		} catch (ConstantEditError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(toStore.getVarName()).getErrorMessage());
 			// TODO Auto-generated catch block
 			System.out.println("EDIT ERROR");
 		}
@@ -581,9 +587,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		String varValue = ctx.varValue.getText();
 		int varIndex = -1;
 		if(ctx.varIndex != null) {
+			System.out.println("INDEX - IT IS FOUND");
 			if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.varIndex.getText())) {
 				varIndex = Integer.valueOf(ctx.varIndex.getText());
 			}			
+		}else {
+			System.out.println("INDEX - IT IS NOT FOUND");
 		}
 		
 //		System.out.println("CHILDCOUNT: " + ctx.varValue.getChild(0).getChild(0).getChildCount());
@@ -591,7 +600,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
 //		}
 		
-		if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ctx.varValue.getChild(0).getText())) {
+		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1 && 
+				!ValueUtil.inferVarType(ctx.varValue.getChild(0).getText()).equals("unknown")) {
 		//if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
 			assignValueToVariable(ctx, varSimpleName, varIndex, varValue);
 		}else {
@@ -614,12 +624,13 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	}
 	
 	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, int varIndex, String varValue){
-		Variable toEdit;
+		Variable toEdit = null;
 		try {
 			toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
 			if(varIndex > -1) {
 				VariableManager.storeValueToVariableArray(toEdit, varIndex, new Value(ValueUtil.inferVarType(varValue), varValue, false));	
 			}else {
+				System.out.println("VALUE TYPE: " + ValueUtil.inferVarType(varValue));
 				VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));				
 			}
 			return 0;
@@ -627,7 +638,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(varSimpleName).getErrorMessage());
 			e1.printStackTrace();
 		} catch (IncompatibleVariableDataTypeError e) {
-			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(toEdit.getValue().getType(), ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
 		} catch (ConstantEditError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(varSimpleName).getErrorMessage());
@@ -752,7 +763,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 						System.out.println("FLIPPANT BEAVER: " + value[index]);
 						return Float.parseFloat(value[index]);
 					} catch (VariableNotFoundError e) {
-						OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
+						SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 					}
 	    		}
 				else {
@@ -766,8 +777,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
     					}
     						
     				} catch (VariableNotFoundError e) {
+    					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
     					e.printStackTrace();
     				} catch(NumberFormatException e1) {
+    					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e1.getMessage());
     					e1.printStackTrace(); 
     				}
     				return (float)-1;
@@ -870,21 +883,28 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					String varValue = (String)var.getValue().getValue();
 					String[] value = varValue.split(",");
 					return Float.parseFloat(value[index]);
-				} catch (VariableNotFoundError e) {
-					OutputCollector.getInstance().append("No variable " + ctx.getChild(0).getChild(0).getText() + " was found");
+				} catch (VariableNotFoundError e) {					
+					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+					e.printStackTrace();
 				}
     		}
 			else {
 				try {
 					return Float.parseFloat(VariableManager.searchVariable(ctx.getText(), constructVariableScope(ctx)).getValue().getValue().toString());
 				} catch (VariableNotFoundError e) {
+					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 					e.printStackTrace();
 				}			
 				return (float)-1;
 			}
 		}
 		else {
-			return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+			try {
+				return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+			}catch(DivisionByZeroError e) {
+				SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
@@ -914,43 +934,43 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //                    String varSimpleName = ctx.inputReceiver.getText();
 //                    String varFormat = ctx.inputFormat.getText();
 //                    String varValue= "";
-//                    System.out.println("VAR FORMAT IS " + varFormat);
-//                    switch(varFormat) {
-//                        case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
-//                            varValue = StandardInputCollector.getInstance().getNextLine();
-//                            break;
-//                        case FunctionDictionary.FUNCTION_SCAN_NEXT:
-//                            varValue = StandardInputCollector.getInstance().getNext();
-//                            break;
-//                        default:
-//                            varValue = StandardInputCollector.getInstance().getNext();
-//                    }
-//                    System.out.println("VAR VALUE  IS " + varValue);
-//                    if(varValue != null) {
-//                        assignValueToVariable(ctx, varSimpleName, varValue);
-//                    }else {
-//                        throw new NoSuchElementException();
-//                    }
-//                	break;
-//                    
-//                
-////                case FunctionDictionary.FUNCTION_FOR_LOOP:
-////                	System.out.println();
-////                	for(int j=0; j<ctx.getChildCount() ;j++)
-////                		System.out.println(j + " : " + ctx.getChild(j));
-////                		
-////                	break;
-//                default: 
-////                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
-//			}
-//		}
-//		
-////		System.out.println();
-////		System.out.println("EXPRESSION END");
-////		System.out.println();
-//		// TODO Auto-generated method stub
-		return super.visitExpression(ctx);
-	}
+//      System.out.println("VAR FORMAT IS " + varFormat);
+//      switch(varFormat) {
+//          case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
+//              varValue = StandardInputCollector.getInstance().getNextLine();
+//              break;
+//          case FunctionDictionary.FUNCTION_SCAN_NEXT:
+//              varValue = StandardInputCollector.getInstance().getNext();
+//              break;
+//          default:
+//              varValue = StandardInputCollector.getInstance().getNext();
+//      }
+//      System.out.println("VAR VALUE  IS " + varValue);
+//      if(varValue != null) {
+//          assignValueToVariable(ctx, varSimpleName, varValue);
+//      }else {
+//          throw new NoSuchElementException();
+//      }
+//  	break;
+//      
+//  
+////  case FunctionDictionary.FUNCTION_FOR_LOOP:
+////  	System.out.println();
+////  	for(int j=0; j<ctx.getChildCount() ;j++)
+////  		System.out.println(j + " : " + ctx.getChild(j));
+////  		
+////  	break;
+//  default: 
+////  	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+//}
+//}
+//
+////System.out.println();
+////System.out.println("EXPRESSION END");
+////System.out.println();
+//// TODO Auto-generated method stub
+return super.visitExpression(ctx);
+}
 	
 	
 	public String constructVariableScope(ParserRuleContext ctx) {
@@ -1004,10 +1024,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					variableList.add(v);
 					System.out.println(ctx.method.funcname.getText() + " BASE DECLARED varName: " + sb.toString());
 				} catch (IncompatibleVariableDataTypeError e) {
-					// TODO Auto-generated catch block
+					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 					e.printStackTrace();
 				} catch (ConstantEditError e) {
-					// TODO Auto-generated catch block
+					SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 					e.printStackTrace();
 				}
 			}
@@ -1037,8 +1057,13 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 				f.printVariables();
 			}
 //			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
+			/*
+		} catch (MultipleVariableDeclarationError e) {
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+			e.printStackTrace();
+			*/
 		} catch (IncompatibleVariableDataTypeError e) {
-			// TODO Auto-generated catch block
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 			e.printStackTrace();
 		}
 		
@@ -1139,10 +1164,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 						temp.setValue(tempval);
 						f.addVariable(temp);
 					} catch (IncompatibleVariableDataTypeError e) {
-						// TODO Auto-generated catch block
+						SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 						e.printStackTrace();
 					} catch (ConstantEditError e) {
-						// TODO Auto-generated catch block
+						SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
 						e.printStackTrace();
 					}
 					
@@ -1247,7 +1272,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
     					}
     				}
     			} catch (VariableNotFoundError e) {
-    				OutputCollector.getInstance().append("No such variable found");
+    				SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
     				
     			}
     		}

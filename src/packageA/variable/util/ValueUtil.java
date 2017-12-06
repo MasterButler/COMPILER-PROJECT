@@ -19,18 +19,24 @@ public class ValueUtil {
 	public static String inferVarType(String value) {
 		System.out.println("INFERRING " + value);
 		
-		if(isMatch(value, PatternDictionary.CHAR_PATTERN)) {
-			return "char";
-		}else if(isMatch(value, PatternDictionary.INTEGER_PATTERN)) {
+		if(isMatch(value, PatternDictionary.INTEGER_PATTERN)) {
+			System.out.println(value + " is int");
 			return "int";
+		}else if(isMatch(value, PatternDictionary.CHAR_PATTERN)) {
+			System.out.println(value + " is char");
+			return "char";
 		}else if(isMatch(value,PatternDictionary.FLOAT_PATTERN)) {
+			System.out.println(value + " is float");
 			return "float";
 		}else if(isMatch(value,PatternDictionary.BOOLEAN_PATTERN)) {
+			System.out.println(value + " is boolean");
 			return "boolean";
-		}else if(isMatch(value, PatternDictionary.STRING_PATTERN)) {
-			return "string";
 		}else if(Pattern.matches(PatternDictionary.ARRAY_PATTERN, value)) {
+			System.out.println(value + " is array");
 			return "array";
+		}else if(isMatch(value, PatternDictionary.STRING_PATTERN)) {
+			System.out.println(value + " is string");
+			return "string";
 		}
 		return "unknown";
 	}

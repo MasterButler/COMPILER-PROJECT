@@ -79,7 +79,7 @@ public class VariableManager {
 		if(toEdit != null) {
 			return toEdit;
 		}else {
-			throw new VariableNotFoundError(varSimpleName);		
+			throw new VariableNotFoundError(varSimpleName);
 		}
 		
 	}
