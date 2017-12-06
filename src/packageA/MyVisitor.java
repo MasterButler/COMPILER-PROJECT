@@ -931,43 +931,43 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //                    String varSimpleName = ctx.inputReceiver.getText();
 //                    String varFormat = ctx.inputFormat.getText();
 //                    String varValue= "";
-//                    System.out.println("VAR FORMAT IS " + varFormat);
-//                    switch(varFormat) {
-//                        case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
-//                            varValue = StandardInputCollector.getInstance().getNextLine();
-//                            break;
-//                        case FunctionDictionary.FUNCTION_SCAN_NEXT:
-//                            varValue = StandardInputCollector.getInstance().getNext();
-//                            break;
-//                        default:
-//                            varValue = StandardInputCollector.getInstance().getNext();
-//                    }
-//                    System.out.println("VAR VALUE  IS " + varValue);
-//                    if(varValue != null) {
-//                        assignValueToVariable(ctx, varSimpleName, varValue);
-//                    }else {
-//                        throw new NoSuchElementException();
-//                    }
-//                	break;
-//                    
-//                
-////                case FunctionDictionary.FUNCTION_FOR_LOOP:
-////                	System.out.println();
-////                	for(int j=0; j<ctx.getChildCount() ;j++)
-////                		System.out.println(j + " : " + ctx.getChild(j));
-////                		
-////                	break;
-//                default: 
-////                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
-//			}
-//		}
-//		
-////		System.out.println();
-////		System.out.println("EXPRESSION END");
-////		System.out.println();
-//		// TODO Auto-generated method stub
-		return super.visitExpression(ctx);
-	}
+//      System.out.println("VAR FORMAT IS " + varFormat);
+//      switch(varFormat) {
+//          case FunctionDictionary.FUNCTION_SCAN_WHOLELINE: 
+//              varValue = StandardInputCollector.getInstance().getNextLine();
+//              break;
+//          case FunctionDictionary.FUNCTION_SCAN_NEXT:
+//              varValue = StandardInputCollector.getInstance().getNext();
+//              break;
+//          default:
+//              varValue = StandardInputCollector.getInstance().getNext();
+//      }
+//      System.out.println("VAR VALUE  IS " + varValue);
+//      if(varValue != null) {
+//          assignValueToVariable(ctx, varSimpleName, varValue);
+//      }else {
+//          throw new NoSuchElementException();
+//      }
+//  	break;
+//      
+//  
+////  case FunctionDictionary.FUNCTION_FOR_LOOP:
+////  	System.out.println();
+////  	for(int j=0; j<ctx.getChildCount() ;j++)
+////  		System.out.println(j + " : " + ctx.getChild(j));
+////  		
+////  	break;
+//  default: 
+////  	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
+//}
+//}
+//
+////System.out.println();
+////System.out.println("EXPRESSION END");
+////System.out.println();
+//// TODO Auto-generated method stub
+return super.visitExpression(ctx);
+}
 	
 	
 	public String constructVariableScope(ParserRuleContext ctx) {
