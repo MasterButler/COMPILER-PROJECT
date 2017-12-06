@@ -48,7 +48,10 @@ import packageA.collector.OutputCollector;
 import packageA.collector.StandardInputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
+import packageA.error.FunctionNotFoundError;
+import packageA.error.IncompatibleReturnTypeError;
 import packageA.error.IncompatibleVariableDataTypeError;
+import packageA.error.MultipleFunctionDeclarationError;
 import packageA.error.MultipleVariableDeclarationError;
 import packageA.error.ReferencingError;
 import packageA.error.VariableNotFoundError;
@@ -997,11 +1000,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					StringBuilder sb = new StringBuilder();
                     sb.append(ctx.method.funcname.getText()).append("$set0");
                     
-                    
                     Variable v = new Variable(sb.toString(), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
-//					Variable v = new Variable(constructVariableScope(paramCont.get(i)), paramCont.get(i).vardec.getText(), new Value(paramCont.get(i).type.getText(), null, false));
 					variableList.add(v);
-//					System.out.println("BASE DECLARED varName: " + v.getVarName());
 					System.out.println(ctx.method.funcname.getText() + " BASE DECLARED varName: " + sb.toString());
 				} catch (IncompatibleVariableDataTypeError e) {
 					// TODO Auto-generated catch block
@@ -1017,19 +1017,26 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 		try {
 			if(ctx.method.returntype != null){
 				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),ctx.method.returntype.getText(), variableList, ctx.method.statements);
-				FunctionManager.addFunction(f);
+				try {
+					FunctionManager.addFunction(f);
+				} catch (MultipleFunctionDeclarationError e) {
+					// TODO Auto-generated catch block
+					OutputCollector.getInstance().append(e.getErrorMessage());
+				}
 				f.printVariables();
 			}
 			
 			else{ //void return
 				f = new Function(ctx.method.funcname.getText() + '$', ctx.method.funcname.getText(),"", variableList, ctx.method.statements);
-				FunctionManager.addFunction(f);
+				try {
+					FunctionManager.addFunction(f);
+				} catch (MultipleFunctionDeclarationError e) {
+					// TODO Auto-generated catch block
+					OutputCollector.getInstance().append(e.getErrorMessage());
+				}
 				f.printVariables();
 			}
 //			System.out.println("CONTEXT " + ctx.method.funcname.getText() + " : " + ctx.method.funcname.getText() + '$');
-		} catch (MultipleVariableDeclarationError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IncompatibleVariableDataTypeError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1043,20 +1050,68 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	
 	@Override
     public Float visitReturnStatement(ReturnStatementContext ctx) {
-    	String ctxSamp = constructVariableName(ctx, ctx.retExp.getText());
-    	System.out.println("\t\t\t\t\t SAMPLE:" + ctxSamp);
+		//check if func exists
+		Function f = null;
+    	if(FunctionManager.isExisting(ctx.funcname.getText())){
+			f = FunctionManager.getFunction(ctx.funcname.getText());
+    	}
+    	else{
+    		try {
+    			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Function " + ctx.funcname.getText() + " not declared.");
+				throw new FunctionNotFoundError(ctx.funcname.getText());
+				
+			} catch (FunctionNotFoundError e) {
+				SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+				e.printStackTrace();
+			}
+    	}
+		
+    	//check if var exists
+		String ctxSamp = constructVariableName(ctx, ctx.retExp.getText());
+    	String valueString= ctx.retExp.getText();
     	if(VariableManager.isExisting(ctxSamp)){
     		Variable v = VariableManager.getVariable(ctxSamp);
-    		System.out.println("HELLO VALUE: " + v.getValue().getValue());
-    		
-    		if(FunctionManager.isExisting(ctx.funcname.getText())){
-    			Function f = FunctionManager.getFunction(ctx.funcname.getText());
+    		if(f.getFuncReturnType().equals(v.getVarType())){
     			f.setRetObject(v);
-    					
+    			System.out.println("RETURNED");
     		}
-    		
+    		else{
+    			System.out.println("NEVER RETURN");
+    			try {
+					throw new IncompatibleReturnTypeError(v.getVarType());
+				} catch (IncompatibleReturnTypeError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    			
+    		}
     	}
-    	
+    	else{
+    		ctxSamp = constructVariableScope(ctx);
+        	if(ValueUtil.inferVarType(valueString).equals("int")){
+	    		if(f.getFuncReturnType().equals("int")){
+	    			constructVariableName(ctx, f.getRetName());
+	    			
+					try {
+						Variable v = new Variable(constructVariableName(ctx, f.getRetName()), f.getRetName(), new Value("int", Integer.parseInt(ctx.retExp.getText()), false));
+						f.setRetObject(v);
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IncompatibleVariableDataTypeError e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ConstantEditError e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    			
+	    			
+	    			System.out.println("DONE: " + f.getRetObject().getValue().getValue().toString());
+	    		}
+	    	}
+    	}
+    
     	
     	return super.visitReturnStatement(ctx);
     }
@@ -1099,19 +1154,54 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			visitMethodBody(f.getSc());
 			
 			if(ctx.getVal != null){
-				
-				String varname = constructVariableName(ctx, ctx.getVal.getText());
+				f.setRetName(ctx.getVal.getText());
+				String valText = ctx.getVal.getText();
+				String varname = constructVariableName(ctx, valText);
+				System.out.println("VARNAME GETVAL: " + varname);
 				Variable varSamp = VariableManager.getVariable(varname);
-				System.out.println("\t\t\t\t\t\t\t NOT NULL : " + varname);
-				try {
-					varSamp.setValue(f.getRetObject().getValue());
-				} catch (IncompatibleVariableDataTypeError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ConstantEditError e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				
+				if(varSamp != null){
+					Value val = f.getRetObject().getValue();
+					
+					//if int
+					if(ValueUtil.inferVarType(val.getValue().toString()).equals("int")){
+					//if(Pattern.matches(PatternDictionary.INTEGER_PATTERN, ValueUtil.inferVarType(val.getValue().toString()))){
+						
+						try {
+							varSamp.setValue(new Value("int", Integer.parseInt(val.getValue().toString()), false));
+							
+						} catch (IncompatibleVariableDataTypeError e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ConstantEditError e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
+						/*
+						try {
+							Value val = new Value("int", Integer.parseInt(valText), false);
+							varSamp.setValue(val);
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IncompatibleVariableDataTypeError e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ConstantEditError e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						*/
+						
+					}
 				}
+				else{
+					//throw error
+				}
+				
+				
 			}
 				
 			else

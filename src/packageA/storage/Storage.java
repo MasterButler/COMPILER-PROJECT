@@ -7,6 +7,7 @@ import packageA.error.ConstantEditError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.variable.Function;
 import packageA.variable.Variable;
+import packageA.variable.util.VariableManager;
 
 public class Storage {
 	private static Storage instance; 
@@ -96,23 +97,33 @@ public class Storage {
 	
 	
 	public void transferVarList(HashMap<String, Variable> varList2){
-		System.out.println("\t\t\t\t PUTANGINA2");
 		Iterator it = varList2.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry pair = (HashMap.Entry)it.next();
-	        addVariable((Variable) pair.getValue());
-	        it.remove(); // avoids a ConcurrentModificationException
+	        
+	        if(VariableManager.isExisting(pair.getKey().toString())){
+	        	Variable v = VariableManager.getVariable(pair.getKey().toString());
+	        	try {
+					v.setValue(((Variable) pair.getValue()).getValue());
+				} catch (IncompatibleVariableDataTypeError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConstantEditError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+	        else
+	        	addVariable((Variable) pair.getValue());
 	    }
 	}
 	
 	public void removeVarList(HashMap<String, Variable> varList2){
-		System.out.println("\t\t\t\t PUTANGINA3");
 		Iterator it = varList2.entrySet().iterator();
 	    while (it.hasNext()) {
 	        HashMap.Entry pair = (HashMap.Entry)it.next();
 	        Variable v = (Variable) pair.getValue();
 	        removeVariable(v.getVarName());
-	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
 	

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 import packageA.collector.OutputCollector;
 import packageA.collector.SyntaxErrorCollector;
+import packageA.error.FunctionNotFoundError;
 import packageA.error.IncompatibleVariableDataTypeError;
+import packageA.error.MultipleFunctionDeclarationError;
 import packageA.error.MultipleVariableDeclarationError;
 import packageA.error.VariableNotFoundError;
 import packageA.function.StringUtil;
@@ -23,14 +25,14 @@ public class FunctionManager {
 		return Storage.getInstance().getFunction(funcName);
 	}
 	
-	public static Function addFunction(Function function) throws MultipleVariableDeclarationError {
+	public static Function addFunction(Function function) throws MultipleFunctionDeclarationError {
 		if(isExisting(function.getFuncSimpleName())) {
-			throw new MultipleVariableDeclarationError(function.getFuncSimpleName());
+			throw new MultipleFunctionDeclarationError(function.getFuncSimpleName());
 		}
 		return Storage.getInstance().addFunction(function);
 	}
 	
-	public static Function searchFunction(String funcSimpleName, String funcScope) throws VariableNotFoundError{
+	public static Function searchFunction(String funcSimpleName, String funcScope) throws FunctionNotFoundError{
 		String toSearch = "";
 		Function toEdit = null;
 		
@@ -48,7 +50,7 @@ public class FunctionManager {
 		if(toEdit != null) {
 			return toEdit;
 		}else {
-			throw new VariableNotFoundError(funcSimpleName);		
+			throw new FunctionNotFoundError(funcSimpleName);		
 		}
 		
 	}
@@ -63,53 +65,5 @@ public class FunctionManager {
 		Function f = getFunction(funcSimpleName);
 		return f.getFuncParameter();
 	}
-	
-	
-	
-	/*
-	
-	
-	
-	
-	public static boolean storeValueToVariable(Variable variable, Value value) throws IncompatibleVariableDataTypeError {
-		if(variable.setValue(value)) {
-			System.out.println(variable.getVarName() + "'s value changed to " + value.getValue());
-			return true;
-		}
-		return false;
-	}
-	
-	
-	public static Variable addVariable(Variable variable) throws MultipleVariableDeclarationError {
-		if(isExisting(variable.getVarName())) {
-			throw new MultipleVariableDeclarationError(variable.getVarSimpleName());
-		}
-		return Storage.getInstance().addVariable(variable);
-	}
-
-	public static Variable searchVariable(String varSimpleName, String varScope) throws VariableNotFoundError{
-		String toSearch = "";
-		Variable toEdit = null;
-		
-		do {
-			toSearch = (new StringBuilder()).append(varScope).append("$").append(varSimpleName).toString();				
-			toEdit = getVariable(toSearch);
-			if(toEdit != null) {
-				return toEdit;
-			}
-			varScope = StringUtil.scopeIncrease(varScope);
-		}while(varScope.indexOf("$") != -1); 
-			
-		toSearch = (new StringBuilder()).append(varScope).append("$").append(varSimpleName).toString();
-		toEdit = getVariable(toSearch);
-		if(toEdit != null) {
-			return toEdit;
-		}else {
-			throw new VariableNotFoundError(varSimpleName);		
-		}
-		
-	}
-	
-	*/
 }
 

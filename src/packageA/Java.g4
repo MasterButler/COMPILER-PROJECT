@@ -424,7 +424,7 @@ conditional
 	;
 	
 returnStatement
-	:	'return' funcname=Identifier retExp=expression?
+	:	'return' funcname=Identifier retExp=primary?
 	;
 	
 

@@ -23,6 +23,7 @@ public class Function {
 	private HashMap<String, Variable> varList;
 	private MethodBodyContext sc;
 	private Variable retObject;
+	private String retName;
 	
 	
 	
@@ -37,6 +38,7 @@ public class Function {
 		this.sc = sc;
 		this.varList = new HashMap<String, Variable>();
 		this.retObject = null;
+		this.retName = null;
 		
 	}
 
@@ -158,6 +160,15 @@ public class Function {
 	public void setRetObject(Variable retObject) {
 		this.retObject = retObject;
 	}
+
+	public String getRetName() {
+		return retName;
+	}
+
+	public void setRetName(String retName) {
+		this.retName = retName;
+	}
+	
 	
 	
 	
