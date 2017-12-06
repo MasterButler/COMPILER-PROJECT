@@ -171,6 +171,7 @@ methodDeclaration
 
 methodCall
 	:	 'call''('funcname=Identifier '('passedParam=expressionList ')' ')'
+	|	'call''(' getVal=Identifier ',' funcname=Identifier '('passedParam=expressionList ')' ')'
 	;
 	
 
@@ -403,7 +404,7 @@ set
 
 setStatement
     :   localVariableDeclarationStatement
-    |   statement
+    |   state=statement
     |   typeDeclaration
     ;
 
@@ -421,6 +422,11 @@ conditional
 	|   'dowhile' '(' condition=boolean_expression ')' ifAction=statement?
 	|   'for' '(' control=forControl ')' ifAction=statement
 	;
+	
+returnStatement
+	:	'return' funcname=Identifier retExp=expression?
+	;
+	
 
 statement
     :   set
@@ -433,7 +439,7 @@ statement
 //    |   'try' resourceSpecification set catchClause* finallySet?
     |   'switch' parExpression '{' switchSetStatementGroup* switchLabel* '}'
 //    |   'synchronized' parExpression set
-    |   'return' expression? ';'
+    |   returnStatement ';'
     |   'throw' expression ';'
     |   'break' Identifier? ';'
 //    |   'continue' Identifier? ';'

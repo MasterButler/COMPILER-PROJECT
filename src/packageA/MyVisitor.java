@@ -35,6 +35,7 @@ import packageA.JavaParser.MethodDeclarationContext;
 import packageA.JavaParser.ParameterContext;
 import packageA.JavaParser.ParameterListContext;
 import packageA.JavaParser.ParametersContext;
+import packageA.JavaParser.ReturnStatementContext;
 import packageA.JavaParser.SetContext;
 import packageA.JavaParser.SetStatementContext;
 import packageA.JavaParser.StatementContext;
@@ -361,6 +362,10 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 					PointerManager.clearAddress(addressToFree);
 					
 					return 0f;
+					
+//                case FunctionDictionary.FUNCTION_RETURN:
+//                	ctx.methodDeclaration().statements.set().setStatement().state
+//                	return 0f;
                 default: 
 //                	System.out.println("DEFAULT " + i + " : " + ctx.getChild(i).getText() + " \t|\t " + ctx.getChild(i).getClass().getSimpleName()); 
             }
@@ -369,6 +374,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
     
         return super.visitStatement(ctx);
     }
+    
+    
     
 
 	
@@ -1047,6 +1054,26 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	}
 	
 	@Override
+    public Float visitReturnStatement(ReturnStatementContext ctx) {
+    	String ctxSamp = constructVariableName(ctx, ctx.retExp.getText());
+    	System.out.println("\t\t\t\t\t SAMPLE:" + ctxSamp);
+    	if(VariableManager.isExisting(ctxSamp)){
+    		Variable v = VariableManager.getVariable(ctxSamp);
+    		System.out.println("HELLO VALUE: " + v.getValue().getValue());
+    		
+    		if(FunctionManager.isExisting(ctx.funcname.getText())){
+    			Function f = FunctionManager.getFunction(ctx.funcname.getText());
+    			f.setRetObject(v);
+    					
+    		}
+    		
+    	}
+    	
+    	
+    	return super.visitReturnStatement(ctx);
+    }
+	
+	@Override
 	public Float visitMethodCall(MethodCallContext ctx) {
 		System.out.println("\t\t\t\t\tAT METHOD CALL");
 		String funcName = ctx.funcname.getText();
@@ -1082,6 +1109,27 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			f.addValuesToStorage();
 			
 			visitMethodBody(f.getSc());
+			
+			if(ctx.getVal != null){
+				
+				String varname = constructVariableName(ctx, ctx.getVal.getText());
+				Variable varSamp = VariableManager.getVariable(varname);
+				System.out.println("\t\t\t\t\t\t\t NOT NULL : " + varname);
+				try {
+					varSamp.setValue(f.getRetObject().getValue());
+				} catch (IncompatibleVariableDataTypeError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConstantEditError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+				
+			else
+				System.out.println("\t\t\t\t\t\t\tNULL");
+			
+			
 			
 		}
 		else{

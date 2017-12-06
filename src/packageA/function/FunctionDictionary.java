@@ -10,5 +10,7 @@ public class FunctionDictionary {
 	
     public static final String FUNCTION_SCAN_WHOLELINE = "SCAN_LINE";
     public static final String FUNCTION_SCAN_NEXT = "SCAN_NEXT";
+    
+    public static final String FUNCTION_RETURN = "return";
 
 }
