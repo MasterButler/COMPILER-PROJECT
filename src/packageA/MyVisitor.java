@@ -48,6 +48,7 @@ import packageA.collector.OutputCollector;
 import packageA.collector.StandardInputCollector;
 import packageA.collector.SyntaxErrorCollector;
 import packageA.error.ConstantEditError;
+import packageA.error.DivisionByZeroError;
 import packageA.error.IncompatibleVariableDataTypeError;
 import packageA.error.MultipleVariableDeclarationError;
 import packageA.error.ReferencingError;
@@ -895,7 +896,12 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			}
 		}
 		else {
-			return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+			try {
+				return (float) MathUtil.solve(visitMath_expression(ctx.left), ctx.op.getText().charAt(0), visitMath_expression(ctx.right));
+			}catch(DivisionByZeroError e) {
+				SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), e.getErrorMessage());
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
