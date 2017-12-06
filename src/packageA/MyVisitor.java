@@ -596,7 +596,8 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 //			System.out.println("CHILD " + i + ": " + ctx.varValue.getChild(0).getChild(0).getChild(i).getText());
 //		}
 		
-		if(!ValueUtil.inferVarType(ctx.varValue.getChild(0).getText()).equals("unknown")) {
+		if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1 && 
+				!ValueUtil.inferVarType(ctx.varValue.getChild(0).getText()).equals("unknown")) {
 		//if(ctx.varValue.getChild(0).getChild(0).getChildCount() == 1) {
 			assignValueToVariable(ctx, varSimpleName, varIndex, varValue);
 		}else {
@@ -619,12 +620,13 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 	}
 	
 	public Integer assignValueToVariable(ParserRuleContext ctx, String varSimpleName, int varIndex, String varValue){
-		Variable toEdit;
+		Variable toEdit = null;
 		try {
 			toEdit = VariableManager.searchVariable(varSimpleName, constructVariableScope(ctx));
 			if(varIndex > -1) {
 				VariableManager.storeValueToVariableArray(toEdit, varIndex, new Value(ValueUtil.inferVarType(varValue), varValue, false));	
 			}else {
+				System.out.println("VALUE TYPE: " + ValueUtil.inferVarType(varValue));
 				VariableManager.storeValueToVariable(toEdit, new Value(ValueUtil.inferVarType(varValue), varValue, false));				
 			}
 			return 0;
@@ -632,7 +634,7 @@ public class MyVisitor extends JavaBaseVisitor<Float> {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VariableNotFoundError(varSimpleName).getErrorMessage());
 			e1.printStackTrace();
 		} catch (IncompatibleVariableDataTypeError e) {
-			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(ValueUtil.inferVarType(varValue), ValueUtil.inferVarType(varValue)).getErrorMessage());
+			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new IncompatibleVariableDataTypeError(toEdit.getValue().getType(), ValueUtil.inferVarType(varValue)).getErrorMessage());
 			e.printStackTrace();
 		} catch (ConstantEditError e) {
 			SyntaxErrorCollector.getInstance().recordError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new ConstantEditError(varSimpleName).getErrorMessage());
